@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VoyageQuest - Online Travel Booking System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #10568f;
+      --primary-dark: #0b3960;
+      --primary-light: #edf4fc;
+      --accent: #f26419;
+      --accent-hover: #d9530e;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --radius: 12px;
+      --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.08);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; }
+
+    /* Top Demo Presentation Bar */
+    .demo-bar {
+      background: #0f172a; color: #94a3b8; font-size: 0.85rem; padding: 6px 20px;
+      display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1e293b;
+    }
+    .demo-bar a, .demo-bar button {
+      color: #38bdf8; background: none; border: none; cursor: pointer; font-size: 0.82rem; font-weight: 600; margin-left: 12px;
+    }
+    .demo-bar button:hover { text-decoration: underline; color: #7dd3fc; }
+
+    /* Navbar */
+    header {
+      background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
+    }
+    .nav-container {
+      max-width: 1280px; margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .brand { font-size: 1.4rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 8px; cursor: pointer; }
+    .brand span { color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 24px; }
+    .nav-links a { color: var(--text); text-decoration: none; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--primary); }
+    .nav-auth { display: flex; align-items: center; gap: 12px; }
+
+    /* Buttons */
+    .btn {
+      padding: 9px 18px; border-radius: 8px; font-weight: 600; font-size: 0.9rem;
+      cursor: pointer; border: none; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-accent { background: var(--accent); color: #fff; }
+    .btn-accent:hover { background: var(--accent-hover); }
+    .btn-outline { background: transparent; border: 1.5px solid var(--border); color: var(--text); }
+    .btn-outline:hover { background: var(--bg); border-color: #cbd5e1; }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-danger:hover { background: #b91c1c; }
+    .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
+
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, #0b3960 0%, #10568f 60%, #1e3a8a 100%);
+      color: #fff; padding: 60px 24px 75px; text-align: center; position: relative; overflow: hidden;
+    }
+    .hero h1 { font-size: 2.8rem; font-weight: 800; margin-bottom: 12px; line-height: 1.2; letter-spacing: -0.02em; }
+    .hero p { font-size: 1.15rem; color: #cbd5e1; max-width: 650px; margin: 0 auto 30px; }
+    .search-box {
+      max-width: 680px; margin: 0 auto; background: var(--surface); border-radius: 12px;
+      padding: 8px 12px; display: flex; gap: 10px; box-shadow: var(--shadow-lg);
+    }
+    .search-box input, .search-box select {
+      flex: 1; border: none; outline: none; padding: 10px 14px; font-size: 0.95rem; font-family: inherit; color: var(--text);
+    }
+    .search-box select { border-left: 1px solid var(--border); max-width: 200px; }
+
+    /* Sections */
+    .container { max-width: 1280px; margin: 0 auto; padding: 50px 24px; }
+    .section-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; }
+    .section-title { font-size: 1.8rem; font-weight: 800; color: var(--text); letter-spacing: -0.02em; }
+    .section-subtitle { color: var(--text-muted); font-size: 0.95rem; margin-top: 4px; }
+
+    /* Cards Grid */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+    .card {
+      background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border);
+      overflow: hidden; box-shadow: var(--shadow); transition: transform 0.2s, box-shadow 0.2s; display: flex; flex-direction: column;
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+    .card-body { padding: 20px; flex: 1; display: flex; flex-direction: column; }
+    .card-badge {
+      display: inline-block; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700;
+      text-transform: uppercase; background: var(--primary-light); color: var(--primary); margin-bottom: 10px;
+    }
+    .card-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; }
+    .card-desc { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 15px; flex: 1; }
+    .card-meta { display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; color: #475569; margin-bottom: 15px; }
+    .card-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 14px; border-top: 1px solid var(--border); }
+    .price-tag { font-size: 1.3rem; font-weight: 800; color: var(--primary); }
+    .price-tag span { font-size: 0.8rem; font-weight: 500; color: var(--text-muted); }
+
+    /* Tags / Inclusions */
+    .inclusions { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+    .tag { font-size: 0.75rem; background: #f1f5f9; padding: 3px 8px; border-radius: 4px; font-weight: 600; color: #334155; }
+    .tag.yes { background: #dcfce7; color: #15803d; }
+
+    /* Modals */
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
+      display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      background: var(--surface); border-radius: 16px; max-width: 580px; width: 100%; max-height: 90vh;
+      overflow-y: auto; box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25); border: 1px solid var(--border);
+    }
+    .modal-lg { max-width: 900px; }
+    .modal-header {
+      padding: 18px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;
+      background: var(--primary); color: #fff; border-radius: 16px 16px 0 0;
+    }
+    .modal-header h3 { font-size: 1.25rem; font-weight: 700; }
+    .modal-close { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; }
+    .modal-body { padding: 24px; }
+    .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; background: var(--bg); border-radius: 0 0 16px 16px; }
+
+    /* Form Fields */
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+    .form-control {
+      width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px;
+      font-size: 0.95rem; font-family: inherit; transition: border-color 0.2s;
+    }
+    .form-control:focus { outline: none; border-color: var(--primary); }
+
+    /* Cost Box */
+    .calc-card {
+      background: var(--primary-light); border: 1.5px solid #bfdbfe; border-radius: 10px;
+      padding: 16px; margin: 15px 0; display: flex; flex-direction: column; gap: 8px; font-size: 0.9rem;
+    }
+    .calc-row { display: flex; justify-content: space-between; }
+    .calc-total { font-size: 1.25rem; font-weight: 800; color: var(--accent); border-top: 1.5px dashed #93c5fd; padding-top: 8px; margin-top: 4px; }
+
+    /* Payment Tabs */
+    .pay-methods { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 18px; }
+    .pay-tab {
+      padding: 10px 8px; text-align: center; border: 1.5px solid var(--border); border-radius: 8px;
+      font-size: 0.82rem; font-weight: 700; cursor: pointer; background: var(--surface);
+    }
+    .pay-tab.active { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+
+    /* Tables */
+    .table-responsive { overflow-x: auto; background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem; }
+    th { background: #f1f5f9; padding: 12px 16px; font-weight: 700; color: #475569; border-bottom: 1px solid var(--border); }
+    td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text); }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f8fafc; }
+
+    /* Badges */
+    .badge { padding: 4px 10px; border-radius: 9999px; font-size: 0.72rem; font-weight: 700; display: inline-block; }
+    .badge-success { background: #dcfce7; color: #166534; }
+    .badge-danger { background: #fee2e2; color: #991b1b; }
+    .badge-warning { background: #fef3c7; color: #92400e; }
+
+    /* KPI Summary Cards */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px; box-shadow: var(--shadow); }
+    .kpi-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); }
+    .kpi-value { font-size: 1.8rem; font-weight: 800; color: var(--primary); margin: 6px 0; }
+
+    /* Receipt Box */
+    .receipt-box {
+      font-family: monospace; background: #fff; border: 1px solid #cbd5e1; border-radius: 8px;
+      padding: 20px; white-space: pre-wrap; font-size: 0.85rem; line-height: 1.4; max-height: 380px; overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Demo Bar for Viva Presentation -->
+  <div class="demo-bar">
+    <div>🎓 <b>College Project Demo Mode</b> &bull; Connected to MySQL: <code>travel_booking_system</code></div>
+    <div>
+      <span>Quick Login:</span>
+      <button onclick="fillAndLogin('admin@travel.com', 'admin123')">Login as Admin</button>
+      <button onclick="fillAndLogin('priya@example.com', 'user123')">Login as Customer</button>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <header>
+    <div class="nav-container">
+      <div class="brand" onclick="navigate('home')">
+        ✈ Voyage<span>Quest</span>
+      </div>
+      <div class="nav-links">
+        <a onclick="navigate('destinations')">Destinations</a>
+        <a onclick="navigate('packages')">Holiday Packages</a>
+        <a onclick="navigate('hotels')">Hotels</a>
+        <a id="navMyBookings" style="display:none;" onclick="navigate('bookings')">My Bookings</a>
+        <a id="navAdmin" style="display:none;" onclick="navigate('admin')">Admin Panel</a>
+      </div>
+      <div class="nav-auth" id="authSection">
+        <button class="btn btn-outline" onclick="openModal('loginModal')">Sign In</button>
+        <button class="btn btn-primary" onclick="openModal('registerModal')">Register</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero" id="homeSection">
+    <h1>Explore Incredible India with Ease</h1>
+    <p>Discover picturesque mountains, serene beaches, and historic palaces. Book verified vacation packages and partner hotels with transparent pricing.</p>
+    <div class="search-box">
+      <input type="text" id="heroSearchInput" placeholder="Search packages, places, or destinations..." onkeyup="handleHeroSearch(event)" />
+      <select id="heroDestSelect" onchange="filterPackages()">
+        <option value="">All Destinations</option>
+      </select>
+      <button class="btn btn-accent" onclick="filterPackages()">Search Tours</button>
+    </div>
+  </section>
+
+  <!-- Main Content Areas -->
+  <main class="container">
+
+    <!-- 1. Destinations Section -->
+    <section id="destinationsSection">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Iconic Destinations</h2>
+          <p class="section-subtitle">Top-rated tourist destinations across India with curated local tours</p>
+        </div>
+      </div>
+      <div class="grid" id="destinationsGrid"></div>
+    </section>
+
+    <!-- 2. Packages Section -->
+    <section id="packagesSection" style="margin-top: 60px;">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Holiday & Tour Packages</h2>
+          <p class="section-subtitle">All-inclusive travel itineraries with hotel, transport, and guided sightseeing</p>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <input type="text" id="pkgSearchField" class="form-control" style="width:200px;" placeholder="Search package..." onkeyup="filterPackages()" />
+          <select id="pkgDestFilter" class="form-control" style="width:180px;" onchange="filterPackages()">
+            <option value="">All Destinations</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid" id="packagesGrid"></div>
+    </section>
+
+    <!-- 3. Hotels Section -->
+    <section id="hotelsSection" style="margin-top: 60px;">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Partner Hotels & Resorts</h2>
+          <p class="section-subtitle">Verified accommodations offering comfort, hygiene, and prime locations</p>
+        </div>
+        <div>
+          <select id="hotelDestFilter" class="form-control" style="width:200px;" onchange="loadHotels()">
+            <option value="">All Destinations</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid" id="hotelsGrid"></div>
+    </section>
+
+    <!-- 4. Customer My Bookings Section -->
+    <section id="myBookingsSection" style="margin-top: 60px; display:none;">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">My Travel Bookings</h2>
+          <p class="section-subtitle">Manage your reservations, view confirmation receipts, or cancel upcoming trips</p>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Booking ID</th>
+              <th>Destination</th>
+              <th>Package</th>
+              <th>Departure Date</th>
+              <th>Guests</th>
+              <th>Total Amount</th>
+              <th>Payment Status</th>
+              <th>Booking Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="bookingsTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 5. Admin Control Center Section -->
+    <section id="adminSection" style="margin-top: 60px; display:none;">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">🛡 Admin Control Center</h2>
+          <p class="section-subtitle">System statistics, user moderation, catalog management, and audit logs</p>
+        </div>
+        <div>
+          <button class="btn btn-outline" onclick="loadAdminData()">🔄 Refresh Stats</button>
+        </div>
+      </div>
+
+      <!-- 8 KPI Metrics Cards -->
+      <div class="kpi-grid" id="adminKpis"></div>
+
+      <!-- Admin Tabs -->
+      <div style="display:flex; gap:10px; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:10px;">
+        <button class="btn btn-primary btn-sm" onclick="switchAdminTab('users')">Manage Users</button>
+        <button class="btn btn-outline btn-sm" onclick="switchAdminTab('bookings')">Manage Bookings</button>
+        <button class="btn btn-outline btn-sm" onclick="switchAdminTab('destinations')">Destinations CRUD</button>
+        <button class="btn btn-outline btn-sm" onclick="switchAdminTab('packages')">Packages CRUD</button>
+        <button class="btn btn-outline btn-sm" onclick="switchAdminTab('hotels')">Hotels & Rooms</button>
+        <button class="btn btn-outline btn-sm" onclick="switchAdminTab('payments')">Payment Audits</button>
+      </div>
+
+      <div id="adminTabContent"></div>
+    </section>
+
+  </main>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- Login Modal -->
+  <div class="modal-backdrop" id="loginModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Sign In to VoyageQuest</h3>
+        <button class="modal-close" onclick="closeModal('loginModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="loginError" style="color:var(--danger); font-size:0.88rem; margin-bottom:12px; display:none;"></div>
+        <div class="form-group">
+          <label>Email Address / Username</label>
+          <input type="email" id="loginEmail" class="form-control" placeholder="user@example.com" />
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" />
+        </div>
+        <div style="font-size:0.82rem; color:var(--text-muted); margin-bottom:15px;">
+          Demo Accounts: <code>admin@travel.com</code> / <code>admin123</code> &bull; <code>priya@example.com</code> / <code>user123</code>
+        </div>
+        <button class="btn btn-primary" style="width:100%;" onclick="submitLogin()">Sign In</button>
+      </div>
+      <div class="modal-footer">
+        <span style="font-size:0.88rem; color:var(--text-muted);">New customer?</span>
+        <button class="btn btn-outline btn-sm" onclick="closeModal('loginModal'); openModal('registerModal');">Create Account</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Register Modal -->
+  <div class="modal-backdrop" id="registerModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Create Traveler Account</h3>
+        <button class="modal-close" onclick="closeModal('registerModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="regError" style="color:var(--danger); font-size:0.88rem; margin-bottom:12px; display:none;"></div>
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="regName" class="form-control" placeholder="Vikram Malhotra" />
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="regEmail" class="form-control" placeholder="vikram@example.com" />
+        </div>
+        <div class="form-group">
+          <label>Phone Number (10 digits)</label>
+          <input type="tel" id="regPhone" class="form-control" placeholder="9876543210" />
+        </div>
+        <div class="form-group">
+          <label>Password (min 6 characters)</label>
+          <input type="password" id="regPassword" class="form-control" placeholder="••••••••" />
+        </div>
+        <div class="form-group">
+          <label>Confirm Password</label>
+          <input type="password" id="regConfirmPassword" class="form-control" placeholder="••••••••" />
+        </div>
+        <button class="btn btn-primary" style="width:100%;" onclick="submitRegister()">Register Account</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Booking Modal -->
+  <div class="modal-backdrop" id="bookingModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="bookingModalTitle">Book Package</h3>
+        <button class="modal-close" onclick="closeModal('bookingModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="bPackageId" />
+        <div class="form-group">
+          <label>Traveler Name</label>
+          <input type="text" id="bCustomerName" class="form-control" readonly style="background:#f1f5f9;" />
+        </div>
+        <div class="form-group">
+          <label>Departure Date</label>
+          <input type="date" id="bTravelDate" class="form-control" onchange="recalcCosts()" />
+        </div>
+        <div class="form-group">
+          <label>Number of Travelers</label>
+          <input type="number" id="bPersons" class="form-control" value="2" min="1" max="50" onchange="recalcCosts()" onkeyup="recalcCosts()" />
+        </div>
+        <div class="form-group">
+          <label>Hotel Accommodation</label>
+          <select id="bHotelSelect" class="form-control" onchange="recalcCosts()">
+            <option value="">Standard Inclusions (Included in Package)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Special Requests</label>
+          <textarea id="bSpecialRequests" class="form-control" rows="2" placeholder="e.g. Vegetarian meal plan, high floor room, airport pickup"></textarea>
+        </div>
+
+        <!-- Live Cost Card -->
+        <div class="calc-card">
+          <div class="calc-row"><span>Package Cost:</span> <b id="costPkg">₹ 0.00</b></div>
+          <div class="calc-row"><span>Hotel Accommodation:</span> <b id="costHotel">₹ 0.00</b></div>
+          <div class="calc-row calc-total"><span>Total Payable:</span> <span id="costTotal">₹ 0.00</span></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('bookingModal')">Cancel</button>
+        <button class="btn btn-accent" onclick="proceedToPayment()">Proceed to Payment &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Simulated Payment Modal -->
+  <div class="modal-backdrop" id="paymentModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Secure Simulated Checkout</h3>
+        <button class="modal-close" onclick="closeModal('paymentModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="background:#f8fafc; border:1px solid var(--border); border-radius:10px; padding:12px; margin-bottom:16px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:0.9rem; color:var(--text-muted);">Amount Due:</span>
+            <span style="font-size:1.4rem; font-weight:800; color:var(--primary);" id="payDueAmount">₹ 0.00</span>
+          </div>
+        </div>
+
+        <div class="pay-methods">
+          <div class="pay-tab active" onclick="selectPayTab('UPI')">📱 UPI</div>
+          <div class="pay-tab" onclick="selectPayTab('CARD')">💳 Card</div>
+          <div class="pay-tab" onclick="selectPayTab('NET_BANKING')">🏦 Net Banking</div>
+          <div class="pay-tab" onclick="selectPayTab('CASH')">💵 Pay Later</div>
+        </div>
+
+        <!-- UPI Form -->
+        <div id="payFormUPI">
+          <div class="form-group">
+            <label>Virtual Payment Address (UPI ID)</label>
+            <input type="text" id="upiId" class="form-control" value="traveler@okhdfcbank" placeholder="name@okhdfcbank" />
+          </div>
+          <p style="font-size:0.8rem; color:var(--text-muted);">Instant simulated verification via GPay, PhonePe, Paytm, or BHIM.</p>
+        </div>
+
+        <!-- Card Form -->
+        <div id="payFormCARD" style="display:none;">
+          <div class="form-group">
+            <label>Card Number (16 digits)</label>
+            <input type="text" id="cardNum" class="form-control" value="4532112233445566" maxlength="16" />
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div class="form-group">
+              <label>Expiry (MM/YY)</label>
+              <input type="text" id="cardExp" class="form-control" value="08/28" placeholder="MM/YY" />
+            </div>
+            <div class="form-group">
+              <label>CVV (3 digits)</label>
+              <input type="password" id="cardCvv" class="form-control" value="789" maxlength="3" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Net Banking Form -->
+        <div id="payFormNET_BANKING" style="display:none;">
+          <div class="form-group">
+            <label>Select Bank</label>
+            <select id="nbBank" class="form-control">
+              <option>State Bank of India (SBI)</option>
+              <option>HDFC Bank</option>
+              <option>ICICI Bank</option>
+              <option>Axis Bank</option>
+              <option>Punjab National Bank (PNB)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Pay on Arrival Form -->
+        <div id="payFormCASH" style="display:none;">
+          <p style="font-size:0.9rem; color:var(--text); margin-bottom:6px;"><b>Pay Upon Arrival at Hotel</b></p>
+          <p style="font-size:0.82rem; color:var(--text-muted);">Payment status will be marked as PENDING until verified at reception.</p>
+        </div>
+
+        <div id="payProcessing" style="display:none; text-align:center; padding:15px; color:var(--primary); font-weight:700;">
+          ⏳ Authorizing simulated transaction... Please wait...
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('paymentModal')">Cancel</button>
+        <button class="btn btn-accent" id="payConfirmBtn" onclick="submitPayment()">Authorize Payment</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Receipt Voucher Modal -->
+  <div class="modal-backdrop" id="receiptModal">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h3>🎉 Booking Confirmed & Official Receipt Voucher</h3>
+        <button class="modal-close" onclick="closeModal('receiptModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="receipt-box" id="receiptText"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="printReceipt()">🖨 Print Voucher</button>
+        <button class="btn btn-primary" onclick="closeModal('receiptModal'); navigate('bookings');">View in My Bookings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Entity Edit Modal (Destinations/Packages/Hotels) -->
+  <div class="modal-backdrop" id="adminEditModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="adminEditTitle">Admin Edit</h3>
+        <button class="modal-close" onclick="closeModal('adminEditModal')">&times;</button>
+      </div>
+      <div class="modal-body" id="adminEditBody"></div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('adminEditModal')">Cancel</button>
+        <button class="btn btn-primary" id="adminSaveBtn">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Application Logic -->
+  <script>
+    // State
+    let currentUser = null;
+    let destinations = [];
+    let packages = [];
+    let hotels = [];
+    let selectedPackage = null;
+    let currentPaymentMethod = 'UPI';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Set min date for booking
+      const today = new Date().toISOString().split('T')[0];
+      const dateInput = document.getElementById('bTravelDate');
+      if (dateInput) {
+        dateInput.min = today;
+        const future = new Date();
+        future.setDate(future.getDate() + 14);
+        dateInput.value = future.toISOString().split('T')[0];
+      }
+
+      loadDestinations();
+      loadPackages();
+      loadHotels();
+
+      // Check session
+      const saved = localStorage.getItem('voyage_user');
+      if (saved) {
+        try {
+          currentUser = JSON.parse(saved);
+          updateUserUI();
+        } catch (e) {}
+      }
+    });
+
+    // Navigation
+    function navigate(view) {
+      if (view === 'bookings') {
+        if (!currentUser) { openModal('loginModal'); return; }
+        document.getElementById('myBookingsSection').style.display = 'block';
+        document.getElementById('adminSection').style.display = 'none';
+        loadUserBookings();
+        document.getElementById('myBookingsSection').scrollIntoView({ behavior: 'smooth' });
+      } else if (view === 'admin') {
+        if (!currentUser || currentUser.role !== 'ADMIN') {
+          alert('Admin access required. Please sign in as System Administrator.');
+          openModal('loginModal');
+          return;
+        }
+        document.getElementById('adminSection').style.display = 'block';
+        document.getElementById('myBookingsSection').style.display = 'none';
+        loadAdminData();
+        document.getElementById('adminSection').scrollIntoView({ behavior: 'smooth' });
+      } else {
+        document.getElementById('myBookingsSection').style.display = 'none';
+        document.getElementById('adminSection').style.display = 'none';
+        const el = document.getElementById(view + 'Section');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    // Modal Helpers
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+    // Currency Formatter
+    function formatINR(val) {
+      return '₹ ' + Number(val).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // 1. Destinations
+    async function loadDestinations() {
+      try {
+        const res = await fetch('/api/destinations');
+        destinations = await res.json();
+
+        // Populate dropdowns
+        const heroSelect = document.getElementById('heroDestSelect');
+        const pkgSelect = document.getElementById('pkgDestFilter');
+        const htlSelect = document.getElementById('hotelDestFilter');
+
+        heroSelect.innerHTML = '<option value="">All Destinations</option>';
+        pkgSelect.innerHTML = '<option value="">All Destinations</option>';
+        htlSelect.innerHTML = '<option value="">All Destinations</option>';
+
+        destinations.forEach(d => {
+          heroSelect.innerHTML += `<option value="${d.id}">${d.name}</option>`;
+          pkgSelect.innerHTML += `<option value="${d.id}">${d.name}</option>`;
+          htlSelect.innerHTML += `<option value="${d.id}">${d.name}</option>`;
+        });
+
+        // Render Destinations Grid
+        const grid = document.getElementById('destinationsGrid');
+        grid.innerHTML = destinations.map(d => `
+          <div class="card">
+            <div class="card-body">
+              <span class="card-badge">${d.state}</span>
+              <h3 class="card-title">${d.name}</h3>
+              <p class="card-desc">${d.description}</p>
+              <div class="card-meta">
+                <div><b>Top Attractions:</b> ${d.attractions}</div>
+                <div><b>Best Season:</b> ${d.bestTime}</div>
+              </div>
+              <div class="card-footer">
+                <button class="btn btn-outline btn-sm" onclick="selectDestination(${d.id})">Explore Packages &rarr;</button>
+              </div>
+            </div>
+          </div>
+        `).join('');
+
+      } catch (e) {
+        console.error('Error loading destinations:', e);
+      }
+    }
+
+    function selectDestination(destId) {
+      document.getElementById('pkgDestFilter').value = destId;
+      filterPackages();
+      document.getElementById('packagesSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // 2. Packages
+    async function loadPackages() {
+      await filterPackages();
+    }
+
+    async function filterPackages() {
+      const keyword = document.getElementById('pkgSearchField').value || document.getElementById('heroSearchInput').value || '';
+      const destId = document.getElementById('pkgDestFilter').value || document.getElementById('heroDestSelect').value || '';
+
+      try {
+        const res = await fetch(`/api/packages?keyword=${encodeURIComponent(keyword)}&destId=${destId}`);
+        packages = await res.json();
+
+        const grid = document.getElementById('packagesGrid');
+        if (packages.length === 0) {
+          grid.innerHTML = '<p style="color:var(--text-muted); grid-column: 1/-1;">No packages found matching criteria.</p>';
+          return;
+        }
+
+        grid.innerHTML = packages.map(p => `
+          <div class="card">
+            <div class="card-body">
+              <span class="card-badge">${p.destinationName} &bull; ${p.durationDays}D / ${p.durationNights}N</span>
+              <h3 class="card-title">${p.packageName}</h3>
+              <div class="inclusions">
+                <span class="tag ${p.hotelIncluded ? 'yes' : ''}">🏨 Hotel ${p.hotelIncluded ? 'Yes' : 'No'}</span>
+                <span class="tag ${p.foodIncluded ? 'yes' : ''}">🍽 Food ${p.foodIncluded ? 'Yes' : 'No'}</span>
+                <span class="tag ${p.transportIncluded ? 'yes' : ''}">🚗 Cab ${p.transportIncluded ? 'Yes' : 'No'}</span>
+              </div>
+              <p class="card-desc">${p.description}</p>
+              <div class="card-meta">
+                <div><b>Places Covered:</b> ${p.placesCovered}</div>
+              </div>
+              <div class="card-footer">
+                <div class="price-tag">${formatINR(p.pricePerPerson)}<span>/person</span></div>
+                <button class="btn btn-accent btn-sm" onclick="openBooking(${p.id})">Book Now</button>
+              </div>
+            </div>
+          </div>
+        `).join('');
+
+      } catch (e) {
+        console.error('Error loading packages:', e);
+      }
+    }
+
+    function handleHeroSearch(e) {
+      if (e.key === 'Enter') {
+        document.getElementById('pkgSearchField').value = document.getElementById('heroSearchInput').value;
+        filterPackages();
+        document.getElementById('packagesSection').scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    // 3. Hotels
+    async function loadHotels() {
+      const destId = document.getElementById('hotelDestFilter').value;
+      try {
+        const res = await fetch(`/api/hotels?destId=${destId}`);
+        hotels = await res.json();
+
+        const grid = document.getElementById('hotelsGrid');
+        grid.innerHTML = hotels.map(h => `
+          <div class="card">
+            <div class="card-body">
+              <span class="card-badge">${h.destinationName} &bull; ⭐ ${h.rating}</span>
+              <h3 class="card-title">${h.hotelName}</h3>
+              <p class="card-desc">${h.description}</p>
+              <div class="card-meta">
+                <div><b>Category:</b> ${h.roomType}</div>
+                <div><b>Address:</b> ${h.address}</div>
+                <div><b>Availability:</b> <span class="badge ${h.availableRooms > 0 ? 'badge-success' : 'badge-danger'}">${h.availableRooms} Rooms Left</span></div>
+              </div>
+              <div class="card-footer">
+                <div class="price-tag">${formatINR(h.pricePerNight)}<span>/night</span></div>
+                <span style="font-size:0.8rem; font-weight:600; color:var(--primary);">Verified Partner</span>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      } catch (e) {
+        console.error('Error loading hotels:', e);
+      }
+    }
+
+    // 4. Booking Flow
+    function openBooking(packageId) {
+      if (!currentUser) {
+        openModal('loginModal');
+        return;
+      }
+
+      selectedPackage = packages.find(p => p.id === packageId);
+      if (!selectedPackage) return;
+
+      document.getElementById('bPackageId').value = selectedPackage.id;
+      document.getElementById('bookingModalTitle').textContent = `Book Tour: ${selectedPackage.packageName}`;
+      document.getElementById('bCustomerName').value = `${currentUser.fullName} (${currentUser.email})`;
+
+      // Load hotels for this destination
+      const hSelect = document.getElementById('bHotelSelect');
+      hSelect.innerHTML = '<option value="">Standard Inclusions (Included in Package - ₹0)</option>';
+      const destHotels = hotels.filter(h => h.destinationId === selectedPackage.destinationId && h.availableRooms > 0);
+      destHotels.forEach(h => {
+        hSelect.innerHTML += `<option value="${h.id}">${h.hotelName} [${h.roomType}] (${formatINR(h.pricePerNight)}/night)</option>`;
+      });
+
+      recalcCosts();
+      openModal('bookingModal');
+    }
+
+    function recalcCosts() {
+      if (!selectedPackage) return;
+      const persons = Math.max(1, parseInt(document.getElementById('bPersons').value) || 1);
+      const pkgCost = selectedPackage.pricePerPerson * persons;
+
+      const hId = document.getElementById('bHotelSelect').value;
+      let hotelCost = 0;
+      if (hId) {
+        const h = hotels.find(item => item.id == hId);
+        if (h) {
+          hotelCost = h.pricePerNight * selectedPackage.durationNights;
+        }
+      }
+
+      const total = pkgCost + hotelCost;
+      document.getElementById('costPkg').textContent = formatINR(pkgCost);
+      document.getElementById('costHotel').textContent = formatINR(hotelCost);
+      document.getElementById('costTotal').textContent = formatINR(total);
+    }
+
+    function proceedToPayment() {
+      const travelDate = document.getElementById('bTravelDate').value;
+      if (!travelDate) {
+        alert('Please choose a departure date.');
+        return;
+      }
+      closeModal('bookingModal');
+      document.getElementById('payDueAmount').textContent = document.getElementById('costTotal').textContent;
+      openModal('paymentModal');
+    }
+
+    function selectPayTab(method) {
+      currentPaymentMethod = method;
+      document.querySelectorAll('.pay-tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+
+      document.getElementById('payFormUPI').style.display = method === 'UPI' ? 'block' : 'none';
+      document.getElementById('payFormCARD').style.display = method === 'CARD' ? 'block' : 'none';
+      document.getElementById('payFormNET_BANKING').style.display = method === 'NET_BANKING' ? 'block' : 'none';
+      document.getElementById('payFormCASH').style.display = method === 'CASH' ? 'block' : 'none';
+    }
+
+    async function submitPayment() {
+      let details = '';
+      if (currentPaymentMethod === 'UPI') {
+        details = document.getElementById('upiId').value.trim();
+        if (!details.includes('@')) { alert('Please enter a valid UPI ID.'); return; }
+      } else if (currentPaymentMethod === 'CARD') {
+        const cNum = document.getElementById('cardNum').value.trim();
+        const cExp = document.getElementById('cardExp').value.trim();
+        const cCvv = document.getElementById('cardCvv').value.trim();
+        if (cNum.length !== 16 || cCvv.length !== 3) { alert('Invalid card credentials.'); return; }
+        details = `${cNum}|${cExp}|${cCvv}|${currentUser.fullName}`;
+      } else if (currentPaymentMethod === 'NET_BANKING') {
+        details = document.getElementById('nbBank').value;
+      } else {
+        details = 'Pay on Arrival';
+      }
+
+      document.getElementById('payProcessing').style.display = 'block';
+      document.getElementById('payConfirmBtn').disabled = true;
+
+      const payload = {
+        userId: currentUser.id,
+        packageId: selectedPackage.id,
+        hotelId: document.getElementById('bHotelSelect').value || null,
+        travelDate: document.getElementById('bTravelDate').value,
+        persons: document.getElementById('bPersons').value,
+        specialRequests: document.getElementById('bSpecialRequests').value,
+        paymentMethod: currentPaymentMethod,
+        paymentDetails: details
+      };
+
+      try {
+        const res = await fetch('/api/bookings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        document.getElementById('payProcessing').style.display = 'none';
+        document.getElementById('payConfirmBtn').disabled = false;
+
+        if (result.success) {
+          closeModal('paymentModal');
+          renderReceipt(result);
+          openModal('receiptModal');
+          loadHotels(); // Refresh room counts
+        } else {
+          alert('Booking error: ' + (result.message || result.error));
+        }
+      } catch (e) {
+        document.getElementById('payProcessing').style.display = 'none';
+        document.getElementById('payConfirmBtn').disabled = false;
+        alert('Server communication error: ' + e.getMessage());
+      }
+    }
+
+    function renderReceipt(data) {
+      const hSelect = document.getElementById('bHotelSelect');
+      const hotelName = hSelect.options[hSelect.selectedIndex].text;
+      const text =
+`==============================================================
+                 VOYAGEQUEST TRAVEL VOUCHER                   
+          Certified Tour Operator & Tourism Management        
+==============================================================
+
+BOOKING REFERENCE  : ${data.bookingCode}
+BOOKING STATUS     : CONFIRMED
+DEPARTURE DATE     : ${document.getElementById('bTravelDate').value}
+GUEST COUNT        : ${document.getElementById('bPersons').value} Travelers
+
+CUSTOMER DETAILS
+Name               : ${currentUser.fullName}
+Email              : ${currentUser.email}
+Phone              : ${currentUser.phone}
+
+ITINERARY
+Package            : ${selectedPackage.packageName}
+Destination        : ${selectedPackage.destinationName}
+Accommodations     : ${hotelName}
+Special Requests   : ${document.getElementById('bSpecialRequests').value || 'None'}
+
+PAYMENT SUMMARY
+Transaction Code   : ${data.txnCode}
+Payment Method     : ${currentPaymentMethod}
+Payment Status     : ${data.paymentStatus}
+TOTAL FARE PAID    : ${formatINR(data.totalAmount)}
+
+==============================================================
+   Thank you for booking with VoyageQuest! Have a safe trip.  
+   Toll-free Support: 1800-VOYAGE | support@travelbooking.com 
+==============================================================`;
+      document.getElementById('receiptText').textContent = text;
+    }
+
+    function printReceipt() {
+      window.print();
+    }
+
+    // 5. My Bookings
+    async function loadUserBookings() {
+      if (!currentUser) return;
+      try {
+        const res = await fetch(`/api/bookings?userId=${currentUser.id}`);
+        const list = await res.json();
+        const tbody = document.getElementById('bookingsTableBody');
+
+        if (list.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; color:var(--text-muted);">No bookings found yet. Explore packages to book!</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = list.map(b => `
+          <tr>
+            <td><b>${b.bookingCode}</b></td>
+            <td>${b.destinationName}</td>
+            <td>${b.packageName}</td>
+            <td>${b.travelDate}</td>
+            <td>${b.persons}</td>
+            <td>${formatINR(b.totalAmount)}</td>
+            <td><span class="badge ${b.paymentStatus === 'SUCCESS' ? 'badge-success' : 'badge-warning'}">${b.paymentStatus}</span></td>
+            <td><span class="badge ${b.bookingStatus === 'CONFIRMED' ? 'badge-success' : (b.bookingStatus === 'CANCELLED' ? 'badge-danger' : 'badge-warning')}">${b.bookingStatus}</span></td>
+            <td>
+              ${b.bookingStatus !== 'CANCELLED' ? `<button class="btn btn-danger btn-sm" onclick="cancelBooking(${b.id})">Cancel</button>` : '<span style="color:var(--text-muted);font-size:0.8rem;">Cancelled</span>'}
+            </td>
+          </tr>
+        `).join('');
+      } catch (e) {
+        console.error('Error loading bookings:', e);
+      }
+    }
+
+    async function cancelBooking(id) {
+      if (!confirm('Are you sure you want to cancel this booking? Reserved hotel rooms will be restored.')) return;
+      try {
+        const res = await fetch('/api/bookings/cancel', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ bookingId: id, userId: currentUser.id, isAdmin: false })
+        });
+        const result = await res.json();
+        if (result.success) {
+          alert('Booking cancelled successfully.');
+          loadUserBookings();
+          loadHotels();
+        } else {
+          alert('Cancellation failed: ' + result.message);
+        }
+      } catch (e) {
+        alert('Server error: ' + e);
+      }
+    }
+
+    // 6. Admin Control Center
+    async function loadAdminData() {
+      try {
+        const res = await fetch('/api/admin/stats');
+        const s = await res.json();
+        document.getElementById('adminKpis').innerHTML = `
+          <div class="kpi-card"><div class="kpi-title">Total Users</div><div class="kpi-value">${s.totalUsers}</div></div>
+          <div class="kpi-card"><div class="kpi-title">Destinations</div><div class="kpi-value" style="color:var(--success);">${s.totalDestinations}</div></div>
+          <div class="kpi-card"><div class="kpi-title">Packages</div><div class="kpi-value" style="color:var(--accent);">${s.totalPackages}</div></div>
+          <div class="kpi-card"><div class="kpi-title">Partner Hotels</div><div class="kpi-value" style="color:#6366f1;">${s.totalHotels}</div></div>
+          <div class="kpi-card"><div class="kpi-title">Total Bookings</div><div class="kpi-value" style="color:#0284c7;">${s.totalBookings}</div></div>
+          <div class="kpi-card"><div class="kpi-title">Confirmed Trips</div><div class="kpi-value" style="color:var(--success);">${s.confirmedBookings}</div></div>
+          <div class="kpi-card"><div class="kpi-title">Cancelled Trips</div><div class="kpi-value" style="color:var(--danger);">${s.cancelledBookings}</div></div>
+          <div class="kpi-card"><div class="kpi-title">Total Revenue</div><div class="kpi-value" style="color:#15803d;font-size:1.4rem;">${formatINR(s.totalRevenue)}</div></div>
+        `;
+        switchAdminTab('users');
+      } catch (e) {
+        console.error('Error loading admin stats:', e);
+      }
+    }
+
+    async function switchAdminTab(tab) {
+      const container = document.getElementById('adminTabContent');
+      if (tab === 'users') {
+        const res = await fetch('/api/admin/users');
+        const users = await res.json();
+        container.innerHTML = `
+          <div class="table-responsive">
+            <table>
+              <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Status</th><th>Action</th></tr></thead>
+              <tbody>
+                ${users.map(u => `
+                  <tr>
+                    <td>${u.id}</td><td><b>${u.fullName}</b></td><td>${u.email}</td><td>${u.phone}</td>
+                    <td><span class="badge ${u.role === 'ADMIN' ? 'badge-warning' : 'badge-success'}">${u.role}</span></td>
+                    <td><span class="badge ${u.status === 'ACTIVE' ? 'badge-success' : 'badge-danger'}">${u.status}</span></td>
+                    <td>${u.role !== 'ADMIN' ? `<button class="btn btn-outline btn-sm" onclick="toggleUser(${u.id}, '${u.status === 'ACTIVE' ? 'DISABLED' : 'ACTIVE'}')">Toggle Status</button>` : ''}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      } else if (tab === 'bookings') {
+        const res = await fetch('/api/admin/bookings');
+        const bks = await res.json();
+        container.innerHTML = `
+          <div class="table-responsive">
+            <table>
+              <thead><tr><th>Code</th><th>Customer</th><th>Package</th><th>Destination</th><th>Travel Date</th><th>Total</th><th>Status</th><th>Change Status</th></tr></thead>
+              <tbody>
+                ${bks.map(b => `
+                  <tr>
+                    <td><b>${b.bookingCode}</b></td><td>${b.userName}</td><td>${b.packageName}</td><td>${b.destinationName}</td>
+                    <td>${b.travelDate}</td><td>${formatINR(b.totalAmount)}</td>
+                    <td><span class="badge ${b.bookingStatus === 'CONFIRMED' ? 'badge-success' : (b.bookingStatus === 'COMPLETED' ? 'badge-warning' : 'badge-danger')}">${b.bookingStatus}</span></td>
+                    <td>
+                      <select onchange="updateBookingStatus(${b.id}, this.value)">
+                        <option value="">Update...</option>
+                        <option value="CONFIRMED">CONFIRMED</option>
+                        <option value="COMPLETED">COMPLETED</option>
+                        <option value="CANCELLED">CANCELLED</option>
+                      </select>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      } else if (tab === 'destinations') {
+        container.innerHTML = `
+          <div style="margin-bottom:12px;"><button class="btn btn-primary btn-sm" onclick="openAddDestination()">+ Add Destination</button></div>
+          <div class="table-responsive">
+            <table>
+              <thead><tr><th>ID</th><th>Name</th><th>State</th><th>Attractions</th><th>Best Time</th><th>Actions</th></tr></thead>
+              <tbody>
+                ${destinations.map(d => `
+                  <tr>
+                    <td>${d.id}</td><td><b>${d.name}</b></td><td>${d.state}</td><td>${d.attractions}</td><td>${d.bestTime}</td>
+                    <td>
+                      <button class="btn btn-danger btn-sm" onclick="deleteDestination(${d.id})">Delete</button>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      } else if (tab === 'packages') {
+        container.innerHTML = `
+          <div style="margin-bottom:12px;"><button class="btn btn-accent btn-sm" onclick="openAddPackage()">+ Add Travel Package</button></div>
+          <div class="table-responsive">
+            <table>
+              <thead><tr><th>ID</th><th>Package</th><th>Destination</th><th>Duration</th><th>Price</th><th>Hotel</th><th>Food</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody>
+                ${packages.map(p => `
+                  <tr>
+                    <td>${p.id}</td><td><b>${p.packageName}</b></td><td>${p.destinationName}</td><td>${p.durationDays}D / ${p.durationNights}N</td>
+                    <td>${formatINR(p.pricePerPerson)}</td><td>${p.hotelIncluded ? 'Yes' : 'No'}</td><td>${p.foodIncluded ? 'Yes' : 'No'}</td>
+                    <td>${p.status}</td>
+                    <td><button class="btn btn-danger btn-sm" onclick="deletePackage(${p.id})">Delete</button></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      } else if (tab === 'hotels') {
+        container.innerHTML = `
+          <div style="margin-bottom:12px;"><button class="btn btn-primary btn-sm" onclick="openAddHotel()">+ Add Hotel</button></div>
+          <div class="table-responsive">
+            <table>
+              <thead><tr><th>ID</th><th>Hotel</th><th>Destination</th><th>Category</th><th>Price / Night</th><th>Rooms</th><th>Rating</th><th>Adjust Rooms</th><th>Actions</th></tr></thead>
+              <tbody>
+                ${hotels.map(h => `
+                  <tr>
+                    <td>${h.id}</td><td><b>${h.hotelName}</b></td><td>${h.destinationName}</td><td>${h.roomType}</td>
+                    <td>${formatINR(h.pricePerNight)}</td><td><b>${h.availableRooms}</b></td><td>⭐ ${h.rating}</td>
+                    <td>
+                      <button class="btn btn-outline btn-sm" onclick="adjustRooms(${h.id}, 5)">+5 Rooms</button>
+                      <button class="btn btn-outline btn-sm" onclick="adjustRooms(${h.id}, -1)">-1</button>
+                    </td>
+                    <td><button class="btn btn-danger btn-sm" onclick="deleteHotel(${h.id})">Delete</button></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      } else if (tab === 'payments') {
+        const res = await fetch('/api/admin/payments');
+        const pays = await res.json();
+        container.innerHTML = `
+          <div class="table-responsive">
+            <table>
+              <thead><tr><th>Txn Code</th><th>Booking Code</th><th>Customer</th><th>Amount</th><th>Method</th><th>Details</th><th>Status</th></tr></thead>
+              <tbody>
+                ${pays.map(p => `
+                  <tr>
+                    <td><b>${p.transactionCode}</b></td><td>${p.bookingCode}</td><td>${p.userName}</td>
+                    <td>${formatINR(p.amount)}</td><td>${p.paymentMethod}</td><td>${p.paymentDetails}</td>
+                    <td><span class="badge badge-success">${p.paymentStatus}</span></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      }
+    }
+
+    async function toggleUser(userId, newStatus) {
+      await fetch('/api/admin/toggle-user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, status: newStatus })
+      });
+      switchAdminTab('users');
+      loadAdminData();
+    }
+
+    async function updateBookingStatus(bookingId, status) {
+      if (!status) return;
+      await fetch('/api/admin/update-booking-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bookingId, status })
+      });
+      switchAdminTab('bookings');
+      loadAdminData();
+    }
+
+    async function adjustRooms(id, delta) {
+      await fetch('/api/admin/hotel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'adjustRooms', id, delta })
+      });
+      loadHotels();
+      switchAdminTab('hotels');
+    }
+
+    async function deleteDestination(id) {
+      if (!confirm('Delete destination? Associated packages & hotels will also be removed.')) return;
+      await fetch('/api/admin/destination', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'delete', id })
+      });
+      loadDestinations();
+      switchAdminTab('destinations');
+    }
+
+    async function deletePackage(id) {
+      if (!confirm('Delete package?')) return;
+      await fetch('/api/admin/package', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'delete', id })
+      });
+      filterPackages();
+      switchAdminTab('packages');
+    }
+
+    async function deleteHotel(id) {
+      if (!confirm('Delete hotel?')) return;
+      await fetch('/api/admin/hotel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'delete', id })
+      });
+      loadHotels();
+      switchAdminTab('hotels');
+    }
+
+    function openAddDestination() {
+      document.getElementById('adminEditTitle').textContent = 'Add New Destination';
+      document.getElementById('adminEditBody').innerHTML = `
+        <div class="form-group"><label>Name</label><input id="adName" class="form-control" /></div>
+        <div class="form-group"><label>State</label><input id="adState" class="form-control" /></div>
+        <div class="form-group"><label>Description</label><textarea id="adDesc" class="form-control"></textarea></div>
+        <div class="form-group"><label>Attractions</label><input id="adAttr" class="form-control" /></div>
+        <div class="form-group"><label>Best Time</label><input id="adBest" class="form-control" /></div>
+      `;
+      document.getElementById('adminSaveBtn').onclick = async () => {
+        await fetch('/api/admin/destination', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'save',
+            name: document.getElementById('adName').value,
+            state: document.getElementById('adState').value,
+            description: document.getElementById('adDesc').value,
+            attractions: document.getElementById('adAttr').value,
+            bestTime: document.getElementById('adBest').value
+          })
+        });
+        closeModal('adminEditModal');
+        loadDestinations();
+        switchAdminTab('destinations');
+      };
+      openModal('adminEditModal');
+    }
+
+    function openAddPackage() {
+      document.getElementById('adminEditTitle').textContent = 'Add Travel Package';
+      document.getElementById('adminEditBody').innerHTML = `
+        <div class="form-group"><label>Package Name</label><input id="apName" class="form-control" /></div>
+        <div class="form-group"><label>Destination</label>
+          <select id="apDest" class="form-control">${destinations.map(d => `<option value="${d.id}">${d.name}</option>`).join('')}</select>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div class="form-group"><label>Days</label><input type="number" id="apDays" class="form-control" value="4" /></div>
+          <div class="form-group"><label>Nights</label><input type="number" id="apNights" class="form-control" value="3" /></div>
+        </div>
+        <div class="form-group"><label>Price / Person (₹)</label><input type="number" id="apPrice" class="form-control" value="8999" /></div>
+        <div class="form-group"><label>Places Covered</label><input id="apPlaces" class="form-control" /></div>
+        <div class="form-group"><label>Description</label><textarea id="apDesc" class="form-control"></textarea></div>
+      `;
+      document.getElementById('adminSaveBtn').onclick = async () => {
+        await fetch('/api/admin/package', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'save',
+            packageName: document.getElementById('apName').value,
+            destinationId: document.getElementById('apDest').value,
+            durationDays: document.getElementById('apDays').value,
+            durationNights: document.getElementById('apNights').value,
+            pricePerPerson: document.getElementById('apPrice').value,
+            placesCovered: document.getElementById('apPlaces').value,
+            hotelIncluded: 'true', foodIncluded: 'true', transportIncluded: 'true',
+            description: document.getElementById('apDesc').value
+          })
+        });
+        closeModal('adminEditModal');
+        filterPackages();
+        switchAdminTab('packages');
+      };
+      openModal('adminEditModal');
+    }
+
+    function openAddHotel() {
+      document.getElementById('adminEditTitle').textContent = 'Add Hotel';
+      document.getElementById('adminEditBody').innerHTML = `
+        <div class="form-group"><label>Hotel Name</label><input id="ahName" class="form-control" /></div>
+        <div class="form-group"><label>Destination</label>
+          <select id="ahDest" class="form-control">${destinations.map(d => `<option value="${d.id}">${d.name}</option>`).join('')}</select>
+        </div>
+        <div class="form-group"><label>Address</label><input id="ahAddr" class="form-control" /></div>
+        <div class="form-group"><label>Room Category</label><input id="ahType" class="form-control" value="Deluxe Room" /></div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div class="form-group"><label>Price / Night (₹)</label><input type="number" id="ahPrice" class="form-control" value="2500" /></div>
+          <div class="form-group"><label>Available Rooms</label><input type="number" id="ahRooms" class="form-control" value="15" /></div>
+        </div>
+        <div class="form-group"><label>Rating (1.0 to 5.0)</label><input type="number" step="0.1" id="ahRating" class="form-control" value="4.5" /></div>
+      `;
+      document.getElementById('adminSaveBtn').onclick = async () => {
+        await fetch('/api/admin/hotel', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'save',
+            hotelName: document.getElementById('ahName').value,
+            destinationId: document.getElementById('ahDest').value,
+            address: document.getElementById('ahAddr').value,
+            roomType: document.getElementById('ahType').value,
+            pricePerNight: document.getElementById('ahPrice').value,
+            availableRooms: document.getElementById('ahRooms').value,
+            rating: document.getElementById('ahRating').value,
+            description: 'Verified accommodation'
+          })
+        });
+        closeModal('adminEditModal');
+        loadHotels();
+        switchAdminTab('hotels');
+      };
+      openModal('adminEditModal');
+    }
+
+    // 7. Auth (Login & Register)
+    async function submitLogin() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const errEl = document.getElementById('loginError');
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (data.success) {
+          currentUser = data.user;
+          localStorage.setItem('voyage_user', JSON.stringify(currentUser));
+          updateUserUI();
+          closeModal('loginModal');
+          if (currentUser.role === 'ADMIN') {
+            navigate('admin');
+          }
+        } else {
+          errEl.textContent = data.message || 'Invalid credentials';
+          errEl.style.display = 'block';
+        }
+      } catch (e) {
+        errEl.textContent = 'Server connection error';
+        errEl.style.display = 'block';
+      }
+    }
+
+    async function submitRegister() {
+      const payload = {
+        fullName: document.getElementById('regName').value.trim(),
+        email: document.getElementById('regEmail').value.trim(),
+        phone: document.getElementById('regPhone').value.trim(),
+        password: document.getElementById('regPassword').value,
+        confirmPassword: document.getElementById('regConfirmPassword').value
+      };
+      const errEl = document.getElementById('regError');
+
+      try {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          currentUser = data.user;
+          localStorage.setItem('voyage_user', JSON.stringify(currentUser));
+          updateUserUI();
+          closeModal('registerModal');
+          alert('Welcome to VoyageQuest, ' + currentUser.fullName + '!');
+        } else {
+          errEl.textContent = data.message || 'Registration failed';
+          errEl.style.display = 'block';
+        }
+      } catch (e) {
+        errEl.textContent = 'Server connection error';
+        errEl.style.display = 'block';
+      }
+    }
+
+    function fillAndLogin(email, pass) {
+      document.getElementById('loginEmail').value = email;
+      document.getElementById('loginPassword').value = pass;
+      submitLogin();
+    }
+
+    function updateUserUI() {
+      const section = document.getElementById('authSection');
+      const navBk = document.getElementById('navMyBookings');
+      const navAd = document.getElementById('navAdmin');
+
+      if (currentUser) {
+        navBk.style.display = 'inline-block';
+        navAd.style.display = currentUser.role === 'ADMIN' ? 'inline-block' : 'none';
+
+        section.innerHTML = `
+          <span style="font-weight:700; color:var(--primary); font-size:0.9rem;">👋 ${currentUser.fullName}</span>
+          <button class="btn btn-outline btn-sm" onclick="logout()">Logout</button>
+        `;
+      } else {
+        navBk.style.display = 'none';
+        navAd.style.display = 'none';
+        section.innerHTML = `
+          <button class="btn btn-outline" onclick="openModal('loginModal')">Sign In</button>
+          <button class="btn btn-primary" onclick="openModal('registerModal')">Register</button>
+        `;
+      }
+    }
+
+    function logout() {
+      currentUser = null;
+      localStorage.removeItem('voyage_user');
+      updateUserUI();
+      navigate('home');
+    }
+  </script>
+</body>
+</html>
