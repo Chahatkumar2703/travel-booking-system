@@ -354,6 +354,50 @@ java -cp "bin;lib\mysql-connector-j-8.3.0.jar" TestSystem
 
 ---
 
+## ☁ Cloud Deployment with Docker (Render / Railway)
+
+This application can be deployed as a public web application in the cloud using the provided `Dockerfile`.
+
+### 1. Supported Cloud Environment Variables
+| Variable Name | Description | Example |
+|---|---|---|
+| `PORT` | Web server port (injected automatically by Render/Railway) | `8080` or `10000` |
+| `DB_URL` / `DATABASE_URL` / `MYSQL_URL` | Cloud MySQL connection URL | `mysql://root:pass@host:3306/railway` |
+| `DB_USER` / `MYSQLUSER` | Database username | `root` |
+| `DB_PASSWORD` / `MYSQLPASSWORD` | Database password | `secret_password` |
+| `DB_HOST` / `MYSQLHOST` | Database host | `roundhouse.proxy.rlwy.net` |
+| `DB_PORT` / `MYSQLPORT` | Database port | `3306` |
+| `DB_NAME` / `MYSQLDATABASE` | Database name | `railway` |
+
+> 🔒 **Security Notice**: Never commit database passwords to GitHub! Always add them as **Environment Variables** in the cloud platform's dashboard.
+
+---
+
+### 2. Deploying on Railway (Fastest - Includes Free MySQL)
+1. Go to **[Railway.app](https://railway.app)** and log in with your GitHub account.
+2. Click **New Project** &rarr; **Provision MySQL**.
+3. Click **Add Service** &rarr; **GitHub Repo** &rarr; Select your `travel-booking-system` repository.
+4. Railway will automatically detect the `Dockerfile` and build the container!
+5. In your Railway Web Service settings &rarr; **Variables**, add:
+   - `DATABASE_URL`: `${{MySQL.MYSQL_URL}}` *(or Railway links them automatically)*
+6. In **Settings** &rarr; **Networking**, click **Generate Domain** (e.g. `travel-booking-system.up.railway.app`).
+7. Open the generated domain in your browser!
+
+---
+
+### 3. Deploying on Render
+1. Go to **[Render.com](https://render.com)** and log in.
+2. Click **New +** &rarr; **Web Service**.
+3. Connect your GitHub repository `travel-booking-system`.
+4. Render will detect the `Dockerfile` automatically (Runtime: **Docker**).
+5. In **Environment Variables**, add:
+   - `DB_URL`: Your cloud MySQL JDBC URL
+   - `DB_USER`: Your cloud MySQL username
+   - `DB_PASSWORD`: Your cloud MySQL password
+6. Click **Create Web Service**. Once built, Render will provide a public HTTPS URL (e.g. `https://travel-booking-system.onrender.com`).
+
+---
+
 ## 📁 Project Folder Structure
 
 ```text

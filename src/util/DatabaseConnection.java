@@ -1,6 +1,7 @@
 package util;
 
 import java.io.InputStream;
+import java.net.URI;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -8,7 +9,8 @@ import java.util.Properties;
 
 /**
  * Manages database connectivity using JDBC.
- * Implements Singleton connection factory with configurable properties.
+ * Supports both local development (db.properties / defaults) and cloud deployments
+ * via environment variables (Docker, Render, Railway).
  */
 public class DatabaseConnection {
 
@@ -23,17 +25,78 @@ public class DatabaseConnection {
     }
 
     private static void loadConfig() {
-        try (InputStream input = DatabaseConnection.class.getClassLoader().getResourceAsStream("db.properties")) {
-            if (input != null) {
-                Properties prop = new Properties();
-                prop.load(input);
-                if (prop.getProperty("db.url") != null) dbUrl = prop.getProperty("db.url");
-                if (prop.getProperty("db.user") != null) dbUser = prop.getProperty("db.user");
-                if (prop.getProperty("db.password") != null) dbPassword = prop.getProperty("db.password");
+        // 1. Check cloud environment variables first (Render / Railway / Docker)
+        String envUrl = getFirstEnv("DB_URL", "DATABASE_URL", "MYSQL_URL");
+        String envUser = getFirstEnv("DB_USER", "MYSQLUSER", "MYSQL_USER");
+        String envPass = getFirstEnv("DB_PASSWORD", "MYSQLPASSWORD", "MYSQL_PASSWORD");
+
+        if (envUrl != null && !envUrl.trim().isEmpty()) {
+            envUrl = envUrl.trim();
+            if (envUrl.startsWith("mysql://")) {
+                try {
+                    URI uri = new URI(envUrl);
+                    String userInfo = uri.getUserInfo();
+                    if (userInfo != null) {
+                        String[] parts = userInfo.split(":", 2);
+                        if (envUser == null || envUser.isEmpty()) envUser = parts[0];
+                        if (parts.length > 1 && (envPass == null || envPass.isEmpty())) envPass = parts[1];
+                    }
+                    String host = uri.getHost();
+                    int port = uri.getPort() > 0 ? uri.getPort() : 3306;
+                    String path = uri.getPath();
+                    if (path != null && path.startsWith("/")) path = path.substring(1);
+                    dbUrl = "jdbc:mysql://" + host + ":" + port + "/" + path + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+                } catch (Exception e) {
+                    dbUrl = "jdbc:" + envUrl;
+                }
+            } else if (!envUrl.startsWith("jdbc:")) {
+                dbUrl = "jdbc:mysql://" + envUrl;
+            } else {
+                dbUrl = envUrl;
             }
-        } catch (Exception ignored) {
-            // Fallback to default credentials
+        } else {
+            // Check individual host, port, db environment variables
+            String host = getFirstEnv("DB_HOST", "MYSQLHOST");
+            String port = getFirstEnv("DB_PORT", "MYSQLPORT");
+            String dbName = getFirstEnv("DB_NAME", "MYSQLDATABASE");
+            if (host != null && !host.trim().isEmpty()) {
+                if (port == null || port.trim().isEmpty()) port = "3306";
+                if (dbName == null || dbName.trim().isEmpty()) dbName = "travel_booking_system";
+                dbUrl = "jdbc:mysql://" + host.trim() + ":" + port.trim() + "/" + dbName.trim() + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+            }
         }
+
+        if (envUser != null && !envUser.trim().isEmpty()) {
+            dbUser = envUser.trim();
+        }
+        if (envPass != null) {
+            dbPassword = envPass;
+        }
+
+        // 2. If no environment variables were provided, fall back to db.properties
+        if (envUrl == null && getFirstEnv("DB_HOST", "MYSQLHOST") == null) {
+            try (InputStream input = DatabaseConnection.class.getClassLoader().getResourceAsStream("db.properties")) {
+                if (input != null) {
+                    Properties prop = new Properties();
+                    prop.load(input);
+                    if (prop.getProperty("db.url") != null) dbUrl = prop.getProperty("db.url");
+                    if (prop.getProperty("db.user") != null) dbUser = prop.getProperty("db.user");
+                    if (prop.getProperty("db.password") != null) dbPassword = prop.getProperty("db.password");
+                }
+            } catch (Exception ignored) {
+                // Keep default credentials
+            }
+        }
+    }
+
+    private static String getFirstEnv(String... names) {
+        for (String name : names) {
+            String val = System.getenv(name);
+            if (val != null && !val.trim().isEmpty()) {
+                return val.trim();
+            }
+        }
+        return null;
     }
 
     private static void loadDriver() {
@@ -59,7 +122,12 @@ public class DatabaseConnection {
         if (!driverLoaded) {
             loadDriver();
         }
-        String serverUrl = "jdbc:mysql://localhost:3306/?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+        String serverUrl;
+        if (dbUrl.contains("//localhost") || dbUrl.contains("//127.0.0.1")) {
+            serverUrl = "jdbc:mysql://localhost:3306/?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+        } else {
+            serverUrl = dbUrl;
+        }
         return DriverManager.getConnection(serverUrl, dbUser, dbPassword);
     }
 
@@ -75,5 +143,9 @@ public class DatabaseConnection {
         dbUrl = url;
         dbUser = user;
         dbPassword = password;
+    }
+
+    public static String getDbUrl() {
+        return dbUrl;
     }
 }

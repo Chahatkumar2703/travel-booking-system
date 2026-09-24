@@ -16,8 +16,8 @@ public class DatabaseInitializer {
             try (Connection conn = DatabaseConnection.getServerConnection();
                  Statement stmt = conn.createStatement()) {
                 stmt.executeUpdate("CREATE DATABASE IF NOT EXISTS travel_booking_system;");
-            } catch (SQLException e) {
-                System.err.println("Database server check info: " + e.getMessage());
+            } catch (Exception e) {
+                // Harmless in cloud environments where database is pre-allocated
             }
 
             // Now connect to the database and check tables

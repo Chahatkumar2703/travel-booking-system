@@ -25,7 +25,6 @@ import java.util.concurrent.Executors;
  */
 public class WebServer {
 
-    private static final int PORT = 8080;
     private static final AuthService authService = new AuthService();
     private static final DestinationService destService = new DestinationService();
     private static final PackageService pkgService = new PackageService();
@@ -34,16 +33,33 @@ public class WebServer {
     private static final PaymentService paymentService = new PaymentService();
     private static final AdminService adminService = new AdminService();
 
+    private static int getPort() {
+        String envPort = System.getenv("PORT");
+        if (envPort != null && !envPort.trim().isEmpty()) {
+            try {
+                return Integer.parseInt(envPort.trim());
+            } catch (NumberFormatException ignored) {}
+        }
+        String propPort = System.getProperty("server.port");
+        if (propPort != null && !propPort.trim().isEmpty()) {
+            try {
+                return Integer.parseInt(propPort.trim());
+            } catch (NumberFormatException ignored) {}
+        }
+        return 8080;
+    }
+
     public static void main(String[] args) {
+        int port = getPort();
         System.out.println("==========================================================");
-        System.out.println("      VOYAGEQUEST WEB SERVER: STARTING ON PORT " + PORT + "      ");
+        System.out.println("      VOYAGEQUEST WEB SERVER: STARTING ON PORT " + port + "      ");
         System.out.println("==========================================================");
 
         // Ensure database tables and sample data are ready
         DatabaseInitializer.initializeDatabase();
 
         try {
-            HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
+            HttpServer server = HttpServer.create(new InetSocketAddress("0.0.0.0", port), 0);
             server.setExecutor(Executors.newCachedThreadPool());
 
             // 1. Static file handler (SPA Web Interface)
@@ -69,20 +85,24 @@ public class WebServer {
 
             server.start();
 
-            String webUrl = "http://localhost:" + PORT;
+            String webUrl = "http://localhost:" + port;
             System.out.println("\n>>> Web Application running successfully!");
-            System.out.println(">>> Open in your web browser: " + webUrl);
+            System.out.println(">>> Server listening on 0.0.0.0:" + port);
             System.out.println("==========================================================\n");
 
-            // Automatically open browser on Windows
+            // Open browser only when running in a local desktop environment
             openBrowser(webUrl);
 
         } catch (IOException e) {
-            System.err.println("Error starting web server on port " + PORT + ": " + e.getMessage());
+            System.err.println("Error starting web server on port " + port + ": " + e.getMessage());
         }
     }
 
     private static void openBrowser(String url) {
+        // Skip browser launch in headless / cloud environments (Render, Railway, Docker)
+        if (System.getenv("PORT") != null || java.awt.GraphicsEnvironment.isHeadless()) {
+            return;
+        }
         try {
             if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
                 Desktop.getDesktop().browse(new URI(url));
@@ -90,7 +110,7 @@ public class WebServer {
                 Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
             }
         } catch (Exception e) {
-            System.out.println("Could not auto-launch browser. Please manually visit: " + url);
+            System.out.println("Notice: Visit " + url + " in your browser.");
         }
     }
 
