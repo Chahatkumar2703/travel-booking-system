@@ -5,7 +5,7 @@ echo ===================================================
 
 if not exist bin mkdir bin
 
-javac -d bin -cp "lib\mysql-connector-j-8.3.0.jar;src" src\util\*.java src\model\*.java src\dao\*.java src\service\*.java src\view\*.java src\Main.java src\WebServer.java src\EndToEndTest.java src\UserIsolationTest.java src\AgentHotelCreationTest.java
+javac -d bin -cp "lib\mysql-connector-j-8.3.0.jar;src" src\util\*.java src\model\*.java src\dao\*.java src\service\*.java src\view\*.java src\Main.java src\WebServer.java src\EndToEndTest.java src\UserIsolationTest.java src\AgentHotelCreationTest.java src\ProductionRegressionTest.java
 
 if %ERRORLEVEL% equ 0 (
     copy /Y src\db.properties bin\ >nul

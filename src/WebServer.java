@@ -69,40 +69,40 @@ public class WebServer {
             server.createContext("/", new StaticFileHandler());
 
             // 2. Authentication endpoints
-            server.createContext("/api/auth/login", new LoginHandler());
-            server.createContext("/api/auth/register", new RegisterHandler());
+            registerEndpoint(server, "/api/auth/login", new LoginHandler());
+            registerEndpoint(server, "/api/auth/register", new RegisterHandler());
 
             // 3. Travel Catalogs
-            server.createContext("/api/destinations", new DestinationsHandler());
-            server.createContext("/api/flights", new FlightsHandler());
-            server.createContext("/api/hotels", new HotelsHandler());
-            server.createContext("/api/cars", new CarsHandler());
-            server.createContext("/api/packages", new PackagesHandler());
+            registerEndpoint(server, "/api/destinations", new DestinationsHandler());
+            registerEndpoint(server, "/api/flights", new FlightsHandler());
+            registerEndpoint(server, "/api/hotels", new HotelsHandler());
+            registerEndpoint(server, "/api/cars", new CarsHandler());
+            registerEndpoint(server, "/api/packages", new PackagesHandler());
 
             // 4. Bookings & Itinerary
-            server.createContext("/api/bookings", new BookingsHandler());
-            server.createContext("/api/bookings/cancel", new BookingCancelHandler());
-            server.createContext("/api/itinerary", new ItineraryHandler());
+            registerEndpoint(server, "/api/bookings", new BookingsHandler());
+            registerEndpoint(server, "/api/bookings/cancel", new BookingCancelHandler());
+            registerEndpoint(server, "/api/itinerary", new ItineraryHandler());
 
             // 5. Messages / Feedback
-            server.createContext("/api/messages", new MessagesHandler());
-            server.createContext("/api/messages/reply", new MessageReplyHandler());
+            registerEndpoint(server, "/api/messages", new MessagesHandler());
+            registerEndpoint(server, "/api/messages/reply", new MessageReplyHandler());
 
             // 6. Travel Agent Portal APIs
-            server.createContext("/api/agent/stats", new AgentStatsHandler());
-            server.createContext("/api/agent/listings", new AgentListingsHandler());
-            server.createContext("/api/agent/bookings", new AgentBookingsHandler());
+            registerEndpoint(server, "/api/agent/stats", new AgentStatsHandler());
+            registerEndpoint(server, "/api/agent/listings", new AgentListingsHandler());
+            registerEndpoint(server, "/api/agent/bookings", new AgentBookingsHandler());
 
             // 7. Administrator Portal APIs
-            server.createContext("/api/admin/stats", new AdminStatsHandler());
-            server.createContext("/api/admin/users", new AdminUsersHandler());
-            server.createContext("/api/admin/toggle-user", new AdminToggleUserHandler());
-            server.createContext("/api/admin/listings", new AdminListingsHandler());
-            server.createContext("/api/admin/bookings", new AdminBookingsHandler());
-            server.createContext("/api/admin/update-booking-status", new AdminUpdateBookingStatusHandler());
-            server.createContext("/api/admin/payments", new AdminPaymentsHandler());
-            server.createContext("/api/admin/settings", new AdminSettingsHandler());
-            server.createContext("/api/admin/destination", new AdminDestinationCrudHandler());
+            registerEndpoint(server, "/api/admin/stats", new AdminStatsHandler());
+            registerEndpoint(server, "/api/admin/users", new AdminUsersHandler());
+            registerEndpoint(server, "/api/admin/toggle-user", new AdminToggleUserHandler());
+            registerEndpoint(server, "/api/admin/listings", new AdminListingsHandler());
+            registerEndpoint(server, "/api/admin/bookings", new AdminBookingsHandler());
+            registerEndpoint(server, "/api/admin/update-booking-status", new AdminUpdateBookingStatusHandler());
+            registerEndpoint(server, "/api/admin/payments", new AdminPaymentsHandler());
+            registerEndpoint(server, "/api/admin/settings", new AdminSettingsHandler());
+            registerEndpoint(server, "/api/admin/destination", new AdminDestinationCrudHandler());
 
             server.start();
 
@@ -134,6 +134,20 @@ public class WebServer {
         }
     }
 
+    private static void registerEndpoint(HttpServer server, String path, HttpHandler handler) {
+        server.createContext(path, exchange -> {
+            exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
+            exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+            exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Session-Token");
+            if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(204, -1);
+                exchange.close();
+                return;
+            }
+            handler.handle(exchange);
+        });
+    }
+
     // =========================================================================
     // 1. Static File Handler (Resolves frontend/ and web/ directories)
     // =========================================================================
@@ -141,6 +155,14 @@ public class WebServer {
     static class StaticFileHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
+            if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+                exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
+                exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+                exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Session-Token");
+                exchange.sendResponseHeaders(204, -1);
+                exchange.close();
+                return;
+            }
             String path = exchange.getRequestURI().getPath();
             if ("/".equals(path) || path.isEmpty()) {
                 path = "/index.html";
@@ -1286,7 +1308,7 @@ public class WebServer {
     }
 
     private static void sendErrorResponse(HttpExchange exchange, int status, String msg) throws IOException {
-        String json = "{\"success\":false,\"error\":\"" + escape(msg) + "\"}";
+        String json = "{\"success\":false,\"error\":\"" + escape(msg) + "\",\"message\":\"" + escape(msg) + "\"}";
         sendJsonResponse(exchange, status, json);
     }
 

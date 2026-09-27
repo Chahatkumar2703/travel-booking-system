@@ -350,7 +350,7 @@
       } else {
         // Tour Package
         const pkgs = await API.getPackages();
-        itemData = pkgs.find(p => p.id == itemId) || pkgs[0];
+        itemData = Array.isArray(pkgs) ? (pkgs.find(p => p.id == itemId) || pkgs[0]) : null;
         if (!itemData) { alert('Package not found'); return; }
 
         document.getElementById('itemTitle').textContent = itemData.packageName;
@@ -359,7 +359,7 @@
         partnerHotels = await API.getHotels({ destId: itemData.destinationId });
 
         let hotelOptions = '<option value="">None (Use standard package inclusion)</option>';
-        if (partnerHotels && partnerHotels.length > 0) {
+        if (Array.isArray(partnerHotels) && partnerHotels.length > 0) {
           hotelOptions += partnerHotels.map(h => `<option value="${h.id}">${h.hotelName} (${h.roomType} - ₹${h.pricePerNight}/night)</option>`).join('');
         }
 

@@ -120,7 +120,7 @@
 
       try {
         const res = await API.login(email, password);
-        if (res.success && res.user) {
+        if (res && res.success && res.user) {
           Auth.setUser(res.user, res.token);
           showToast('Login successful! Redirecting...', 'success');
           setTimeout(() => {
@@ -129,7 +129,7 @@
             else window.location.href = 'traveler-dashboard.html';
           }, 800);
         } else {
-          showToast(res.message || 'Login failed. Please check your credentials.', 'error');
+          showToast((res && (res.message || res.error)) || 'Login failed. Please check your credentials.', 'error');
           btn.disabled = false;
           btn.textContent = 'Sign In';
         }
@@ -144,11 +144,11 @@
       document.getElementById('loginEmail').value = email;
       document.getElementById('loginPassword').value = password;
       const res = await API.login(email, password);
-      if (res.success && res.user) {
+      if (res && res.success && res.user) {
         Auth.setUser(res.user);
         window.location.href = redirectUrl;
       } else {
-        showToast('Demo login error: ' + (res.message || 'Unknown'), 'error');
+        showToast('Demo login error: ' + ((res && (res.message || res.error)) || 'Unknown error'), 'error');
       }
     }
   </script>

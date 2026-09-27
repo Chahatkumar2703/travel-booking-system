@@ -17,28 +17,60 @@ public class DatabaseInitializer {
         System.out.println("Finished Database Initialization.");
     }
 
-    public static void initializeDatabase() {
+    private static volatile boolean initialized = false;
+    private static volatile boolean initializing = false;
+
+    public static boolean isInitialized() {
+        return initialized;
+    }
+
+    public static synchronized void ensureInitialized() {
+        if (!initialized && !initializing) {
+            initializeDatabase();
+        }
+    }
+
+    public static synchronized void initializeDatabase() {
+        if (initialized || initializing) return;
+        initializing = true;
         try {
-            // 1. Create database if it does not exist
-            try (Connection conn = DatabaseConnection.getServerConnection();
-                 Statement stmt = conn.createStatement()) {
-                stmt.executeUpdate("CREATE DATABASE IF NOT EXISTS travel_booking_system;");
-            } catch (Exception e) {
-                // Harmless in cloud environments where database is pre-allocated
+            int maxAttempts = 5;
+            for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+                try {
+                    // 1. Create database if it does not exist (harmless on pre-allocated cloud DB)
+                    try (Connection conn = DatabaseConnection.getServerConnection();
+                         Statement stmt = conn.createStatement()) {
+                        stmt.executeUpdate("CREATE DATABASE IF NOT EXISTS travel_booking_system;");
+                    } catch (Exception ignored) {
+                        // Harmless in cloud environments where database is pre-allocated
+                    }
+
+                    // 2. Connect to database and ensure all tables & columns exist
+                    try (Connection conn = DatabaseConnection.getConnectionDirect();
+                         Statement stmt = conn.createStatement()) {
+
+                        createTables(stmt);
+                        runMigrations(stmt);
+                        seedInitialData(stmt);
+
+                        initialized = true;
+                        System.out.println("Database schema, tables, and seed data verified successfully!");
+                        return;
+                    }
+                } catch (SQLException e) {
+                    System.err.println("Database initialization attempt " + attempt + " of " + maxAttempts + " notice: " + e.getMessage());
+                    if (attempt < maxAttempts) {
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException ie) {
+                            Thread.currentThread().interrupt();
+                            break;
+                        }
+                    }
+                }
             }
-
-            // 2. Connect to database and ensure all tables & columns exist
-            try (Connection conn = DatabaseConnection.getConnection();
-                 Statement stmt = conn.createStatement()) {
-
-                createTables(stmt);
-                runMigrations(stmt);
-                seedInitialData(stmt);
-
-                System.out.println("Database schema, tables, and seed data verified successfully!");
-            }
-        } catch (SQLException e) {
-            System.err.println("Database initialization notice: " + e.getMessage());
+        } finally {
+            initializing = false;
         }
     }
 

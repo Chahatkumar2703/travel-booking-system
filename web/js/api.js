@@ -25,30 +25,54 @@ const API = {
     return fetch(url, options);
   },
 
+  async safeJson(res) {
+    try {
+      return await res.json();
+    } catch (e) {
+      return { success: false, error: `HTTP ${res.status}: ${res.statusText || 'Server Error'}` };
+    }
+  },
+
   // Authentication
   async login(email, password) {
-    const res = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
-    return res.json();
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await this.safeJson(res);
+      if (!res.ok && !data.error && !data.message) {
+        data.error = `HTTP ${res.status}: ${res.statusText || 'Login error'}`;
+      }
+      return data;
+    } catch (err) {
+      return { success: false, error: err.message || 'Connection error', message: err.message || 'Connection error' };
+    }
   },
 
   async register(fullName, email, phone, password, confirmPassword, role = 'TRAVELER') {
-    const res = await fetch('/api/auth/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fullName, email, phone, password, confirmPassword, role })
-    });
-    return res.json();
+    try {
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fullName, email, phone, password, confirmPassword, role })
+      });
+      return await this.safeJson(res);
+    } catch (err) {
+      return { success: false, error: err.message || 'Connection error', message: err.message || 'Connection error' };
+    }
   },
 
   // Flights
   async getFlights(filters = {}) {
     const query = new URLSearchParams(filters).toString();
     const res = await this.fetchAuth(`/api/flights${query ? '?' + query : ''}`);
-    return res.json();
+    const data = await this.safeJson(res);
+    if (!res.ok && !Array.isArray(data)) {
+      throw new Error((data && (data.error || data.message)) || `HTTP ${res.status}`);
+    }
+    return data;
   },
 
   async addFlight(flightData) {
@@ -56,14 +80,18 @@ const API = {
       method: 'POST',
       body: JSON.stringify(flightData)
     });
-    return res.json();
+    return this.safeJson(res);
   },
 
   // Hotels
   async getHotels(filters = {}) {
     const query = new URLSearchParams(filters).toString();
     const res = await this.fetchAuth(`/api/hotels${query ? '?' + query : ''}`);
-    return res.json();
+    const data = await this.safeJson(res);
+    if (!res.ok && !Array.isArray(data)) {
+      throw new Error((data && (data.error || data.message)) || `HTTP ${res.status}`);
+    }
+    return data;
   },
 
   async addHotel(hotelData) {
@@ -71,14 +99,18 @@ const API = {
       method: 'POST',
       body: JSON.stringify(hotelData)
     });
-    return res.json();
+    return this.safeJson(res);
   },
 
   // Cars
   async getCars(filters = {}) {
     const query = new URLSearchParams(filters).toString();
     const res = await this.fetchAuth(`/api/cars${query ? '?' + query : ''}`);
-    return res.json();
+    const data = await this.safeJson(res);
+    if (!res.ok && !Array.isArray(data)) {
+      throw new Error((data && (data.error || data.message)) || `HTTP ${res.status}`);
+    }
+    return data;
   },
 
   async addCar(carData) {
@@ -86,14 +118,18 @@ const API = {
       method: 'POST',
       body: JSON.stringify(carData)
     });
-    return res.json();
+    return this.safeJson(res);
   },
 
   // Tour Packages
   async getPackages(filters = {}) {
     const query = new URLSearchParams(filters).toString();
     const res = await this.fetchAuth(`/api/packages${query ? '?' + query : ''}`);
-    return res.json();
+    const data = await this.safeJson(res);
+    if (!res.ok && !Array.isArray(data)) {
+      throw new Error((data && (data.error || data.message)) || `HTTP ${res.status}`);
+    }
+    return data;
   },
 
   async addPackage(pkgData) {
@@ -101,13 +137,17 @@ const API = {
       method: 'POST',
       body: JSON.stringify(pkgData)
     });
-    return res.json();
+    return this.safeJson(res);
   },
 
   // Destinations
   async getDestinations() {
     const res = await this.fetchAuth('/api/destinations');
-    return res.json();
+    const data = await this.safeJson(res);
+    if (!res.ok && !Array.isArray(data)) {
+      throw new Error((data && (data.error || data.message)) || `HTTP ${res.status}`);
+    }
+    return data;
   },
 
   // Bookings

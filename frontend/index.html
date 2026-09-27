@@ -307,7 +307,7 @@
       try {
         const dests = await API.getDestinations();
         const grid = document.getElementById('destinationsGrid');
-        if (dests && dests.length > 0) {
+        if (Array.isArray(dests) && dests.length > 0) {
           grid.innerHTML = dests.slice(0, 4).map(d => `
             <div class="card">
               <img src="${getDestinationImageUrl(d)}"
@@ -335,7 +335,7 @@
       try {
         const flights = await API.getFlights();
         const grid = document.getElementById('flightsGrid');
-        if (flights && flights.length > 0) {
+        if (Array.isArray(flights) && flights.length > 0) {
           grid.innerHTML = flights.slice(0, 3).map(f => `
             <div class="card">
               <div class="card-body">
@@ -365,7 +365,7 @@
       try {
         const hotels = await API.getHotels();
         const grid = document.getElementById('hotelsGrid');
-        if (hotels && hotels.length > 0) {
+        if (Array.isArray(hotels) && hotels.length > 0) {
           grid.innerHTML = hotels.slice(0, 3).map(h => `
             <div class="card">
               <img src="${getHotelImageUrl(h)}"
@@ -397,7 +397,7 @@
       try {
         const cars = await API.getCars();
         const grid = document.getElementById('carsGrid');
-        if (cars && cars.length > 0) {
+        if (Array.isArray(cars) && cars.length > 0) {
           grid.innerHTML = cars.slice(0, 3).map(c => `
             <div class="card">
               <img src="${getCarImageUrl(c)}"
@@ -425,7 +425,7 @@
       try {
         const pkgs = await API.getPackages();
         const grid = document.getElementById('packagesGrid');
-        if (pkgs && pkgs.length > 0) {
+        if (Array.isArray(pkgs) && pkgs.length > 0) {
           grid.innerHTML = pkgs.slice(0, 3).map(p => `
             <div class="card">
               <img src="${getPackageImageUrl(p)}"

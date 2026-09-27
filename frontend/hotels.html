@@ -93,7 +93,20 @@
       container.innerHTML = '<p style="color:var(--text-muted);">Loading hotels...</p>';
 
       try {
-        const hotels = await API.getHotels({ location, rating, maxPrice });
+        const res = await API.getHotels({ location, rating, maxPrice });
+        let hotels = [];
+        if (Array.isArray(res)) {
+          hotels = res;
+        } else if (res && Array.isArray(res.hotels)) {
+          hotels = res.hotels;
+        } else if (res && Array.isArray(res.data)) {
+          hotels = res.data;
+        } else if (res && (res.error || res.message)) {
+          throw new Error(res.error || res.message);
+        } else if (res && res.success === false) {
+          throw new Error(res.error || res.message || 'Failed to load hotels');
+        }
+
         if (!hotels || hotels.length === 0) {
           container.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:50px; background:#fff; border-radius:12px; border:1px dashed var(--border);"><p style="font-size:1.1rem; color:var(--text-muted);">No hotels match your filters.</p></div>';
           return;

@@ -98,7 +98,20 @@
       container.innerHTML = '<p style="color:var(--text-muted);">Loading flights...</p>';
 
       try {
-        const flights = await API.getFlights({ origin, destination, date, airline, maxPrice });
+        const res = await API.getFlights({ origin, destination, date, airline, maxPrice });
+        let flights = [];
+        if (Array.isArray(res)) {
+          flights = res;
+        } else if (res && Array.isArray(res.flights)) {
+          flights = res.flights;
+        } else if (res && Array.isArray(res.data)) {
+          flights = res.data;
+        } else if (res && (res.error || res.message)) {
+          throw new Error(res.error || res.message);
+        } else if (res && res.success === false) {
+          throw new Error(res.error || res.message || 'Failed to load flights');
+        }
+
         if (!flights || flights.length === 0) {
           container.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:50px; background:#fff; border-radius:12px; border:1px dashed var(--border);"><p style="font-size:1.1rem; color:var(--text-muted);">No flights match your search criteria.</p></div>';
           return;

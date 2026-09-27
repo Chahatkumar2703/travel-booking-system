@@ -138,15 +138,16 @@ const Auth = {
 
     try {
       const res = await API.login(email, pass);
-      if (res.success && res.user) {
+      if (res && res.success && res.user) {
         if (res.token) res.user.token = res.token;
         this.setUser(res.user);
         window.location.href = target;
       } else {
-        alert('Demo login failed: ' + (res.message || 'Error'));
+        const errorMsg = (res && (res.message || res.error)) || 'Authentication error';
+        alert('Demo login failed: ' + errorMsg);
       }
     } catch (e) {
-      alert('Unable to connect to server: ' + e.message);
+      alert('Unable to connect to server: ' + (e.message || 'Network error'));
     }
   }
 };

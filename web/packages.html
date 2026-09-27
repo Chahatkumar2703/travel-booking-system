@@ -83,9 +83,10 @@
   <script>
     async function loadDestinationsDropdown() {
       try {
-        const dests = await API.getDestinations();
+        const res = await API.getDestinations();
+        const dests = Array.isArray(res) ? res : (res && Array.isArray(res.destinations) ? res.destinations : []);
         const sel = document.getElementById('destSelect');
-        if (dests && sel) {
+        if (dests && dests.length > 0 && sel) {
           sel.innerHTML = '<option value="">All Destinations</option>' +
             dests.map(d => `<option value="${d.id}">${d.name} (${d.state})</option>`).join('');
           
@@ -104,7 +105,20 @@
       container.innerHTML = '<p style="color:var(--text-muted);">Loading packages...</p>';
 
       try {
-        const pkgs = await API.getPackages({ keyword, destId, maxPrice });
+        const res = await API.getPackages({ keyword, destId, maxPrice });
+        let pkgs = [];
+        if (Array.isArray(res)) {
+          pkgs = res;
+        } else if (res && Array.isArray(res.packages)) {
+          pkgs = res.packages;
+        } else if (res && Array.isArray(res.data)) {
+          pkgs = res.data;
+        } else if (res && (res.error || res.message)) {
+          throw new Error(res.error || res.message);
+        } else if (res && res.success === false) {
+          throw new Error(res.error || res.message || 'Failed to load tour packages');
+        }
+
         if (!pkgs || pkgs.length === 0) {
           container.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:50px; background:#fff; border-radius:12px; border:1px dashed var(--border);"><p style="font-size:1.1rem; color:var(--text-muted);">No tour packages found matching your criteria.</p></div>';
           return;
