@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Confirm Booking - VoyageQuest Online Travel Booking Platform</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .booking-layout {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 30px;
+      align-items: flex-start;
+      margin-top: 20px;
+    }
+    .booking-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 25px;
+      box-shadow: var(--shadow);
+    }
+    .fare-card {
+      background: var(--primary-light);
+      border: 1.5px solid #bfdbfe;
+      border-radius: var(--radius);
+      padding: 22px;
+      position: sticky;
+      top: 90px;
+    }
+    .fare-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 0.92rem;
+    }
+    .fare-total {
+      display: flex;
+      justify-content: space-between;
+      border-top: 2px dashed #93c5fd;
+      padding-top: 14px;
+      margin-top: 14px;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+    }
+    .payment-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 10px;
+      margin: 15px 0;
+    }
+    .pay-btn {
+      padding: 10px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .pay-btn.selected {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+    @media (max-width: 860px) {
+      .booking-layout { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Demo Bar -->
+  <div class="demo-bar">
+    <span>🎓 <b>College Project Demo Mode:</b> <span id="demoUserText">Not logged in</span></span>
+    <div>
+      <span>Quick Switch:</span>
+      <button onclick="Auth.quickDemoLogin('traveler')">Traveler (John)</button>
+      <button onclick="Auth.quickDemoLogin('agent')">Travel Agent (Skyline)</button>
+      <button onclick="Auth.quickDemoLogin('admin')">Admin</button>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-brand">✈ Voyage<span>Quest</span></a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="flights.html">Flights</a></li>
+        <li><a href="hotels.html">Hotels</a></li>
+        <li><a href="cars.html">Rental Cars</a></li>
+        <li><a href="packages.html">Packages</a></li>
+        <li><a href="my-bookings.html">My Bookings</a></li>
+        <li><a href="itinerary.html">Itinerary</a></li>
+      </ul>
+      <div class="nav-auth" id="navAuth"></div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="section-header" style="margin-bottom:10px;">
+      <div>
+        <h1 class="section-title">Confirm Your Reservation</h1>
+        <p class="section-subtitle">Review trip details, customize options, and generate verified booking voucher.</p>
+      </div>
+    </div>
+
+    <!-- Login reminder banner if not logged in -->
+    <div id="loginBanner" style="display:none; background:#fef3c7; border:1px solid #fde047; padding:12px 18px; border-radius:8px; margin-bottom:20px; font-size:0.9rem;">
+      ⚠️ <b>Notice:</b> You are not logged in. <a href="login.html" style="font-weight:700; color:#b45309;">Log in now</a> or click "Traveler" in the top bar to auto-sign in.
+    </div>
+
+    <div class="booking-layout">
+      <!-- Left Column: Booking Form -->
+      <div class="booking-card">
+        <div id="itemHeader" style="margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:15px;">
+          <span class="badge badge-primary" id="itemTypeBadge">RESERVATION</span>
+          <h2 id="itemTitle" style="font-size:1.4rem; font-weight:800; margin-top:6px;">Loading reservation details...</h2>
+          <p id="itemSubtitle" style="color:var(--text-muted); font-size:0.92rem; margin-top:4px;"></p>
+        </div>
+
+        <form id="universalBookingForm" onsubmit="submitBooking(event)">
+          <!-- Dynamic Form Inputs -->
+          <div id="dynamicInputs"></div>
+
+          <!-- Special Requests -->
+          <div class="form-group" style="margin-top:15px;">
+            <label for="specialRequests">Special Requests / Preferences</label>
+            <textarea id="specialRequests" class="form-control" rows="2" placeholder="e.g. Aisle seat preference, late arrival, child seat, dietary requirements..."></textarea>
+          </div>
+
+          <!-- Payment Simulation Section -->
+          <div style="margin-top:25px; border-top:1px solid var(--border); padding-top:18px;">
+            <label style="font-size:0.95rem; font-weight:700; display:block; margin-bottom:6px;">Simulated Payment Method</label>
+            <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:10px;">College project demonstration - uses secure simulated payment gateway.</p>
+            
+            <div class="payment-options">
+              <div class="pay-btn selected" onclick="selectPaymentMethod('UPI')">📱 UPI / QR</div>
+              <div class="pay-btn" onclick="selectPaymentMethod('CARD')">💳 Card</div>
+              <div class="pay-btn" onclick="selectPaymentMethod('NET_BANKING')">🏦 Net Banking</div>
+              <div class="pay-btn" onclick="selectPaymentMethod('CASH')">💵 Pay on Arrival</div>
+            </div>
+
+            <!-- Dynamic Payment Fields -->
+            <div id="payFieldUPI" class="form-group">
+              <label>Virtual Payment Address (VPA / UPI ID)</label>
+              <input type="text" id="payUpiId" class="form-control" value="traveler@okaxis" />
+            </div>
+
+            <div id="payFieldCARD" class="form-group" style="display:none;">
+              <label>Simulated Card Number</label>
+              <input type="text" id="payCardNo" class="form-control" value="4532 •••• •••• 8912" />
+            </div>
+
+            <div id="payFieldNET_BANKING" class="form-group" style="display:none;">
+              <label>Bank Name</label>
+              <select id="payBank" class="form-control">
+                <option>State Bank of India (SBI)</option>
+                <option>HDFC Bank</option>
+                <option>ICICI Bank</option>
+                <option>Axis Bank</option>
+              </select>
+            </div>
+
+            <div id="payFieldCASH" class="form-group" style="display:none;">
+              <p style="font-size:0.85rem; color:var(--text-muted);">Payment will be verified in cash upon check-in or vehicle pickup.</p>
+            </div>
+          </div>
+
+          <button type="submit" id="bookSubmitBtn" class="btn btn-accent btn-block" style="padding:12px; margin-top:20px; font-size:1.05rem;">
+            Confirm & Generate Official Voucher
+          </button>
+        </form>
+      </div>
+
+      <!-- Right Column: Fare Breakdown Card -->
+      <div class="fare-card">
+        <h3 style="font-size:1.15rem; font-weight:800; margin-bottom:15px; color:var(--primary-dark);">Fare Summary</h3>
+        <div class="fare-row">
+          <span id="fareBaseLabel">Base Rate</span>
+          <span id="fareBaseVal">₹0.00</span>
+        </div>
+        <div class="fare-row">
+          <span id="fareQtyLabel">Quantity / Travelers</span>
+          <span id="fareQtyVal">1</span>
+        </div>
+        <div class="fare-row" id="fareHotelRow" style="display:none;">
+          <span>Hotel Room Add-on</span>
+          <span id="fareHotelVal">₹0.00</span>
+        </div>
+        <div class="fare-row">
+          <span>Taxes & System Service Fee</span>
+          <span style="color:var(--success); font-weight:700;">FREE (0%)</span>
+        </div>
+        <div class="fare-total">
+          <span>Total Fare:</span>
+          <span id="fareTotalVal">₹0.00</span>
+        </div>
+        <div style="font-size:0.78rem; color:#475569; margin-top:15px; line-height:1.4;">
+          🔒 Guaranteed instant seat/room lock. Full cancellation support available in My Bookings.
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Official Receipt Voucher Modal -->
+  <div class="modal-backdrop" id="receiptModal">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h3>🎉 Booking Confirmed & Official Travel Voucher</h3>
+        <button class="modal-close" onclick="closeModal('receiptModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="receipt-box" id="receiptText"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="window.print()">🖨 Print Voucher</button>
+        <a href="itinerary.html" class="btn btn-outline">🗺 View Itinerary</a>
+        <a href="my-bookings.html" class="btn btn-primary">My Bookings →</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-bottom">
+      <p>&copy; 2026 VoyageQuest Online Travel Booking Platform. (College Demonstration Project)</p>
+    </div>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    let bookingType = getQueryParam('type') || 'flight';
+    let itemId = getQueryParam('id');
+    let itemData = null;
+    let selectedPayMethod = 'UPI';
+    let partnerHotels = [];
+
+    // Switch payment selector
+    function selectPaymentMethod(method) {
+      selectedPayMethod = method;
+      document.querySelectorAll('.pay-btn').forEach(btn => btn.classList.remove('selected'));
+      event.target.classList.add('selected');
+
+      document.getElementById('payFieldUPI').style.display = method === 'UPI' ? 'block' : 'none';
+      document.getElementById('payFieldCARD').style.display = method === 'CARD' ? 'block' : 'none';
+      document.getElementById('payFieldNET_BANKING').style.display = method === 'NET_BANKING' ? 'block' : 'none';
+      document.getElementById('payFieldCASH').style.display = method === 'CASH' ? 'block' : 'none';
+    }
+
+    // Load Item & Configure Form
+    async function initBookingPage() {
+      if (!Auth.isLoggedIn()) {
+        document.getElementById('loginBanner').style.display = 'block';
+      }
+
+      bookingType = bookingType.toLowerCase();
+      document.getElementById('itemTypeBadge').textContent = bookingType.toUpperCase() + ' RESERVATION';
+
+      const dynInputs = document.getElementById('dynamicInputs');
+      const today = new Date().toISOString().split('T')[0];
+      const futureDate = new Date();
+      futureDate.setDate(futureDate.getDate() + 7);
+      const defaultTravelDate = futureDate.toISOString().split('T')[0];
+
+      if (bookingType === 'flight') {
+        const flights = await API.getFlights();
+        itemData = flights.find(f => f.id == itemId) || flights[0];
+        if (!itemData) { alert('Flight not found'); return; }
+
+        document.getElementById('itemTitle').textContent = `${itemData.airline} ${itemData.flightNumber}`;
+        document.getElementById('itemSubtitle').textContent = `${itemData.origin} → ${itemData.destination} | Dep: ${itemData.departureDate} (${itemData.departureTime})`;
+
+        dynInputs.innerHTML = `
+          <div class="form-group">
+            <label>Departure Date</label>
+            <input type="date" id="flightTravelDate" class="form-control" min="${today}" value="${itemData.departureDate || defaultTravelDate}" onchange="recalcFare()" />
+          </div>
+          <div class="form-group">
+            <label>Number of Passengers</label>
+            <input type="number" id="flightPassengers" class="form-control" min="1" max="${itemData.availableSeats}" value="1" oninput="recalcFare()" />
+            <small style="color:var(--text-muted); font-size:0.8rem;">Max ${itemData.availableSeats} seats remaining</small>
+          </div>
+        `;
+      } else if (bookingType === 'hotel') {
+        const hotels = await API.getHotels();
+        itemData = hotels.find(h => h.id == itemId) || hotels[0];
+        if (!itemData) { alert('Hotel not found'); return; }
+
+        document.getElementById('itemTitle').textContent = itemData.hotelName;
+        document.getElementById('itemSubtitle').textContent = `Location: ${itemData.location || itemData.address} | Room: ${itemData.roomType} (⭐ ${itemData.rating})`;
+
+        const checkOutDef = new Date();
+        checkOutDef.setDate(checkOutDef.getDate() + 9);
+
+        dynInputs.innerHTML = `
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+            <div class="form-group">
+              <label>Check-in Date</label>
+              <input type="date" id="hotelCheckInDate" class="form-control" min="${today}" value="${defaultTravelDate}" onchange="recalcFare()" />
+            </div>
+            <div class="form-group">
+              <label>Check-out Date</label>
+              <input type="date" id="hotelCheckOutDate" class="form-control" min="${today}" value="${checkOutDef.toISOString().split('T')[0]}" onchange="recalcFare()" />
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+            <div class="form-group">
+              <label>Number of Rooms</label>
+              <input type="number" id="hotelRooms" class="form-control" min="1" max="${itemData.availableRooms}" value="1" oninput="recalcFare()" />
+            </div>
+            <div class="form-group">
+              <label>Number of Guests</label>
+              <input type="number" id="hotelGuests" class="form-control" min="1" value="2" />
+            </div>
+          </div>
+        `;
+      } else if (bookingType === 'car') {
+        const cars = await API.getCars();
+        itemData = cars.find(c => c.id == itemId) || cars[0];
+        if (!itemData) { alert('Car not found'); return; }
+
+        document.getElementById('itemTitle').textContent = itemData.carName;
+        document.getElementById('itemSubtitle').textContent = `${itemData.carType} • ${itemData.brand} ${itemData.model} | Pickup Hub: ${itemData.location}`;
+
+        const retDef = new Date();
+        retDef.setDate(retDef.getDate() + 9);
+
+        dynInputs.innerHTML = `
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+            <div class="form-group">
+              <label>Pickup Date</label>
+              <input type="date" id="carPickupDate" class="form-control" min="${today}" value="${defaultTravelDate}" onchange="recalcFare()" />
+            </div>
+            <div class="form-group">
+              <label>Drop-off Date</label>
+              <input type="date" id="carDropDate" class="form-control" min="${today}" value="${retDef.toISOString().split('T')[0]}" onchange="recalcFare()" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Number of Vehicles</label>
+            <input type="number" id="carUnits" class="form-control" min="1" max="${itemData.availableUnits}" value="1" oninput="recalcFare()" />
+          </div>
+        `;
+      } else {
+        // Tour Package
+        const pkgs = await API.getPackages();
+        itemData = pkgs.find(p => p.id == itemId) || pkgs[0];
+        if (!itemData) { alert('Package not found'); return; }
+
+        document.getElementById('itemTitle').textContent = itemData.packageName;
+        document.getElementById('itemSubtitle').textContent = `${itemData.durationDays} Days / ${itemData.durationNights} Nights | Covers: ${itemData.placesCovered}`;
+
+        partnerHotels = await API.getHotels({ destId: itemData.destinationId });
+
+        let hotelOptions = '<option value="">None (Use standard package inclusion)</option>';
+        if (partnerHotels && partnerHotels.length > 0) {
+          hotelOptions += partnerHotels.map(h => `<option value="${h.id}">${h.hotelName} (${h.roomType} - ₹${h.pricePerNight}/night)</option>`).join('');
+        }
+
+        dynInputs.innerHTML = `
+          <div class="form-group">
+            <label>Departure Date</label>
+            <input type="date" id="pkgTravelDate" class="form-control" min="${today}" value="${defaultTravelDate}" />
+          </div>
+          <div class="form-group">
+            <label>Number of Travelers</label>
+            <input type="number" id="pkgPersons" class="form-control" min="1" value="2" oninput="recalcFare()" />
+          </div>
+          <div class="form-group">
+            <label>Optional Hotel Upgrade</label>
+            <select id="pkgHotelSelect" class="form-control" onchange="recalcFare()">
+              ${hotelOptions}
+            </select>
+          </div>
+        `;
+      }
+
+      recalcFare();
+    }
+
+    // Dynamic Fare Recalculation
+    function recalcFare() {
+      if (!itemData) return;
+
+      let basePrice = 0;
+      let qty = 1;
+      let hotelAddon = 0;
+      let total = 0;
+
+      if (bookingType === 'flight') {
+        basePrice = itemData.price;
+        const passInput = document.getElementById('flightPassengers');
+        qty = passInput ? (parseInt(passInput.value) || 1) : 1;
+        total = basePrice * qty;
+
+        document.getElementById('fareBaseLabel').textContent = 'Ticket Price';
+        document.getElementById('fareQtyLabel').textContent = 'Passengers';
+      } else if (bookingType === 'hotel') {
+        basePrice = itemData.pricePerNight;
+        const inDate = new Date(document.getElementById('hotelCheckInDate')?.value || new Date());
+        const outDate = new Date(document.getElementById('hotelCheckOutDate')?.value || new Date());
+        let nights = Math.ceil((outDate - inDate) / (1000 * 60 * 60 * 24));
+        if (nights <= 0) nights = 1;
+
+        const roomsInput = document.getElementById('hotelRooms');
+        const rooms = roomsInput ? (parseInt(roomsInput.value) || 1) : 1;
+        qty = `${rooms} Room(s) × ${nights} Night(s)`;
+        total = basePrice * rooms * nights;
+
+        document.getElementById('fareBaseLabel').textContent = 'Price / Night';
+        document.getElementById('fareQtyLabel').textContent = 'Rooms × Nights';
+      } else if (bookingType === 'car') {
+        basePrice = itemData.pricePerDay;
+        const pickDate = new Date(document.getElementById('carPickupDate')?.value || new Date());
+        const dropDate = new Date(document.getElementById('carDropDate')?.value || new Date());
+        let days = Math.ceil((dropDate - pickDate) / (1000 * 60 * 60 * 24));
+        if (days <= 0) days = 1;
+
+        const unitsInput = document.getElementById('carUnits');
+        const units = unitsInput ? (parseInt(unitsInput.value) || 1) : 1;
+        qty = `${units} Car(s) × ${days} Day(s)`;
+        total = basePrice * units * days;
+
+        document.getElementById('fareBaseLabel').textContent = 'Rate / Day';
+        document.getElementById('fareQtyLabel').textContent = 'Units × Days';
+      } else {
+        // Package
+        basePrice = itemData.pricePerPerson;
+        const pInput = document.getElementById('pkgPersons');
+        const persons = pInput ? (parseInt(pInput.value) || 1) : 1;
+        qty = persons;
+
+        const hSel = document.getElementById('pkgHotelSelect');
+        const selHId = hSel ? hSel.value : '';
+        if (selHId && partnerHotels) {
+          const h = partnerHotels.find(x => x.id == selHId);
+          if (h) {
+            hotelAddon = h.pricePerNight * itemData.durationNights;
+            document.getElementById('fareHotelRow').style.display = 'flex';
+            document.getElementById('fareHotelVal').textContent = formatCurrency(hotelAddon);
+          }
+        } else {
+          document.getElementById('fareHotelRow').style.display = 'none';
+        }
+
+        total = (basePrice * persons) + hotelAddon;
+        document.getElementById('fareBaseLabel').textContent = 'Package / Person';
+        document.getElementById('fareQtyLabel').textContent = 'Travelers';
+      }
+
+      document.getElementById('fareBaseVal').textContent = formatCurrency(basePrice);
+      document.getElementById('fareQtyVal').textContent = qty;
+      document.getElementById('fareTotalVal').textContent = formatCurrency(total);
+    }
+
+    // Submit Booking
+    async function submitBooking(e) {
+      e.preventDefault();
+
+      let user = Auth.getUser();
+      if (!user) {
+        // Auto-login as traveler for presentation convenience if not logged in
+        await Auth.quickDemoLogin('traveler');
+        user = Auth.getUser();
+        if (!user) {
+          alert('Please login to complete booking.');
+          return;
+        }
+      }
+
+      const btn = document.getElementById('bookSubmitBtn');
+      btn.disabled = true;
+      btn.textContent = '⏳ Authorizing simulated transaction...';
+
+      const specialRequests = document.getElementById('specialRequests').value.trim();
+
+      let bookingPayload = {
+        userId: user.id,
+        bookingType: bookingType.toUpperCase(),
+        specialRequests: specialRequests,
+        paymentMethod: selectedPayMethod,
+        paymentDetails: getPayDetailsString()
+      };
+
+      if (bookingType === 'flight') {
+        bookingPayload.flightId = itemData.id;
+        bookingPayload.travelDate = document.getElementById('flightTravelDate').value;
+        bookingPayload.passengers = parseInt(document.getElementById('flightPassengers').value) || 1;
+      } else if (bookingType === 'hotel') {
+        bookingPayload.hotelId = itemData.id;
+        bookingPayload.checkInDate = document.getElementById('hotelCheckInDate').value;
+        bookingPayload.checkOutDate = document.getElementById('hotelCheckOutDate').value;
+        bookingPayload.rooms = parseInt(document.getElementById('hotelRooms').value) || 1;
+        bookingPayload.guests = parseInt(document.getElementById('hotelGuests').value) || 2;
+      } else if (bookingType === 'car') {
+        bookingPayload.carId = itemData.id;
+        bookingPayload.pickupDate = document.getElementById('carPickupDate').value;
+        bookingPayload.dropoffDate = document.getElementById('carDropDate').value;
+        bookingPayload.units = parseInt(document.getElementById('carUnits').value) || 1;
+      } else {
+        // Package
+        bookingPayload.packageId = itemData.id;
+        bookingPayload.travelDate = document.getElementById('pkgTravelDate').value;
+        bookingPayload.persons = parseInt(document.getElementById('pkgPersons').value) || 1;
+        bookingPayload.hotelId = document.getElementById('pkgHotelSelect')?.value || null;
+      }
+
+      try {
+        const res = await API.createBooking(bookingPayload);
+        if (res.success) {
+          renderReceipt(res, user);
+          openModal('receiptModal');
+        } else {
+          showToast(res.message || 'Booking creation failed.', 'error');
+          btn.disabled = false;
+          btn.textContent = 'Confirm & Generate Official Voucher';
+        }
+      } catch (err) {
+        showToast('Error communicating with backend: ' + err.message, 'error');
+        btn.disabled = false;
+        btn.textContent = 'Confirm & Generate Official Voucher';
+      }
+    }
+
+    function getPayDetailsString() {
+      if (selectedPayMethod === 'UPI') return `UPI ID: ${document.getElementById('payUpiId').value}`;
+      if (selectedPayMethod === 'CARD') return `Card ending with ${document.getElementById('payCardNo').value.slice(-4)}`;
+      if (selectedPayMethod === 'NET_BANKING') return `Net Banking: ${document.getElementById('payBank').value}`;
+      return 'Pay on Arrival / Cash Desk';
+    }
+
+    function renderReceipt(res, user) {
+      const dateStr = new Date().toLocaleString();
+      const receipt = `
+========================================================================
+                 ✈ VOYAGEQUEST ONLINE TRAVEL PLATFORM
+                   OFFICIAL BOOKING CONFIRMATION VOUCHER
+========================================================================
+Booking Reference : ${res.bookingCode}
+Transaction Ref   : ${res.txnCode}
+Issued Date/Time  : ${dateStr}
+Booking Status    : CONFIRMED
+Payment Status    : ${res.paymentStatus} (${selectedPayMethod})
+------------------------------------------------------------------------
+PRIMARY TRAVELER DETAILS:
+Full Name         : ${user.fullName}
+Email Address     : ${user.email}
+Phone Number      : ${user.phone || '9876543210'}
+Account Role      : ${user.role}
+------------------------------------------------------------------------
+RESERVATION SUMMARY:
+Booking Category  : ${res.bookingType}
+Item / Itinerary  : ${document.getElementById('itemTitle').textContent}
+Details           : ${document.getElementById('itemSubtitle').textContent}
+Special Notes     : ${document.getElementById('specialRequests').value || 'None specified'}
+------------------------------------------------------------------------
+FARE BREAKDOWN & AUDIT:
+Total Fare Paid   : ${formatCurrency(res.totalAmount)}
+Payment Method    : ${selectedPayMethod} (${getPayDetailsString()})
+Service Tax (GST) : INCLUDED (0% Waived)
+========================================================================
+  Thank you for booking with VoyageQuest! Have a safe and pleasant trip.
+  For support inquiries, contact support@travelbooking.com
+========================================================================`;
+
+      document.getElementById('receiptText').textContent = receipt.trim();
+    }
+
+    document.addEventListener('DOMContentLoaded', initBookingPage);
+  </script>
+</body>
+</html>

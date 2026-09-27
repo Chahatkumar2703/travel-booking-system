@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flights - VoyageQuest Online Travel Booking Platform</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- Demo Bar -->
+  <div class="demo-bar">
+    <span>🎓 <b>College Project Demo Mode:</b> <span id="demoUserText">Not logged in</span></span>
+    <div>
+      <span>Quick Switch:</span>
+      <button onclick="Auth.quickDemoLogin('traveler')">Traveler (John)</button>
+      <button onclick="Auth.quickDemoLogin('agent')">Travel Agent (Skyline)</button>
+      <button onclick="Auth.quickDemoLogin('admin')">Admin</button>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-brand">✈ Voyage<span>Quest</span></a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="flights.html" class="active">Flights</a></li>
+        <li><a href="hotels.html">Hotels</a></li>
+        <li><a href="cars.html">Rental Cars</a></li>
+        <li><a href="packages.html">Packages</a></li>
+        <li><a href="my-bookings.html">My Bookings</a></li>
+        <li><a href="itinerary.html">Itinerary</a></li>
+      </ul>
+      <div class="nav-auth" id="navAuth"></div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="section-header">
+      <div>
+        <h1 class="section-title">✈ Domestic Flight Schedules</h1>
+        <p class="section-subtitle">Search, compare, and instantly book certified airline tickets across India.</p>
+      </div>
+    </div>
+
+    <!-- Search Filters Card -->
+    <div class="search-widget" style="margin: 0 0 35px 0;">
+      <div class="search-fields-grid" style="grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)) 110px;">
+        <div class="form-group" style="margin:0;">
+          <label>Origin</label>
+          <input type="text" id="originInput" class="form-control" placeholder="e.g. Delhi" />
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label>Destination</label>
+          <input type="text" id="destInput" class="form-control" placeholder="e.g. Mumbai" />
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label>Travel Date</label>
+          <input type="date" id="dateInput" class="form-control" />
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label>Airline</label>
+          <input type="text" id="airlineInput" class="form-control" placeholder="e.g. IndiGo" />
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label>Max Fare (₹)</label>
+          <input type="number" id="priceInput" class="form-control" placeholder="Any" />
+        </div>
+        <button class="btn btn-primary btn-block" onclick="loadFlights()">Filter</button>
+      </div>
+    </div>
+
+    <!-- Flight Results Grid -->
+    <div class="grid" id="flightsList">
+      <p style="color:var(--text-muted);">Searching flights...</p>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-bottom">
+      <p>&copy; 2026 VoyageQuest Online Travel Booking Platform. (College Demonstration Project)</p>
+    </div>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    async function loadFlights() {
+      const origin = document.getElementById('originInput').value.trim();
+      const destination = document.getElementById('destInput').value.trim();
+      const date = document.getElementById('dateInput').value.trim();
+      const airline = document.getElementById('airlineInput').value.trim();
+      const maxPrice = document.getElementById('priceInput').value.trim();
+
+      const container = document.getElementById('flightsList');
+      container.innerHTML = '<p style="color:var(--text-muted);">Loading flights...</p>';
+
+      try {
+        const flights = await API.getFlights({ origin, destination, date, airline, maxPrice });
+        if (!flights || flights.length === 0) {
+          container.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:50px; background:#fff; border-radius:12px; border:1px dashed var(--border);"><p style="font-size:1.1rem; color:var(--text-muted);">No flights match your search criteria.</p></div>';
+          return;
+        }
+
+        container.innerHTML = flights.map(f => `
+          <div class="card">
+            <div class="card-body">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <span class="badge badge-info">✈ ${f.airline}</span>
+                <span style="font-weight:700; font-size:0.85rem; color:var(--text-muted);">${f.flightNumber}</span>
+              </div>
+              <h3 class="card-title">${f.origin} → ${f.destination}</h3>
+              <div class="card-meta" style="margin:12px 0 16px;">
+                <span>🗓 Departure Date: <b>${f.departureDate}</b></span>
+                <span>⏰ Flight Timings: <b>${f.departureTime} – ${f.arrivalTime}</b></span>
+                <span>💺 Available Seats: <b>${f.availableSeats}</b></span>
+                <span>🏢 Operator: <b>${f.agentName || 'Certified Travel Agency'}</b></span>
+              </div>
+              <div class="card-footer">
+                <div class="price-tag">${formatCurrency(f.price)} <small>/ seat</small></div>
+                <a href="booking.html?type=flight&id=${f.id}" class="btn btn-sm btn-primary">Book Flight</a>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      } catch (err) {
+        container.innerHTML = '<p style="color:var(--danger);">Error connecting to backend: ' + err.message + '</p>';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Pre-fill query parameters if present
+      const orig = getQueryParam('origin');
+      const dest = getQueryParam('destination');
+      const dt = getQueryParam('date');
+      if (orig) document.getElementById('originInput').value = orig;
+      if (dest) document.getElementById('destInput').value = dest;
+      if (dt) document.getElementById('dateInput').value = dt;
+
+      loadFlights();
+    });
+  </script>
+</body>
+</html>

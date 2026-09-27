@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Travel Agent Portal - Online Travel Booking Platform</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .agent-hero {
+      background: linear-gradient(135deg, #065f46 0%, #047857 50%, #059669 100%);
+      color: white;
+      padding: 32px 28px;
+      border-radius: 16px;
+      margin-bottom: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .action-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    .action-dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      background-color: white;
+      min-width: 220px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      border-radius: 10px;
+      z-index: 100;
+      border: 1px solid #e2e8f0;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+    .action-dropdown-content.show {
+      display: block;
+    }
+    .action-dropdown-content a {
+      color: #1e293b;
+      padding: 12px 18px;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: background 0.2s;
+      cursor: pointer;
+    }
+    .action-dropdown-content a:hover {
+      background-color: #f1f5f9;
+      color: #059669;
+    }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .kpi-card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 22px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    }
+    .kpi-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+    }
+    .tab-nav {
+      display: flex;
+      gap: 10px;
+      border-bottom: 2px solid #e2e8f0;
+      margin-bottom: 24px;
+    }
+    .tab-btn {
+      background: none;
+      border: none;
+      padding: 12px 20px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #64748b;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .tab-btn:hover {
+      color: #059669;
+    }
+    .tab-btn.active {
+      color: #059669;
+      border-bottom-color: #059669;
+    }
+    .modal-box {
+      background: white;
+      border-radius: 16px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+    }
+    .modal-header-custom {
+      background: #065f46;
+      color: white;
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header id="main-header" class="site-header"></header>
+
+  <main class="page-container" style="max-width: 1200px; margin: 36px auto; padding: 0 20px;">
+    
+    <!-- Hero Banner -->
+    <div class="agent-hero">
+      <div>
+        <span style="background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; text-transform: uppercase;">
+          <i class="fa-solid fa-briefcase"></i> Partner Agency Control Center
+        </span>
+        <h1 style="margin: 12px 0 6px 0; font-size: 2rem; font-weight: 800;" id="agentNameDisplay">Travel Agent Portal</h1>
+        <p style="margin: 0; opacity: 0.9; font-size: 0.95rem;">
+          Publish and manage your flights, hotels, car rentals, and tour packages. Track customer reservations and resolve inquiries.
+        </p>
+      </div>
+
+      <div class="action-dropdown">
+        <button onclick="toggleActionDropdown()" class="btn" style="background: white; color: #065f46; font-weight: 700; border-radius: 8px; padding: 12px 20px; display: inline-flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-plus-circle"></i> Add Travel Inventory <i class="fa-solid fa-chevron-down" style="font-size: 0.8rem;"></i>
+        </button>
+        <div id="actionDropdownMenu" class="action-dropdown-content">
+          <a onclick="openListingModal('flight')"><i class="fa-solid fa-plane text-primary"></i> Add New Flight</a>
+          <a onclick="openListingModal('hotel')"><i class="fa-solid fa-hotel text-warning"></i> Add New Hotel</a>
+          <a onclick="openListingModal('car')"><i class="fa-solid fa-car text-success"></i> Add Rental Car</a>
+          <a onclick="openListingModal('package')"><i class="fa-solid fa-suitcase-rolling" style="color: #9333ea;"></i> Add Tour Package</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- KPI Metric Cards -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background: #d1fae5; color: #059669;">
+          <i class="fa-solid fa-list-check"></i>
+        </div>
+        <div>
+          <div style="font-size: 1.6rem; font-weight: 800; color: #0f172a;" id="kpiTotalListings">0</div>
+          <div style="font-size: 0.82rem; color: #64748b; font-weight: 600;">Total Listings Created</div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background: #fef3c7; color: #d97706;">
+          <i class="fa-solid fa-hourglass-half"></i>
+        </div>
+        <div>
+          <div style="font-size: 1.6rem; font-weight: 800; color: #d97706;" id="kpiPending">0</div>
+          <div style="font-size: 0.82rem; color: #64748b; font-weight: 600;">Pending Moderation</div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background: #e0f2fe; color: #0284c7;">
+          <i class="fa-solid fa-ticket"></i>
+        </div>
+        <div>
+          <div style="font-size: 1.6rem; font-weight: 800; color: #0f172a;" id="kpiBookings">0</div>
+          <div style="font-size: 0.82rem; color: #64748b; font-weight: 600;">Customer Bookings</div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background: #f3e8ff; color: #9333ea;">
+          <i class="fa-solid fa-sack-dollar"></i>
+        </div>
+        <div>
+          <div style="font-size: 1.6rem; font-weight: 800; color: #0f172a;" id="kpiRevenue">$0</div>
+          <div style="font-size: 0.82rem; color: #64748b; font-weight: 600;">Total Generated Revenue</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="switchTab('listings')">
+        <i class="fa-solid fa-cubes"></i> My Travel Listings
+      </button>
+      <button class="tab-btn" onclick="switchTab('bookings')">
+        <i class="fa-solid fa-receipt"></i> Customer Bookings
+      </button>
+      <button class="tab-btn" onclick="switchTab('messages')">
+        <i class="fa-solid fa-comments"></i> Inquiries & Feedback (<span id="msgCountBadge">0</span>)
+      </button>
+    </div>
+
+    <!-- Tab 1: Listings -->
+    <div id="tab-listings">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-outline" style="padding: 6px 14px; font-size: 0.85rem; border-radius: 20px;" onclick="filterListingsByType('ALL')">All</button>
+          <button class="btn btn-outline" style="padding: 6px 14px; font-size: 0.85rem; border-radius: 20px;" onclick="filterListingsByType('flight')">Flights</button>
+          <button class="btn btn-outline" style="padding: 6px 14px; font-size: 0.85rem; border-radius: 20px;" onclick="filterListingsByType('hotel')">Hotels</button>
+          <button class="btn btn-outline" style="padding: 6px 14px; font-size: 0.85rem; border-radius: 20px;" onclick="filterListingsByType('car')">Cars</button>
+          <button class="btn btn-outline" style="padding: 6px 14px; font-size: 0.85rem; border-radius: 20px;" onclick="filterListingsByType('package')">Packages</button>
+        </div>
+        <span style="font-size: 0.85rem; color: #64748b;">
+          <i class="fa-solid fa-circle-info text-primary"></i> Newly created items start as <strong>PENDING</strong> until reviewed by Administrator.
+        </span>
+      </div>
+
+      <div id="listingsTableContainer" style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
+        <p style="padding: 40px; text-align: center; color: #64748b;">Loading listings...</p>
+      </div>
+    </div>
+
+    <!-- Tab 2: Bookings -->
+    <div id="tab-bookings" style="display: none;">
+      <div id="bookingsTableContainer" style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
+        <p style="padding: 40px; text-align: center; color: #64748b;">Loading customer bookings...</p>
+      </div>
+    </div>
+
+    <!-- Tab 3: Messages / Inquiries -->
+    <div id="tab-messages" style="display: none;">
+      <div id="messagesListContainer" style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.02); padding: 20px;">
+        <p style="padding: 40px; text-align: center; color: #64748b;">Loading inquiries...</p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- MODALS FOR ADDING INVENTORY -->
+  <!-- ========================================================================= -->
+
+  <!-- 1. Add Flight Modal -->
+  <div id="modalFlight" class="modal-backdrop" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+    <div class="modal-box">
+      <div class="modal-header-custom">
+        <h3 style="margin: 0; font-size: 1.15rem; font-weight: 700;"><i class="fa-solid fa-plane"></i> Add New Flight Listing</h3>
+        <button onclick="closeModal('modalFlight')" style="background: transparent; border: none; color: white; font-size: 1.25rem; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form onsubmit="handleCreateFlight(event)" style="padding: 24px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px;">
+          <div>
+            <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Airline Name *</label>
+            <input type="text" id="flAirline" required placeholder="e.g. Air India, Emirates" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+          </div>
+          <div>
+            <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Flight Number *</label>
+            <input type="text" id="flNumber" required placeholder="e.g. AI-204" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px;">
+          <div>
+            <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Origin City *</label>
+            <input type="text" id="flOrigin" required placeholder="e.g. New Delhi (DEL)" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+          </div>
+          <div>
+            <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Destination City *</label>
+            <input type="text" id="flDestination" required placeholder="e.g. Mumbai (BOM)" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px;">
+          <div>
+            <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Departure Date *</label>
+            <input type="date" id="flDepDate" required style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+          </div>
+          <div>
+            <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Departure Time</label>
+            <input type="time" id="flDepTime" value="08:00" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+          <div>
+            <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Ticket Price ($) *</label>
+            <input type="number" step="0.01" id="flPrice" required min="1" placeholder="95.00" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+          </div>
+          <div>
+            <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Available Seats *</label>
+            <input type="number" id="flSeats" required min="1" value="60" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" class="btn btn-outline" onclick="closeModal('modalFlight')">Cancel</button>
+          <button type="submit" class="btn btn-primary" style="background: #059669; border-color: #059669;">Submit for Approval</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. Add Hotel Modal -->
+  <div id="modalHotel" class="modal-backdrop" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+    <div class="modal-box">
+      <div class="modal-header-custom" style="background: #ea580c;">
+        <h3 style="margin: 0; font-size: 1.15rem; font-weight: 700;"><i class="fa-solid fa-hotel"></i> Add New Hotel Listing</h3>
+        <button onclick="closeModal('modalHotel')" style="background: transparent; border: none; color: white; font-size: 1.25rem; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form onsubmit="handleCreateHotel(event)" style="padding: 24px;">
+        <div style="margin-bottom: 14px;">
+          <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Hotel Name *</label>
+          <input type="text" id="htName" required placeholder="e.g. Grand View Resort & Spa" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px;">
+          <div>
+            <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Destination / Location *</label>
+            <input type="text" id="htLocation" required placeholder="e.g. Goa, Paris, Manali" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+          </div>
+          <div>
+            <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Room Type *</label>
+            <input type="text" id="htRoomType" required placeholder="e.g. Deluxe Sea View Suite" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px;">
+          <div>
+            <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Price Per Night ($) *</label>
+            <input type="number" step="0.01" id="htPrice" required min="1" placeholder="120.00" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+          </div>
+          <div>
+            <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Available Rooms *</label>
+            <input type="number" id="htRooms" required min="1" value="10" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+          </div>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Amenities & Features</label>
+          <input type="text" id="htAmenities" placeholder="WiFi, Swimming Pool, Free Breakfast, AC" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" class="btn btn-outline" onclick="closeModal('modalHotel')">Cancel</button>
+          <button type="submit" class="btn btn-primary" style="background: #ea580c; border-color: #ea580c;">Submit for Approval</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. Add Car Modal -->
+  <div id="modalCar" class="modal-backdrop" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+    <div class="modal-box">
+      <div class="modal-header-custom" style="background: #16a34a;">
+        <h3 style="margin: 0; font-size: 1.15rem; font-weight: 700;"><i class="fa-solid fa-car"></i> Add Rental Car Listing</h3>
+        <button onclick="closeModal('modalCar')" style="background: transparent; border: none; color: white; font-size: 1.25rem; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form onsubmit="handleCreateCar(event)" style="padding: 24px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px;">
+          <div>
+            <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Car Model / Name *</label>
+            <input type="text" id="crName" required placeholder="e.g. Fortuner 4x4, City V" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+          </div>
+          <div>
+            <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Brand / Make *</label>
+            <input type="text" id="crBrand" required placeholder="e.g. Toyota, Honda" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px;">
+          <div>
+            <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Pickup Location *</label>
+            <input type="text" id="crLocation" required placeholder="e.g. Airport Terminal or City Center" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+          </div>
+          <div>
+            <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Vehicle Category *</label>
+            <select id="crType" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+              <option value="SUV">SUV</option>
+              <option value="Sedan">Sedan</option>
+              <option value="Hatchback">Hatchback</option>
+              <option value="Luxury">Luxury</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+          <div>
+            <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Price Per Day ($) *</label>
+            <input type="number" step="0.01" id="crPrice" required min="1" placeholder="45.00" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+          </div>
+          <div>
+            <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Fleet Units Available *</label>
+            <input type="number" id="crUnits" required min="1" value="5" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" class="btn btn-outline" onclick="closeModal('modalCar')">Cancel</button>
+          <button type="submit" class="btn btn-primary" style="background: #16a34a; border-color: #16a34a;">Submit for Approval</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. Add Tour Package Modal -->
+  <div id="modalPackage" class="modal-backdrop" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+    <div class="modal-box">
+      <div class="modal-header-custom" style="background: #9333ea;">
+        <h3 style="margin: 0; font-size: 1.15rem; font-weight: 700;"><i class="fa-solid fa-suitcase-rolling"></i> Add Tour Package Listing</h3>
+        <button onclick="closeModal('modalPackage')" style="background: transparent; border: none; color: white; font-size: 1.25rem; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form onsubmit="handleCreatePackage(event)" style="padding: 24px;">
+        <div style="margin-bottom: 14px;">
+          <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Tour Package Name *</label>
+          <input type="text" id="pkName" required placeholder="e.g. Majestic Himalayan Expedition" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px;">
+          <div>
+            <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Duration (Days) *</label>
+            <input type="number" id="pkDays" required min="1" value="5" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+          </div>
+          <div>
+            <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Price Per Person ($) *</label>
+            <input type="number" step="0.01" id="pkPrice" required min="1" placeholder="499.00" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+          </div>
+        </div>
+
+        <div style="margin-bottom: 14px;">
+          <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Available Capacity / Slots *</label>
+          <input type="number" id="pkSlots" required min="1" value="20" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px;">Tour Description & Itinerary Highlights</label>
+          <textarea id="pkDesc" rows="3" placeholder="Includes airport pickup, 4-star mountain lodge accommodation, guided valley trekking..." style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px;"></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" class="btn btn-outline" onclick="closeModal('modalPackage')">Cancel</button>
+          <button type="submit" class="btn btn-primary" style="background: #9333ea; border-color: #9333ea;">Submit for Approval</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 5. Reply to Inquiry Modal -->
+  <div id="modalReply" class="modal-backdrop" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+    <div class="modal-box" style="max-width: 500px;">
+      <div class="modal-header-custom" style="background: #1e293b;">
+        <h3 style="margin: 0; font-size: 1.15rem; font-weight: 700;"><i class="fa-solid fa-reply"></i> Reply to Customer</h3>
+        <button onclick="closeModal('modalReply')" style="background: transparent; border: none; color: white; font-size: 1.25rem; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form onsubmit="handleSendReply(event)" style="padding: 24px;">
+        <input type="hidden" id="replyMessageId">
+        <div style="background: #f8fafc; padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 0.88rem;">
+          <strong id="replyModalSubject" style="color: #0f172a; display: block; margin-bottom: 4px;">Subject</strong>
+          <p id="replyModalBody" style="margin: 0; color: #475569; font-style: italic;">Customer inquiry text...</p>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 6px;">Your Official Response *</label>
+          <textarea id="replyTextContent" rows="4" required placeholder="Type your helpful resolution or response..." style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem;"></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" class="btn btn-outline" onclick="closeModal('modalReply')">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btnSubmitReply">Send Reply</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer id="main-footer" class="site-footer"></footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    let currentAgent = null;
+    let agentListings = { flights: [], hotels: [], cars: [], packages: [] };
+    let agentBookings = [];
+    let agentMessages = [];
+    let listingFilterType = 'ALL';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      currentAgent = Auth.getUser();
+      if (!currentAgent) {
+        showToast('Please sign in as a Travel Agent to access this portal', 'warning');
+        setTimeout(() => window.location.href = 'login.html', 1000);
+        return;
+      }
+
+      if (currentAgent.role === 'TRAVELER') {
+        window.location.href = 'traveler-dashboard.html';
+        return;
+      }
+
+      document.getElementById('agentNameDisplay').textContent = `${currentAgent.fullName || 'Travel Agent'} Dashboard`;
+
+      await loadAgentDashboard();
+    });
+
+    async function loadAgentDashboard() {
+      try {
+        const [stats, listings, bookings, messages] = await Promise.all([
+          Api.getAgentStats(currentAgent.id),
+          Api.getAgentListings(currentAgent.id),
+          Api.getAgentBookings(currentAgent.id),
+          Api.getMessages({ agentId: currentAgent.id })
+        ]);
+
+        // Update KPIs
+        document.getElementById('kpiTotalListings').textContent = stats.totalListings || 0;
+        document.getElementById('kpiPending').textContent = stats.pendingApprovals || 0;
+        document.getElementById('kpiBookings').textContent = stats.totalBookings || 0;
+        document.getElementById('kpiRevenue').textContent = formatCurrency(stats.totalRevenue || 0);
+
+        agentListings = listings || { flights: [], hotels: [], cars: [], packages: [] };
+        agentBookings = Array.isArray(bookings) ? bookings : [];
+        agentMessages = Array.isArray(messages) ? messages : [];
+
+        document.getElementById('msgCountBadge').textContent = agentMessages.length;
+
+        renderListingsTable();
+        renderBookingsTable();
+        renderMessagesInbox();
+
+      } catch (err) {
+        console.error('Error loading agent data:', err);
+        showToast('Error retrieving agent records: ' + err.message, 'danger');
+      }
+    }
+
+    function toggleActionDropdown() {
+      const menu = document.getElementById('actionDropdownMenu');
+      menu.classList.toggle('show');
+    }
+
+    window.onclick = function(event) {
+      if (!event.target.closest('.action-dropdown')) {
+        const menu = document.getElementById('actionDropdownMenu');
+        if (menu && menu.classList.contains('show')) {
+          menu.classList.remove('show');
+        }
+      }
+    };
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('[id^="tab-"]').forEach(el => el.style.display = 'none');
+
+      document.getElementById(`tab-${tabId}`).style.display = 'block';
+      const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick').includes(tabId));
+      if (activeBtn) activeBtn.classList.add('active');
+    }
+
+    function filterListingsByType(type) {
+      listingFilterType = type;
+      renderListingsTable();
+    }
+
+    function renderListingsTable() {
+      const container = document.getElementById('listingsTableContainer');
+      let rows = [];
+
+      if (listingFilterType === 'ALL' || listingFilterType === 'flight') {
+        (agentListings.flights || []).forEach(f => rows.push({
+          type: 'Flight',
+          categoryCode: 'flight',
+          id: f.id,
+          name: `${f.airline} (${f.flightNumber})`,
+          detail: `${f.origin} &rarr; ${f.destination}`,
+          price: f.price,
+          units: `${f.seats || 0} seats`,
+          status: f.approvalStatus
+        }));
+      }
+
+      if (listingFilterType === 'ALL' || listingFilterType === 'hotel') {
+        (agentListings.hotels || []).forEach(h => rows.push({
+          type: 'Hotel',
+          categoryCode: 'hotel',
+          id: h.id,
+          name: h.hotelName,
+          detail: `${h.location} &bull; ${h.roomType}`,
+          price: h.pricePerNight,
+          units: `${h.availableRooms || 0} rooms`,
+          status: h.approvalStatus
+        }));
+      }
+
+      if (listingFilterType === 'ALL' || listingFilterType === 'car') {
+        (agentListings.cars || []).forEach(c => rows.push({
+          type: 'Car',
+          categoryCode: 'car',
+          id: c.id,
+          name: `${c.brand} ${c.carName}`,
+          detail: `${c.location} &bull; ${c.carType}`,
+          price: c.pricePerDay,
+          units: `${c.availableUnits || 0} units`,
+          status: c.approvalStatus
+        }));
+      }
+
+      if (listingFilterType === 'ALL' || listingFilterType === 'package') {
+        (agentListings.packages || []).forEach(p => rows.push({
+          type: 'Package',
+          categoryCode: 'package',
+          id: p.id,
+          name: p.packageName,
+          detail: `${p.durationDays} Days Tour`,
+          price: p.pricePerPerson,
+          units: 'Available',
+          status: p.approvalStatus
+        }));
+      }
+
+      if (rows.length === 0) {
+        container.innerHTML = `
+          <div style="padding: 50px; text-align: center; color: #64748b;">
+            <i class="fa-solid fa-box-open fa-2x" style="color: #cbd5e1; margin-bottom: 12px;"></i>
+            <p style="margin: 0 0 16px 0;">No listings found under this filter.</p>
+            <button onclick="toggleActionDropdown()" class="btn btn-primary" style="font-size: 0.85rem; border-radius: 6px;">
+              <i class="fa-solid fa-plus"></i> Add First Item
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      let html = '<div class="table-responsive"><table class="data-table" style="margin: 0;"><thead><tr><th>Type</th><th>Listing Name</th><th>Route / Details</th><th>Price</th><th>Availability</th><th>Approval Status</th><th>Actions</th></tr></thead><tbody>';
+      
+      rows.forEach(r => {
+        let badgeClass = 'badge-warning';
+        if (r.status === 'APPROVED') badgeClass = 'badge-success';
+        else if (r.status === 'REJECTED') badgeClass = 'badge-danger';
+
+        html += `
+          <tr>
+            <td><span class="badge" style="background: #f1f5f9; color: #334155; font-weight: 600;">${r.type}</span></td>
+            <td style="font-weight: 700; color: #0f172a;">${escapeHtml(r.name)}</td>
+            <td>${r.detail}</td>
+            <td style="font-weight: 700;">${formatCurrency(r.price)}</td>
+            <td>${r.units}</td>
+            <td><span class="badge ${badgeClass}">${r.status}</span></td>
+            <td>
+              <button onclick="confirmDeleteListing('${r.categoryCode}', ${r.id}, '${escapeHtml(r.name)}')" class="btn btn-outline" style="padding: 4px 10px; font-size: 0.78rem; color: #dc2626; border-color: #fca5a5;">
+                <i class="fa-solid fa-trash"></i> Delete
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+      html += '</tbody></table></div>';
+      container.innerHTML = html;
+    }
+
+    function renderBookingsTable() {
+      const container = document.getElementById('bookingsTableContainer');
+      if (agentBookings.length === 0) {
+        container.innerHTML = `
+          <div style="padding: 50px; text-align: center; color: #64748b;">
+            <i class="fa-solid fa-calendar-xmark fa-2x" style="color: #cbd5e1; margin-bottom: 12px;"></i>
+            <p style="margin: 0;">No travelers have reserved your inventory items yet.</p>
+          </div>
+        `;
+        return;
+      }
+
+      let html = '<div class="table-responsive"><table class="data-table" style="margin: 0;"><thead><tr><th>Booking Code</th><th>Traveler</th><th>Email</th><th>Reserved Service</th><th>Travel Date</th><th>Amount</th><th>Status</th></tr></thead><tbody>';
+      agentBookings.forEach(b => {
+        const isCancelled = (b.bookingStatus || '').toUpperCase() === 'CANCELLED';
+        html += `
+          <tr>
+            <td style="font-family: monospace; font-weight: 600; color: #059669;">#${escapeHtml(b.bookingCode)}</td>
+            <td style="font-weight: 600;">${escapeHtml(b.userName || 'Guest')}</td>
+            <td style="color: #64748b; font-size: 0.88rem;">${escapeHtml(b.userEmail || '')}</td>
+            <td><strong>${escapeHtml(b.itemName || '')}</strong> <span style="font-size: 0.78rem; color: #64748b;">(${b.bookingType})</span></td>
+            <td>${b.travelDate || 'Scheduled'}</td>
+            <td style="font-weight: 700;">${formatCurrency(b.totalAmount)}</td>
+            <td><span class="badge ${isCancelled ? 'badge-danger' : 'badge-success'}">${b.bookingStatus}</span></td>
+          </tr>
+        `;
+      });
+      html += '</tbody></table></div>';
+      container.innerHTML = html;
+    }
+
+    function renderMessagesInbox() {
+      const container = document.getElementById('messagesListContainer');
+      if (agentMessages.length === 0) {
+        container.innerHTML = `
+          <div style="padding: 40px; text-align: center; color: #64748b;">
+            <i class="fa-solid fa-envelope-open fa-2x" style="color: #cbd5e1; margin-bottom: 10px;"></i>
+            <p style="margin: 0;">Inbox clean! No pending traveler inquiries.</p>
+          </div>
+        `;
+        return;
+      }
+
+      let html = '<div style="display: flex; flex-direction: column; gap: 14px;">';
+      agentMessages.forEach(m => {
+        const isAnswered = !!m.reply;
+        html += `
+          <div style="border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px; background: ${isAnswered ? '#ffffff' : '#fefce8'};">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+              <div>
+                <strong style="color: #0f172a; font-size: 1.05rem;">${escapeHtml(m.subject)}</strong>
+                <div style="font-size: 0.82rem; color: #64748b; margin-top: 2px;">
+                  From: <strong>${escapeHtml(m.userName)}</strong> (${escapeHtml(m.userEmail)}) &bull; ${m.createdAt || ''}
+                </div>
+              </div>
+              <span class="badge ${isAnswered ? 'badge-success' : 'badge-warning'}">
+                ${isAnswered ? 'Answered' : 'Action Required'}
+              </span>
+            </div>
+
+            <p style="margin: 8px 0 12px 0; font-size: 0.92rem; color: #334155; line-height: 1.5;">${escapeHtml(m.message)}</p>
+
+            ${isAnswered ? `
+              <div style="background: #f8fafc; border-left: 3px solid #059669; padding: 10px 14px; border-radius: 0 6px 6px 0; font-size: 0.88rem; color: #166534;">
+                <strong>Your Reply:</strong> ${escapeHtml(m.reply)}
+              </div>
+            ` : `
+              <button onclick="openReplyModal(${m.id}, '${escapeHtml(m.subject)}', '${escapeHtml(m.message)}')" class="btn btn-primary" style="padding: 6px 14px; font-size: 0.82rem; border-radius: 6px; background: #059669; border-color: #059669;">
+                <i class="fa-solid fa-reply"></i> Reply to Inquiry
+              </button>
+            `}
+          </div>
+        `;
+      });
+      html += '</div>';
+      container.innerHTML = html;
+    }
+
+    function openListingModal(type) {
+      document.getElementById('actionDropdownMenu').classList.remove('show');
+      if (type === 'flight') openModal('modalFlight');
+      else if (type === 'hotel') openModal('modalHotel');
+      else if (type === 'car') openModal('modalCar');
+      else if (type === 'package') openModal('modalPackage');
+    }
+
+    function openReplyModal(msgId, subject, body) {
+      document.getElementById('replyMessageId').value = msgId;
+      document.getElementById('replyModalSubject').textContent = subject;
+      document.getElementById('replyModalBody').textContent = `"${body}"`;
+      document.getElementById('replyTextContent').value = '';
+      openModal('modalReply');
+    }
+
+    async function handleSendReply(e) {
+      e.preventDefault();
+      const msgId = document.getElementById('replyMessageId').value;
+      const reply = document.getElementById('replyTextContent').value.trim();
+
+      if (!reply) return;
+
+      const btn = document.getElementById('btnSubmitReply');
+      btn.disabled = true;
+      btn.textContent = 'Submitting...';
+
+      try {
+        const res = await Api.replyMessage(msgId, reply);
+        if (res && res.success) {
+          showToast('Reply dispatched to customer successfully!', 'success');
+          closeModal('modalReply');
+          await loadAgentDashboard();
+        } else {
+          showToast(res.message || 'Failed to submit reply', 'danger');
+        }
+      } catch (err) {
+        showToast(err.message || 'Server error', 'danger');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Send Reply';
+      }
+    }
+
+    async function confirmDeleteListing(type, id, name) {
+      if (!confirm(`Are you sure you want to remove listing "${name}"?`)) return;
+
+      try {
+        const res = await Api.deleteAgentListing(type, id);
+        if (res && res.success) {
+          showToast(`Listing "${name}" was deleted.`, 'success');
+          await loadAgentDashboard();
+        } else {
+          showToast(res.message || 'Failed to delete listing', 'danger');
+        }
+      } catch (err) {
+        showToast(err.message || 'Server error', 'danger');
+      }
+    }
+
+    // Handlers for Adding Items
+    async function handleCreateFlight(e) {
+      e.preventDefault();
+      const payload = {
+        agentId: currentAgent.id,
+        airline: document.getElementById('flAirline').value.trim(),
+        flightNumber: document.getElementById('flNumber').value.trim(),
+        origin: document.getElementById('flOrigin').value.trim(),
+        destination: document.getElementById('flDestination').value.trim(),
+        departureDate: document.getElementById('flDepDate').value,
+        departureTime: document.getElementById('flDepTime').value + ':00',
+        arrivalTime: '11:00:00',
+        price: parseFloat(document.getElementById('flPrice').value),
+        availableSeats: parseInt(document.getElementById('flSeats').value)
+      };
+
+      try {
+        const res = await Api.addFlight(payload);
+        if (res && res.success) {
+          showToast('Flight created! Status: PENDING (Admin approval required)', 'success');
+          closeModal('modalFlight');
+          e.target.reset();
+          await loadAgentDashboard();
+        } else {
+          showToast(res.message || 'Failed to create flight', 'danger');
+        }
+      } catch (err) {
+        showToast(err.message || 'Server error', 'danger');
+      }
+    }
+
+    async function handleCreateHotel(e) {
+      e.preventDefault();
+      const loc = document.getElementById('htLocation').value.trim();
+      const amenities = document.getElementById('htAmenities').value.trim();
+      const payload = {
+        agentId: currentAgent.id,
+        hotelName: document.getElementById('htName').value.trim(),
+        location: loc,
+        address: loc,
+        roomType: document.getElementById('htRoomType').value.trim(),
+        pricePerNight: parseFloat(document.getElementById('htPrice').value),
+        availableRooms: parseInt(document.getElementById('htRooms').value),
+        amenities: amenities,
+        description: amenities
+      };
+
+      try {
+        const res = await Api.addHotel(payload);
+        if (res && res.success) {
+          showToast('Hotel created! Status: PENDING (Admin approval required)', 'success');
+          closeModal('modalHotel');
+          e.target.reset();
+          await loadAgentDashboard();
+        } else {
+          showToast(res.message || res.error || 'Failed to create hotel', 'danger');
+        }
+      } catch (err) {
+        showToast(err.message || 'Server error', 'danger');
+      }
+    }
+
+    async function handleCreateCar(e) {
+      e.preventDefault();
+      const payload = {
+        agentId: currentAgent.id,
+        carName: document.getElementById('crName').value.trim(),
+        brand: document.getElementById('crBrand').value.trim(),
+        location: document.getElementById('crLocation').value.trim(),
+        carType: document.getElementById('crType').value,
+        pricePerDay: parseFloat(document.getElementById('crPrice').value),
+        availableUnits: parseInt(document.getElementById('crUnits').value),
+        transmission: 'Automatic',
+        fuelType: 'Petrol'
+      };
+
+      try {
+        const res = await Api.addCar(payload);
+        if (res && res.success) {
+          showToast('Rental car created! Status: PENDING (Admin approval required)', 'success');
+          closeModal('modalCar');
+          e.target.reset();
+          await loadAgentDashboard();
+        } else {
+          showToast(res.message || 'Failed to create rental car', 'danger');
+        }
+      } catch (err) {
+        showToast(err.message || 'Server error', 'danger');
+      }
+    }
+
+    async function handleCreatePackage(e) {
+      e.preventDefault();
+      const payload = {
+        agentId: currentAgent.id,
+        destinationId: 1, // Default destination
+        packageName: document.getElementById('pkName').value.trim(),
+        durationDays: parseInt(document.getElementById('pkDays').value),
+        pricePerPerson: parseFloat(document.getElementById('pkPrice').value),
+        availableSlots: parseInt(document.getElementById('pkSlots').value),
+        description: document.getElementById('pkDesc').value.trim()
+      };
+
+      try {
+        const res = await Api.addPackage(payload);
+        if (res && res.success) {
+          showToast('Package created! Status: PENDING (Admin approval required)', 'success');
+          closeModal('modalPackage');
+          e.target.reset();
+          await loadAgentDashboard();
+        } else {
+          showToast(res.message || 'Failed to create package', 'danger');
+        }
+      } catch (err) {
+        showToast(err.message || 'Server error', 'danger');
+      }
+    }
+  </script>
+</body>
+</html>

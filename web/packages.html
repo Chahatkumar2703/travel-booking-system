@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tour Packages - VoyageQuest Online Travel Booking Platform</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- Demo Bar -->
+  <div class="demo-bar">
+    <span>🎓 <b>College Project Demo Mode:</b> <span id="demoUserText">Not logged in</span></span>
+    <div>
+      <span>Quick Switch:</span>
+      <button onclick="Auth.quickDemoLogin('traveler')">Traveler (John)</button>
+      <button onclick="Auth.quickDemoLogin('agent')">Travel Agent (Skyline)</button>
+      <button onclick="Auth.quickDemoLogin('admin')">Admin</button>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-brand">✈ Voyage<span>Quest</span></a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="flights.html">Flights</a></li>
+        <li><a href="hotels.html">Hotels</a></li>
+        <li><a href="cars.html">Rental Cars</a></li>
+        <li><a href="packages.html" class="active">Packages</a></li>
+        <li><a href="my-bookings.html">My Bookings</a></li>
+        <li><a href="itinerary.html">Itinerary</a></li>
+      </ul>
+      <div class="nav-auth" id="navAuth"></div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="section-header">
+      <div>
+        <h1 class="section-title">🎒 Curated Tour & Holiday Packages</h1>
+        <p class="section-subtitle">Experience customized holidays with guided tours, transport, meals, and hotel stays.</p>
+      </div>
+    </div>
+
+    <!-- Search Filters Card -->
+    <div class="search-widget" style="margin: 0 0 35px 0;">
+      <div class="search-fields-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) 110px;">
+        <div class="form-group" style="margin:0;">
+          <label>Keyword / Places</label>
+          <input type="text" id="keywordInput" class="form-control" placeholder="e.g. Goa, Adventure, Valley" />
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label>Destination</label>
+          <select id="destSelect" class="form-control">
+            <option value="">All Destinations</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label>Max Budget / Person (₹)</label>
+          <input type="number" id="budgetInput" class="form-control" placeholder="Any" />
+        </div>
+        <button class="btn btn-primary btn-block" onclick="loadPackages()">Filter</button>
+      </div>
+    </div>
+
+    <!-- Package Results Grid -->
+    <div class="grid" id="packagesList">
+      <p style="color:var(--text-muted);">Searching tour packages...</p>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-bottom">
+      <p>&copy; 2026 VoyageQuest Online Travel Booking Platform. (College Demonstration Project)</p>
+    </div>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    async function loadDestinationsDropdown() {
+      try {
+        const dests = await API.getDestinations();
+        const sel = document.getElementById('destSelect');
+        if (dests && sel) {
+          sel.innerHTML = '<option value="">All Destinations</option>' +
+            dests.map(d => `<option value="${d.id}">${d.name} (${d.state})</option>`).join('');
+          
+          const paramDest = getQueryParam('destId');
+          if (paramDest) sel.value = paramDest;
+        }
+      } catch (e) {}
+    }
+
+    async function loadPackages() {
+      const keyword = document.getElementById('keywordInput').value.trim();
+      const destId = document.getElementById('destSelect').value;
+      const maxPrice = document.getElementById('budgetInput').value.trim();
+
+      const container = document.getElementById('packagesList');
+      container.innerHTML = '<p style="color:var(--text-muted);">Loading packages...</p>';
+
+      try {
+        const pkgs = await API.getPackages({ keyword, destId, maxPrice });
+        if (!pkgs || pkgs.length === 0) {
+          container.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:50px; background:#fff; border-radius:12px; border:1px dashed var(--border);"><p style="font-size:1.1rem; color:var(--text-muted);">No tour packages found matching your criteria.</p></div>';
+          return;
+        }
+
+        container.innerHTML = pkgs.map(p => `
+          <div class="card">
+            <img src="${getPackageImageUrl(p)}"
+                 class="card-img" alt="${escapeHtml(p.packageName)}" onerror="handleImageError(this, 'package')" />
+            <div class="card-body">
+              <span class="badge badge-success" style="margin-bottom:8px;">${p.durationDays} Days / ${p.durationNights} Nights</span>
+              <h3 class="card-title">${p.packageName}</h3>
+              <p class="card-desc">${p.description}</p>
+              <div class="card-meta">
+                <span>📍 <b>Places Covered:</b> ${p.placesCovered}</span>
+                <span>✨ <b>Inclusions:</b> ${p.hotelIncluded ? '🏨 Hotel ' : ''}${p.foodIncluded ? '🍽 Food ' : ''}${p.transportIncluded ? '🚗 Transport' : ''}</span>
+                <span>🏢 Host Agency: <b>${p.agentName || 'Verified Agency'}</b></span>
+              </div>
+              <div class="card-footer">
+                <div class="price-tag">${formatCurrency(p.pricePerPerson)} <small>/ person</small></div>
+                <a href="booking.html?type=package&id=${p.id}" class="btn btn-sm btn-primary">Book Package</a>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      } catch (err) {
+        container.innerHTML = '<p style="color:var(--danger);">Error loading tour packages: ' + err.message + '</p>';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadDestinationsDropdown();
+      const kw = getQueryParam('keyword');
+      if (kw) document.getElementById('keywordInput').value = kw;
+
+      loadPackages();
+    });
+  </script>
+</body>
+</html>

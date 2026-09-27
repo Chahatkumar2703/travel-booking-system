@@ -35,7 +35,8 @@ WORKDIR /app
 COPY --from=builder /app/bin bin/
 COPY --from=builder /app/lib lib/
 
-# Copy web assets and database scripts
+# Copy web & frontend assets and database scripts
+COPY frontend/ frontend/
 COPY web/ web/
 COPY database/ database/
 

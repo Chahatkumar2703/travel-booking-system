@@ -12,9 +12,10 @@ import java.util.List;
 public class PackageDAO extends BaseDAO implements GenericDAO<TravelPackage> {
 
     private static final String BASE_SELECT =
-            "SELECT p.*, d.name AS destination_name " +
+            "SELECT p.*, d.name AS destination_name, u.full_name AS agent_name " +
             "FROM packages p " +
-            "JOIN destinations d ON p.destination_id = d.id ";
+            "JOIN destinations d ON p.destination_id = d.id " +
+            "LEFT JOIN users u ON p.agent_id = u.id ";
 
     @Override
     public TravelPackage findById(int id) throws SQLException {
@@ -47,7 +48,7 @@ public class PackageDAO extends BaseDAO implements GenericDAO<TravelPackage> {
 
     public List<TravelPackage> findByDestination(int destinationId) throws SQLException {
         List<TravelPackage> list = new ArrayList<>();
-        String sql = BASE_SELECT + "WHERE p.destination_id = ? ORDER BY p.price_per_person ASC;";
+        String sql = BASE_SELECT + "WHERE p.destination_id = ? AND p.status = 'ACTIVE' AND p.approval_status = 'APPROVED' ORDER BY p.price_per_person ASC;";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, destinationId);
@@ -62,7 +63,7 @@ public class PackageDAO extends BaseDAO implements GenericDAO<TravelPackage> {
 
     public List<TravelPackage> search(String keyword, Integer destinationId, Double maxPrice) throws SQLException {
         List<TravelPackage> list = new ArrayList<>();
-        StringBuilder sql = new StringBuilder(BASE_SELECT + "WHERE 1=1 ");
+        StringBuilder sql = new StringBuilder(BASE_SELECT + "WHERE p.status = 'ACTIVE' AND p.approval_status = 'APPROVED' ");
         List<Object> params = new ArrayList<>();
 
         if (keyword != null && !keyword.trim().isEmpty()) {
@@ -99,24 +100,52 @@ public class PackageDAO extends BaseDAO implements GenericDAO<TravelPackage> {
         return list;
     }
 
+    public List<TravelPackage> findByAgentId(int agentId) throws SQLException {
+        List<TravelPackage> list = new ArrayList<>();
+        String sql = BASE_SELECT + "WHERE p.agent_id = ? ORDER BY p.id DESC";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, agentId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapRow(rs));
+                }
+            }
+        }
+        return list;
+    }
+
+    public boolean updateApprovalStatus(int id, String approvalStatus) throws SQLException {
+        String sql = "UPDATE packages SET approval_status = ? WHERE id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, approvalStatus);
+            ps.setInt(2, id);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
     @Override
     public boolean save(TravelPackage p) throws SQLException {
-        String sql = "INSERT INTO packages (package_name, destination_id, duration_days, duration_nights, " +
-                "price_per_person, places_covered, hotel_included, food_included, transport_included, description, status) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        String sql = "INSERT INTO packages (agent_id, package_name, destination_id, duration_days, duration_nights, " +
+                "price_per_person, places_covered, hotel_included, food_included, transport_included, description, image_url, status, approval_status) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setString(1, p.getPackageName());
-            ps.setInt(2, p.getDestinationId());
-            ps.setInt(3, p.getDurationDays());
-            ps.setInt(4, p.getDurationNights());
-            ps.setDouble(5, p.getPricePerPerson());
-            ps.setString(6, p.getPlacesCovered());
-            ps.setBoolean(7, p.isHotelIncluded());
-            ps.setBoolean(8, p.isFoodIncluded());
-            ps.setBoolean(9, p.isTransportIncluded());
-            ps.setString(10, p.getDescription());
-            ps.setString(11, p.getStatus());
+            ps.setInt(1, p.getAgentId() > 0 ? p.getAgentId() : 1);
+            ps.setString(2, p.getPackageName());
+            ps.setInt(3, p.getDestinationId());
+            ps.setInt(4, p.getDurationDays());
+            ps.setInt(5, p.getDurationNights());
+            ps.setDouble(6, p.getPricePerPerson());
+            ps.setString(7, p.getPlacesCovered());
+            ps.setBoolean(8, p.isHotelIncluded());
+            ps.setBoolean(9, p.isFoodIncluded());
+            ps.setBoolean(10, p.isTransportIncluded());
+            ps.setString(11, p.getDescription());
+            ps.setString(12, p.getImageUrl() != null ? p.getImageUrl() : "");
+            ps.setString(13, p.getStatus() != null ? p.getStatus() : "ACTIVE");
+            ps.setString(14, p.getApprovalStatus() != null ? p.getApprovalStatus() : "APPROVED");
 
             int affected = ps.executeUpdate();
             if (affected > 0) {
@@ -133,23 +162,26 @@ public class PackageDAO extends BaseDAO implements GenericDAO<TravelPackage> {
 
     @Override
     public boolean update(TravelPackage p) throws SQLException {
-        String sql = "UPDATE packages SET package_name = ?, destination_id = ?, duration_days = ?, duration_nights = ?, " +
+        String sql = "UPDATE packages SET agent_id = ?, package_name = ?, destination_id = ?, duration_days = ?, duration_nights = ?, " +
                 "price_per_person = ?, places_covered = ?, hotel_included = ?, food_included = ?, transport_included = ?, " +
-                "description = ?, status = ? WHERE id = ?;";
+                "description = ?, image_url = ?, status = ?, approval_status = ? WHERE id = ?;";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, p.getPackageName());
-            ps.setInt(2, p.getDestinationId());
-            ps.setInt(3, p.getDurationDays());
-            ps.setInt(4, p.getDurationNights());
-            ps.setDouble(5, p.getPricePerPerson());
-            ps.setString(6, p.getPlacesCovered());
-            ps.setBoolean(7, p.isHotelIncluded());
-            ps.setBoolean(8, p.isFoodIncluded());
-            ps.setBoolean(9, p.isTransportIncluded());
-            ps.setString(10, p.getDescription());
-            ps.setString(11, p.getStatus());
-            ps.setInt(12, p.getId());
+            ps.setInt(1, p.getAgentId() > 0 ? p.getAgentId() : 1);
+            ps.setString(2, p.getPackageName());
+            ps.setInt(3, p.getDestinationId());
+            ps.setInt(4, p.getDurationDays());
+            ps.setInt(5, p.getDurationNights());
+            ps.setDouble(6, p.getPricePerPerson());
+            ps.setString(7, p.getPlacesCovered());
+            ps.setBoolean(8, p.isHotelIncluded());
+            ps.setBoolean(9, p.isFoodIncluded());
+            ps.setBoolean(10, p.isTransportIncluded());
+            ps.setString(11, p.getDescription());
+            ps.setString(12, p.getImageUrl());
+            ps.setString(13, p.getStatus());
+            ps.setString(14, p.getApprovalStatus());
+            ps.setInt(15, p.getId());
             return ps.executeUpdate() > 0;
         }
     }
@@ -165,21 +197,25 @@ public class PackageDAO extends BaseDAO implements GenericDAO<TravelPackage> {
     }
 
     private TravelPackage mapRow(ResultSet rs) throws SQLException {
-        TravelPackage p = new TravelPackage(
-                rs.getInt("id"),
-                rs.getString("package_name"),
-                rs.getInt("destination_id"),
-                rs.getString("destination_name"),
-                rs.getInt("duration_days"),
-                rs.getInt("duration_nights"),
-                rs.getDouble("price_per_person"),
-                rs.getString("places_covered"),
-                rs.getBoolean("hotel_included"),
-                rs.getBoolean("food_included"),
-                rs.getBoolean("transport_included"),
-                rs.getString("description"),
-                rs.getString("status")
-        );
+        TravelPackage p = new TravelPackage();
+        p.setId(rs.getInt("id"));
+        try { p.setAgentId(rs.getInt("agent_id")); } catch (SQLException ignored) {}
+        try { p.setAgentName(rs.getString("agent_name")); } catch (SQLException ignored) {}
+        p.setPackageName(rs.getString("package_name"));
+        p.setDestinationId(rs.getInt("destination_id"));
+        p.setDestinationName(rs.getString("destination_name"));
+        p.setDurationDays(rs.getInt("duration_days"));
+        p.setDurationNights(rs.getInt("duration_nights"));
+        p.setPricePerPerson(rs.getDouble("price_per_person"));
+        p.setPlacesCovered(rs.getString("places_covered"));
+        p.setHotelIncluded(rs.getBoolean("hotel_included"));
+        p.setFoodIncluded(rs.getBoolean("food_included"));
+        p.setTransportIncluded(rs.getBoolean("transport_included"));
+        p.setDescription(rs.getString("description"));
+        try { p.setImageUrl(rs.getString("image_url")); } catch (SQLException ignored) {}
+        p.setStatus(rs.getString("status"));
+        try { p.setApprovalStatus(rs.getString("approval_status")); } catch (SQLException ignored) {}
+
         Timestamp ts = rs.getTimestamp("created_at");
         if (ts != null) {
             p.setCreatedAt(ts.toLocalDateTime());

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rental Cars - VoyageQuest Online Travel Booking Platform</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- Demo Bar -->
+  <div class="demo-bar">
+    <span>🎓 <b>College Project Demo Mode:</b> <span id="demoUserText">Not logged in</span></span>
+    <div>
+      <span>Quick Switch:</span>
+      <button onclick="Auth.quickDemoLogin('traveler')">Traveler (John)</button>
+      <button onclick="Auth.quickDemoLogin('agent')">Travel Agent (Skyline)</button>
+      <button onclick="Auth.quickDemoLogin('admin')">Admin</button>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-brand">✈ Voyage<span>Quest</span></a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="flights.html">Flights</a></li>
+        <li><a href="hotels.html">Hotels</a></li>
+        <li><a href="cars.html" class="active">Rental Cars</a></li>
+        <li><a href="packages.html">Packages</a></li>
+        <li><a href="my-bookings.html">My Bookings</a></li>
+        <li><a href="itinerary.html">Itinerary</a></li>
+      </ul>
+      <div class="nav-auth" id="navAuth"></div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="section-header">
+      <div>
+        <h1 class="section-title">🚗 Car Rentals & Self-Drive Fleet</h1>
+        <p class="section-subtitle">Rent verified SUVs, luxury sedans, and economical hatchbacks across top Indian cities.</p>
+      </div>
+    </div>
+
+    <!-- Search Filters Card -->
+    <div class="search-widget" style="margin: 0 0 35px 0;">
+      <div class="search-fields-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) 110px;">
+        <div class="form-group" style="margin:0;">
+          <label>City / Location</label>
+          <input type="text" id="carLocationInput" class="form-control" placeholder="e.g. Delhi, Goa, Mumbai" />
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label>Car Category</label>
+          <select id="carTypeSelect" class="form-control">
+            <option value="">All Categories</option>
+            <option value="SUV">SUV (4x4 & Family)</option>
+            <option value="Sedan">Sedan (Executive)</option>
+            <option value="Hatchback">Hatchback (Economy)</option>
+            <option value="Luxury">Luxury (Premium)</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label>Max Daily Rate (₹)</label>
+          <input type="number" id="maxDailyInput" class="form-control" placeholder="Any" />
+        </div>
+        <button class="btn btn-primary btn-block" onclick="loadCars()">Filter</button>
+      </div>
+    </div>
+
+    <!-- Car Results Grid -->
+    <div class="grid" id="carsList">
+      <p style="color:var(--text-muted);">Searching rental cars...</p>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-bottom">
+      <p>&copy; 2026 VoyageQuest Online Travel Booking Platform. (College Demonstration Project)</p>
+    </div>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    async function loadCars() {
+      const location = document.getElementById('carLocationInput').value.trim();
+      const carType = document.getElementById('carTypeSelect').value;
+      const maxPrice = document.getElementById('maxDailyInput').value.trim();
+
+      const container = document.getElementById('carsList');
+      container.innerHTML = '<p style="color:var(--text-muted);">Loading cars...</p>';
+
+      try {
+        const cars = await API.getCars({ location, carType, maxPrice });
+        if (!cars || cars.length === 0) {
+          container.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:50px; background:#fff; border-radius:12px; border:1px dashed var(--border);"><p style="font-size:1.1rem; color:var(--text-muted);">No rental cars found matching your criteria.</p></div>';
+          return;
+        }
+
+        container.innerHTML = cars.map(c => `
+          <div class="card">
+            <img src="${getCarImageUrl(c)}"
+                 class="card-img" alt="${escapeHtml(c.carName)}" onerror="handleImageError(this, 'car')" />
+            <div class="card-body">
+              <span class="badge badge-info" style="margin-bottom:8px;">${c.carType} • ${c.brand}</span>
+              <h3 class="card-title">${c.carName}</h3>
+              <p class="card-desc">Model: <b>${c.model || 'Standard'}</b>. Perfect for city commutes or scenic highway road trips.</p>
+              <div class="card-meta">
+                <span>📍 Pickup Hub: <b>${c.location}</b></span>
+                <span>🚗 Units Available: <b>${c.availableUnits}</b></span>
+                <span>🏢 Fleet Agency: <b>${c.agentName || 'Verified Agency'}</b></span>
+              </div>
+              <div class="card-footer">
+                <div class="price-tag">${formatCurrency(c.pricePerDay)} <small>/ day</small></div>
+                <a href="booking.html?type=car&id=${c.id}" class="btn btn-sm btn-primary">Rent Car</a>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      } catch (err) {
+        container.innerHTML = '<p style="color:var(--danger);">Error loading cars: ' + err.message + '</p>';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const loc = getQueryParam('location');
+      const type = getQueryParam('carType');
+      const maxP = getQueryParam('maxPrice');
+      if (loc) document.getElementById('carLocationInput').value = loc;
+      if (type) document.getElementById('carTypeSelect').value = type;
+      if (maxP) document.getElementById('maxDailyInput').value = maxP;
+
+      loadCars();
+    });
+  </script>
+</body>
+</html>

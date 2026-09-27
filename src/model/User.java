@@ -80,6 +80,14 @@ public class User extends BaseEntity {
         return "ADMIN".equalsIgnoreCase(role);
     }
 
+    public boolean isAgent() {
+        return "AGENT".equalsIgnoreCase(role);
+    }
+
+    public boolean isTraveler() {
+        return "TRAVELER".equalsIgnoreCase(role) || "USER".equalsIgnoreCase(role);
+    }
+
     public boolean isActive() {
         return "ACTIVE".equalsIgnoreCase(status);
     }

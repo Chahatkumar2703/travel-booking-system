@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Control Center - Online Travel Booking Platform</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .admin-hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #334155 100%);
+      color: white;
+      padding: 32px 28px;
+      border-radius: 16px;
+      margin-bottom: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .kpi-matrix {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .admin-kpi-card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .admin-kpi-card:hover {
+      box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+    }
+    .kpi-icon-admin {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+    }
+    .admin-tabs {
+      display: flex;
+      gap: 8px;
+      border-bottom: 2px solid #e2e8f0;
+      margin-bottom: 24px;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .admin-tab-btn {
+      background: none;
+      border: none;
+      padding: 12px 18px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: #64748b;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .admin-tab-btn:hover {
+      color: #0284c7;
+    }
+    .admin-tab-btn.active {
+      color: #0284c7;
+      border-bottom-color: #0284c7;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header id="main-header" class="site-header"></header>
+
+  <main class="page-container" style="max-width: 1300px; margin: 36px auto; padding: 0 20px;">
+    
+    <!-- Hero Banner -->
+    <div class="admin-hero">
+      <div>
+        <span style="background: rgba(255,255,255,0.15); padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; text-transform: uppercase;">
+          <i class="fa-solid fa-shield-halved"></i> Master Administration Console
+        </span>
+        <h1 style="margin: 12px 0 6px 0; font-size: 2rem; font-weight: 800;">Platform Operations & Oversight</h1>
+        <p style="margin: 0; opacity: 0.85; font-size: 0.95rem;">
+          Moderate agent listings, audit users, manage global bookings, inspect ledger transactions, and adjust system settings.
+        </p>
+      </div>
+
+      <div style="display: flex; gap: 10px;">
+        <button onclick="refreshAllAdminData()" class="btn" style="background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.25); border-radius: 8px;">
+          <i class="fa-solid fa-rotate"></i> Refresh Metrics
+        </button>
+      </div>
+    </div>
+
+    <!-- 8 KPI Metrics Cards -->
+    <div class="kpi-matrix">
+      <!-- 1. Total Users -->
+      <div class="admin-kpi-card">
+        <div class="kpi-icon-admin" style="background: #e0f2fe; color: #0284c7;">
+          <i class="fa-solid fa-users"></i>
+        </div>
+        <div>
+          <div style="font-size: 1.5rem; font-weight: 800; color: #0f172a;" id="kpiTotalUsers">0</div>
+          <div style="font-size: 0.8rem; color: #64748b; font-weight: 600;">Total Users (<span id="kpiUserBreakdown">0T / 0A</span>)</div>
+        </div>
+      </div>
+
+      <!-- 2. Revenue -->
+      <div class="admin-kpi-card">
+        <div class="kpi-icon-admin" style="background: #dcfce7; color: #16a34a;">
+          <i class="fa-solid fa-sack-dollar"></i>
+        </div>
+        <div>
+          <div style="font-size: 1.5rem; font-weight: 800; color: #16a34a;" id="kpiTotalRevenue">$0</div>
+          <div style="font-size: 0.8rem; color: #64748b; font-weight: 600;">Total Gross Revenue</div>
+        </div>
+      </div>
+
+      <!-- 3. Pending Approvals -->
+      <div class="admin-kpi-card" style="border: 2px solid #fed7aa;">
+        <div class="kpi-icon-admin" style="background: #ffedd5; color: #ea580c;">
+          <i class="fa-solid fa-clipboard-check"></i>
+        </div>
+        <div>
+          <div style="font-size: 1.5rem; font-weight: 800; color: #ea580c;" id="kpiPendingListings">0</div>
+          <div style="font-size: 0.8rem; color: #9a3412; font-weight: 700;">Pending Moderation</div>
+        </div>
+      </div>
+
+      <!-- 4. Total Bookings -->
+      <div class="admin-kpi-card">
+        <div class="kpi-icon-admin" style="background: #f3e8ff; color: #9333ea;">
+          <i class="fa-solid fa-ticket"></i>
+        </div>
+        <div>
+          <div style="font-size: 1.5rem; font-weight: 800; color: #0f172a;" id="kpiTotalBookings">0</div>
+          <div style="font-size: 0.8rem; color: #64748b; font-weight: 600;">Platform Bookings</div>
+        </div>
+      </div>
+
+      <!-- 5. Flights -->
+      <div class="admin-kpi-card">
+        <div class="kpi-icon-admin" style="background: #e0f2fe; color: #0369a1;">
+          <i class="fa-solid fa-plane"></i>
+        </div>
+        <div>
+          <div style="font-size: 1.5rem; font-weight: 800; color: #0f172a;" id="kpiFlights">0</div>
+          <div style="font-size: 0.8rem; color: #64748b; font-weight: 600;">Flights (<span id="kpiFlightBookings">0</span> booked)</div>
+        </div>
+      </div>
+
+      <!-- 6. Hotels -->
+      <div class="admin-kpi-card">
+        <div class="kpi-icon-admin" style="background: #fef3c7; color: #d97706;">
+          <i class="fa-solid fa-hotel"></i>
+        </div>
+        <div>
+          <div style="font-size: 1.5rem; font-weight: 800; color: #0f172a;" id="kpiHotels">0</div>
+          <div style="font-size: 0.8rem; color: #64748b; font-weight: 600;">Hotels (<span id="kpiHotelBookings">0</span> booked)</div>
+        </div>
+      </div>
+
+      <!-- 7. Cars -->
+      <div class="admin-kpi-card">
+        <div class="kpi-icon-admin" style="background: #dcfce7; color: #059669;">
+          <i class="fa-solid fa-car"></i>
+        </div>
+        <div>
+          <div style="font-size: 1.5rem; font-weight: 800; color: #0f172a;" id="kpiCars">0</div>
+          <div style="font-size: 0.8rem; color: #64748b; font-weight: 600;">Cars (<span id="kpiCarBookings">0</span> booked)</div>
+        </div>
+      </div>
+
+      <!-- 8. Packages -->
+      <div class="admin-kpi-card">
+        <div class="kpi-icon-admin" style="background: #fae8ff; color: #a21caf;">
+          <i class="fa-solid fa-suitcase-rolling"></i>
+        </div>
+        <div>
+          <div style="font-size: 1.5rem; font-weight: 800; color: #0f172a;" id="kpiPackages">0</div>
+          <div style="font-size: 0.8rem; color: #64748b; font-weight: 600;">Packages (<span id="kpiPackageBookings">0</span> booked)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Tabs -->
+    <div class="admin-tabs">
+      <button class="admin-tab-btn active" onclick="switchAdminTab('moderation')">
+        <i class="fa-solid fa-boxes-stacked"></i> Listing Moderation Queue (<span id="tabCountModeration">0</span>)
+      </button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('users')">
+        <i class="fa-solid fa-users-gear"></i> User Moderation & Status
+      </button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('bookings')">
+        <i class="fa-solid fa-receipt"></i> Global Bookings Management
+      </button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('payments')">
+        <i class="fa-solid fa-money-bill-transfer"></i> Payment Transactions
+      </button>
+      <button class="admin-tab-btn" onclick="switchAdminTab('settings')">
+        <i class="fa-solid fa-sliders"></i> System Configurations
+      </button>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- TAB 1: LISTING MODERATION QUEUE -->
+    <!-- ===================================================================== -->
+    <div id="tab-moderation" class="tab-pane">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-outline active" id="btnFilterPending" onclick="filterAdminListings('PENDING')" style="padding: 6px 14px; font-size: 0.85rem; border-radius: 20px;">
+            Pending Approvals Only
+          </button>
+          <button class="btn btn-outline" id="btnFilterApproved" onclick="filterAdminListings('APPROVED')" style="padding: 6px 14px; font-size: 0.85rem; border-radius: 20px;">
+            Approved Items
+          </button>
+          <button class="btn btn-outline" id="btnFilterAll" onclick="filterAdminListings('ALL')" style="padding: 6px 14px; font-size: 0.85rem; border-radius: 20px;">
+            All Listings
+          </button>
+        </div>
+        <span style="font-size: 0.85rem; color: #64748b;">
+          Approve listings to make them publicly visible and bookable for travelers.
+        </span>
+      </div>
+
+      <div id="listingsTableContainer" style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
+        <p style="padding: 40px; text-align: center; color: #64748b;">Loading listings queue...</p>
+      </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- TAB 2: USER MANAGEMENT -->
+    <!-- ===================================================================== -->
+    <div id="tab-users" class="tab-pane" style="display: none;">
+      <div id="usersTableContainer" style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
+        <p style="padding: 40px; text-align: center; color: #64748b;">Loading platform users...</p>
+      </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- TAB 3: GLOBAL BOOKINGS -->
+    <!-- ===================================================================== -->
+    <div id="tab-bookings" class="tab-pane" style="display: none;">
+      <div id="bookingsTableContainer" style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
+        <p style="padding: 40px; text-align: center; color: #64748b;">Loading bookings records...</p>
+      </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- TAB 4: PAYMENTS LEDGER -->
+    <!-- ===================================================================== -->
+    <div id="tab-payments" class="tab-pane" style="display: none;">
+      <div id="paymentsTableContainer" style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
+        <p style="padding: 40px; text-align: center; color: #64748b;">Loading payments transactions...</p>
+      </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- TAB 5: SYSTEM CONFIGURATIONS -->
+    <!-- ===================================================================== -->
+    <div id="tab-settings" class="tab-pane" style="display: none;">
+      <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 28px; max-width: 800px; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
+        <h3 style="margin: 0 0 8px 0; font-size: 1.3rem; color: #0f172a;">Global Platform Parameters</h3>
+        <p style="color: #64748b; font-size: 0.9rem; margin: 0 0 24px 0;">Configure dynamic parameters saved in the database settings store.</p>
+
+        <form onsubmit="handleSaveSettings(event)" id="settingsForm">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+            <div>
+              <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 6px;">Platform Name</label>
+              <input type="text" id="setPlatformName" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px;">
+            </div>
+            <div>
+              <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 6px;">System Currency Code</label>
+              <input type="text" id="setCurrency" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px;">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+            <div>
+              <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 6px;">Platform Commission (%)</label>
+              <input type="number" step="0.1" id="setCommission" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px;">
+            </div>
+            <div>
+              <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 6px;">Tax / GST Rate (%)</label>
+              <input type="number" step="0.1" id="setTaxRate" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px;">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 28px;">
+            <div>
+              <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 6px;">Support / Admin Contact Email</label>
+              <input type="email" id="setSupportEmail" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px;">
+            </div>
+            <div>
+              <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 6px;">System Maintenance Mode</label>
+              <select id="setMaintenance" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px;">
+                <option value="false">Disabled (Platform Online)</option>
+                <option value="true">Enabled (Maintenance Notice)</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end;">
+            <button type="submit" class="btn btn-primary" id="btnSaveSettings" style="border-radius: 8px; padding: 10px 24px;">
+              <i class="fa-solid fa-floppy-disk"></i> Save Configuration
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </main>
+
+  <footer id="main-footer" class="site-footer"></footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    let rawListings = [];
+    let rawUsers = [];
+    let rawBookings = [];
+    let rawPayments = [];
+    let currentListingFilter = 'PENDING';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const user = Auth.getUser();
+      if (!user) {
+        showToast('Please sign in as Administrator', 'warning');
+        setTimeout(() => window.location.href = 'login.html', 1000);
+        return;
+      }
+
+      if (user.role !== 'ADMIN') {
+        showToast('Access restricted: Administrator role required', 'danger');
+        setTimeout(() => window.location.href = 'index.html', 1500);
+        return;
+      }
+
+      await refreshAllAdminData();
+    });
+
+    async function refreshAllAdminData() {
+      try {
+        const [stats, listings, users, bookings, payments, settings] = await Promise.all([
+          Api.getAdminStats(),
+          Api.getAdminListings(),
+          Api.getAdminUsers(),
+          Api.getAdminBookings(),
+          Api.getAdminPayments(),
+          Api.getAdminSettings()
+        ]);
+
+        // Render Stats
+        document.getElementById('kpiTotalUsers').textContent = stats.totalUsers || 0;
+        document.getElementById('kpiUserBreakdown').textContent = `${stats.totalTravelers || 0}T / ${stats.totalAgents || 0}A`;
+        document.getElementById('kpiTotalRevenue').textContent = formatCurrency(stats.totalRevenue || 0);
+        document.getElementById('kpiPendingListings').textContent = stats.pendingApprovals || 0;
+        document.getElementById('tabCountModeration').textContent = stats.pendingApprovals || 0;
+        document.getElementById('kpiTotalBookings').textContent = stats.totalBookings || 0;
+        document.getElementById('kpiFlights').textContent = stats.totalFlights || 0;
+        document.getElementById('kpiFlightBookings').textContent = stats.flightBookings || 0;
+        document.getElementById('kpiHotels').textContent = stats.totalHotels || 0;
+        document.getElementById('kpiHotelBookings').textContent = stats.hotelBookings || 0;
+        document.getElementById('kpiCars').textContent = stats.totalCars || 0;
+        document.getElementById('kpiCarBookings').textContent = stats.carBookings || 0;
+        document.getElementById('kpiPackages').textContent = stats.totalPackages || 0;
+        document.getElementById('kpiPackageBookings').textContent = stats.packageBookings || 0;
+
+        rawListings = Array.isArray(listings) ? listings : [];
+        rawUsers = Array.isArray(users) ? users : [];
+        rawBookings = Array.isArray(bookings) ? bookings : [];
+        rawPayments = Array.isArray(payments) ? payments : [];
+
+        renderListingsTable();
+        renderUsersTable();
+        renderBookingsTable();
+        renderPaymentsTable();
+        populateSettings(settings || {});
+
+      } catch (err) {
+        console.error('Error refreshing admin data:', err);
+        showToast('Error loading platform records: ' + err.message, 'danger');
+      }
+    }
+
+    function switchAdminTab(tabName) {
+      document.querySelectorAll('.admin-tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-pane').forEach(p => p.style.display = 'none');
+
+      document.getElementById(`tab-${tabName}`).style.display = 'block';
+      const activeBtn = Array.from(document.querySelectorAll('.admin-tab-btn')).find(b => b.getAttribute('onclick').includes(tabName));
+      if (activeBtn) activeBtn.classList.add('active');
+    }
+
+    function filterAdminListings(filter) {
+      currentListingFilter = filter;
+      document.getElementById('btnFilterPending').className = filter === 'PENDING' ? 'btn btn-outline active' : 'btn btn-outline';
+      document.getElementById('btnFilterApproved').className = filter === 'APPROVED' ? 'btn btn-outline active' : 'btn btn-outline';
+      document.getElementById('btnFilterAll').className = filter === 'ALL' ? 'btn btn-outline active' : 'btn btn-outline';
+      renderListingsTable();
+    }
+
+    // 1. Listings Table
+    function renderListingsTable() {
+      const container = document.getElementById('listingsTableContainer');
+      let filtered = rawListings;
+      if (currentListingFilter === 'PENDING') {
+        filtered = filtered.filter(l => (l.approvalStatus || '').toUpperCase() === 'PENDING');
+      } else if (currentListingFilter === 'APPROVED') {
+        filtered = filtered.filter(l => (l.approvalStatus || '').toUpperCase() === 'APPROVED');
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div style="padding: 40px; text-align: center; color: #64748b;">
+            <i class="fa-solid fa-check-double fa-2x" style="color: #cbd5e1; margin-bottom: 10px;"></i>
+            <p style="margin: 0;">No items found matching the selected moderation queue filter.</p>
+          </div>
+        `;
+        return;
+      }
+
+      let html = '<div class="table-responsive"><table class="data-table" style="margin: 0;"><thead><tr><th>Category</th><th>Item Name</th><th>Agent / Partner</th><th>Price</th><th>Approval Status</th><th>Actions</th></tr></thead><tbody>';
+      
+      filtered.forEach(l => {
+        const isPending = (l.approvalStatus || '').toUpperCase() === 'PENDING';
+        const isApproved = (l.approvalStatus || '').toUpperCase() === 'APPROVED';
+        let badge = '<span class="badge badge-warning">PENDING</span>';
+        if (isApproved) badge = '<span class="badge badge-success">APPROVED</span>';
+        else if ((l.approvalStatus || '').toUpperCase() === 'REJECTED') badge = '<span class="badge badge-danger">REJECTED</span>';
+
+        html += `
+          <tr>
+            <td><span class="badge" style="background: #f1f5f9; color: #334155; font-weight: 700;">${(l.type || '').toUpperCase()}</span></td>
+            <td style="font-weight: 600; color: #0f172a;">${escapeHtml(l.name)}</td>
+            <td><i class="fa-solid fa-user-tie text-primary"></i> ${escapeHtml(l.agentName || 'Agent ' + l.agentId)}</td>
+            <td style="font-weight: 700;">${formatCurrency(l.price)}</td>
+            <td>${badge}</td>
+            <td>
+              <div style="display: flex; gap: 6px;">
+                ${!isApproved ? `
+                  <button onclick="handleListingAction('approve', '${l.type}', ${l.id}, '${escapeHtml(l.name)}')" class="btn btn-outline" style="padding: 4px 10px; font-size: 0.78rem; color: #16a34a; border-color: #86efac;">
+                    <i class="fa-solid fa-check"></i> Approve
+                  </button>
+                ` : ''}
+                ${isPending ? `
+                  <button onclick="handleListingAction('reject', '${l.type}', ${l.id}, '${escapeHtml(l.name)}')" class="btn btn-outline" style="padding: 4px 10px; font-size: 0.78rem; color: #ea580c; border-color: #fdba74;">
+                    <i class="fa-solid fa-xmark"></i> Reject
+                  </button>
+                ` : ''}
+                <button onclick="handleListingAction('delete', '${l.type}', ${l.id}, '${escapeHtml(l.name)}')" class="btn btn-outline" style="padding: 4px 10px; font-size: 0.78rem; color: #dc2626; border-color: #fca5a5;">
+                  <i class="fa-solid fa-trash"></i> Delete
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+      html += '</tbody></table></div>';
+      container.innerHTML = html;
+    }
+
+    async function handleListingAction(action, type, id, name) {
+      if (action === 'delete' && !confirm(`Are you sure you want to permanently delete listing "${name}"?`)) return;
+
+      try {
+        const res = await Api.moderateListing(action, type, id);
+        if (res && res.success) {
+          showToast(`Listing "${name}" successfully updated (${action}ed).`, 'success');
+          await refreshAllAdminData();
+        } else {
+          showToast(res.message || 'Action failed', 'danger');
+        }
+      } catch (err) {
+        showToast(err.message || 'Server error', 'danger');
+      }
+    }
+
+    // 2. Users Table
+    function renderUsersTable() {
+      const container = document.getElementById('usersTableContainer');
+      let html = '<div class="table-responsive"><table class="data-table" style="margin: 0;"><thead><tr><th>ID</th><th>Full Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Status</th><th>Moderation Action</th></tr></thead><tbody>';
+      
+      rawUsers.forEach(u => {
+        const isActive = (u.status || 'ACTIVE').toUpperCase() === 'ACTIVE';
+        const roleColor = u.role === 'ADMIN' ? '#0f172a' : (u.role === 'AGENT' ? '#059669' : '#0284c7');
+        const roleBg = u.role === 'ADMIN' ? '#e2e8f0' : (u.role === 'AGENT' ? '#d1fae5' : '#e0f2fe');
+
+        html += `
+          <tr>
+            <td style="font-family: monospace; font-weight: 600;">#${u.id}</td>
+            <td style="font-weight: 600; color: #0f172a;">${escapeHtml(u.fullName)}</td>
+            <td>${escapeHtml(u.email)}</td>
+            <td>${escapeHtml(u.phone || 'N/A')}</td>
+            <td>
+              <span class="badge" style="background: ${roleBg}; color: ${roleColor}; font-weight: 700;">
+                ${u.role}
+              </span>
+            </td>
+            <td>
+              <span class="badge ${isActive ? 'badge-success' : 'badge-danger'}">
+                ${isActive ? 'ACTIVE' : 'DISABLED'}
+              </span>
+            </td>
+            <td>
+              ${u.role !== 'ADMIN' ? `
+                <button onclick="handleToggleUser(${u.id}, '${isActive ? 'DISABLED' : 'ACTIVE'}', '${escapeHtml(u.fullName)}')" class="btn btn-outline" style="padding: 4px 10px; font-size: 0.78rem; ${isActive ? 'color: #dc2626; border-color: #fca5a5;' : 'color: #16a34a; border-color: #86efac;'}">
+                  ${isActive ? '<i class="fa-solid fa-user-slash"></i> Disable Account' : '<i class="fa-solid fa-user-check"></i> Activate Account'}
+                </button>
+              ` : '<span style="font-size: 0.8rem; color: #94a3b8; font-style: italic;">Protected Root</span>'}
+            </td>
+          </tr>
+        `;
+      });
+      html += '</tbody></table></div>';
+      container.innerHTML = html;
+    }
+
+    async function handleToggleUser(userId, newStatus, name) {
+      if (!confirm(`Are you sure you want to change user "${name}" status to ${newStatus}?`)) return;
+
+      try {
+        const res = await Api.toggleUserStatus(userId, newStatus);
+        if (res && res.success) {
+          showToast(`User "${name}" status updated to ${newStatus}.`, 'success');
+          await refreshAllAdminData();
+        } else {
+          showToast(res.message || 'Failed to update user', 'danger');
+        }
+      } catch (err) {
+        showToast(err.message || 'Server error', 'danger');
+      }
+    }
+
+    // 3. Bookings Table
+    function renderBookingsTable() {
+      const container = document.getElementById('bookingsTableContainer');
+      let html = '<div class="table-responsive"><table class="data-table" style="margin: 0;"><thead><tr><th>Code</th><th>Traveler</th><th>Service Booked</th><th>Type</th><th>Travel Date</th><th>Amount</th><th>Status</th><th>Admin Override</th></tr></thead><tbody>';
+      
+      rawBookings.forEach(b => {
+        const isConfirmed = (b.bookingStatus || '').toUpperCase() === 'CONFIRMED';
+        const isCancelled = (b.bookingStatus || '').toUpperCase() === 'CANCELLED';
+
+        html += `
+          <tr>
+            <td style="font-family: monospace; font-weight: 600; color: #0284c7;">#${escapeHtml(b.bookingCode)}</td>
+            <td>
+              <div style="font-weight: 600; color: #0f172a;">${escapeHtml(b.userName)}</div>
+              <div style="font-size: 0.78rem; color: #64748b;">${escapeHtml(b.userEmail)}</div>
+            </td>
+            <td style="font-weight: 600;">${escapeHtml(b.itemName)}</td>
+            <td><span class="badge" style="background: #f1f5f9; color: #334155;">${b.bookingType}</span></td>
+            <td>${b.travelDate || 'Flexible'}</td>
+            <td style="font-weight: 700;">${formatCurrency(b.totalAmount)}</td>
+            <td><span class="badge ${isConfirmed ? 'badge-success' : (isCancelled ? 'badge-danger' : 'badge-warning')}">${b.bookingStatus}</span></td>
+            <td>
+              <div style="display: flex; gap: 6px;">
+                ${!isConfirmed ? `
+                  <button onclick="handleOverrideBooking(${b.id}, 'CONFIRMED')" class="btn btn-outline" style="padding: 4px 8px; font-size: 0.75rem; color: #16a34a; border-color: #86efac;">
+                    Confirm
+                  </button>
+                ` : ''}
+                ${!isCancelled ? `
+                  <button onclick="handleOverrideBooking(${b.id}, 'CANCELLED')" class="btn btn-outline" style="padding: 4px 8px; font-size: 0.75rem; color: #dc2626; border-color: #fca5a5;">
+                    Cancel
+                  </button>
+                ` : ''}
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+      html += '</tbody></table></div>';
+      container.innerHTML = html;
+    }
+
+    async function handleOverrideBooking(bookingId, status) {
+      if (!confirm(`Are you sure you want to override status of booking #${bookingId} to ${status}?`)) return;
+
+      try {
+        const res = await Api.updateBookingStatus(bookingId, status);
+        if (res && res.success) {
+          showToast(`Booking #${bookingId} updated to ${status}.`, 'success');
+          await refreshAllAdminData();
+        } else {
+          showToast(res.message || 'Failed to update booking', 'danger');
+        }
+      } catch (err) {
+        showToast(err.message || 'Server error', 'danger');
+      }
+    }
+
+    // 4. Payments Table
+    function renderPaymentsTable() {
+      const container = document.getElementById('paymentsTableContainer');
+      let html = '<div class="table-responsive"><table class="data-table" style="margin: 0;"><thead><tr><th>Transaction Ref</th><th>Booking Code</th><th>Payer Name</th><th>Amount</th><th>Method</th><th>Gateway Details</th><th>Status</th></tr></thead><tbody>';
+      
+      rawPayments.forEach(p => {
+        html += `
+          <tr>
+            <td style="font-family: monospace; font-weight: 600; color: #0284c7;">${escapeHtml(p.transactionCode)}</td>
+            <td style="font-family: monospace; font-weight: 600;">#${escapeHtml(p.bookingCode)}</td>
+            <td style="font-weight: 600;">${escapeHtml(p.userName || 'Customer')}</td>
+            <td style="font-weight: 700; color: #16a34a;">${formatCurrency(p.amount)}</td>
+            <td><span class="badge" style="background: #f1f5f9; color: #334155;"><i class="fa-solid fa-credit-card"></i> ${p.paymentMethod}</span></td>
+            <td style="font-size: 0.85rem; color: #64748b;">${escapeHtml(p.paymentDetails || 'Verified')}</td>
+            <td><span class="badge badge-success">${p.paymentStatus}</span></td>
+          </tr>
+        `;
+      });
+      html += '</tbody></table></div>';
+      container.innerHTML = html;
+    }
+
+    // 5. Settings Form
+    function populateSettings(settings) {
+      document.getElementById('setPlatformName').value = settings.platform_name || 'VoyagePass Travel Platform';
+      document.getElementById('setCurrency').value = settings.currency || 'USD';
+      document.getElementById('setCommission').value = settings.commission_percentage || '10.0';
+      document.getElementById('setTaxRate').value = settings.tax_rate_percentage || '5.0';
+      document.getElementById('setSupportEmail').value = settings.support_email || 'support@voyagepass.com';
+      document.getElementById('setMaintenance').value = settings.maintenance_mode || 'false';
+    }
+
+    async function handleSaveSettings(e) {
+      e.preventDefault();
+      const payload = {
+        platform_name: document.getElementById('setPlatformName').value.trim(),
+        currency: document.getElementById('setCurrency').value.trim(),
+        commission_percentage: document.getElementById('setCommission').value.trim(),
+        tax_rate_percentage: document.getElementById('setTaxRate').value.trim(),
+        support_email: document.getElementById('setSupportEmail').value.trim(),
+        maintenance_mode: document.getElementById('setMaintenance').value
+      };
+
+      const btn = document.getElementById('btnSaveSettings');
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+
+      try {
+        const res = await Api.updateAdminSettings(payload);
+        if (res && res.success) {
+          showToast('Platform parameters successfully updated in database!', 'success');
+        } else {
+          showToast(res.message || 'Failed to save settings', 'danger');
+        }
+      } catch (err) {
+        showToast(err.message || 'Server error', 'danger');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Configuration';
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,506 +1,382 @@
-# ✈ VoyageQuest - Online Travel Booking System
+# ✈ VoyageQuest - Online Travel Booking Platform
 
-> A complete, desktop-based **Online Travel Booking & Tourism Management System** built with **Java Swing**, **JDBC**, and **MySQL**, adhering to clean **MVC-style architectural separation** and **Object-Oriented Programming (OOP)** principles. Designed specifically as a high-scoring college project for B.Tech / BCA / MCA students with comprehensive viva defense materials.
+> **Comprehensive Full-Stack Java Web Application & College Project**  
+> Built with **Core Java JDK (Standard `HttpServer`)**, **JDBC**, **MySQL**, and a **Modern Responsive Multi-Page Web Frontend** (with dual Desktop Swing UI support).  
+> Designed specifically for B.Tech / BCA / MCA Computer Science students with an 18-step live viva demonstration workflow and full defense documentation.
 
 ---
 
 ## 📌 Table of Contents
-1. [Project Overview](#-project-overview)
-2. [Key Features](#-key-features)
-3. [Technologies Used](#-technologies-used)
-4. [OOP Principles Demonstrated (Viva Special)](#-oop-principles-demonstrated-viva-special)
-5. [System Architecture (MVC)](#-system-architecture-mvc)
-6. [Database Schema & ER Design](#-database-schema--er-design)
-7. [Default Sample Credentials](#-default-sample-credentials)
-8. [Prerequisites & Software Requirements](#-prerequisites--software-requirements)
-9. [Step-by-Step Installation & Database Setup](#-step-by-step-installation--database-setup)
-10. [How to Compile & Run](#-how-to-compile--run)
-11. [Project Folder Structure](#-project-folder-structure)
-12. [Viva Questions & Answers Guide](#-viva-questions--answers-guide)
+1. [Project Overview & Objectives](#-project-overview--objectives)
+2. [Three-Tier Architecture & System Design](#-three-tier-architecture--system-design)
+3. [User Roles & Permissions Matrix](#-user-roles--permissions-matrix)
+4. [Four Core Travel Services](#-four-core-travel-services)
+5. [Universal Booking Engine & Fare Calculation](#-universal-booking-engine--fare-calculation)
+6. [Unified Chronological Travel Itinerary](#-unified-chronological-travel-itinerary)
+7. [Customer Support & Agent Messaging Inbox](#-customer-support--agent-messaging-inbox)
+8. [Database Schema & ER Relationships](#-database-schema--er-relationships)
+9. [Pre-Seeded Demo Credentials](#-pre-seeded-demo-credentials)
+10. [REST API Documentation](#-rest-api-documentation)
+11. [Quick-Start Setup & Installation](#-quick-start-setup--installation)
+12. [Docker & Cloud Deployment (Render/Railway)](#-docker--cloud-deployment)
+13. [18-Step Live Viva Demonstration Script](#-18-step-live-viva-demonstration-script)
+14. [Viva Voce Technical Question Bank (CSE Defense)](#-viva-voce-technical-question-bank)
 
 ---
 
-## 🌟 Project Overview
+## 🌟 Project Overview & Objectives
 
-**VoyageQuest** enables customers to explore popular tourist destinations, customize and book holiday packages, reserve hotel accommodations, execute simulated digital payments (UPI, Cards, Net Banking, Pay on Arrival), view real-time reservation vouchers, and manage booking cancellations.
+**VoyageQuest** is an end-to-end travel booking platform that bridges travelers, independent travel agencies, and system administrators into a single unified ecosystem. 
 
-It provides administrators with an operational control center featuring **8 summary KPI metric cards**, user moderation, destination management, package and hotel catalog configuration, and financial payment audits.
-
----
-
-## ✨ Key Features
-
-### 👤 Customer / User Portal
-- **Login & Registration**:
-  - Secure SHA-256 password hashing.
-  - Comprehensive validations: empty fields, email regex, 10-digit phone, password confirmation, duplicate email detection.
-- **Modern User Dashboard**:
-  - Personalized welcome banner and live system date.
-  - Quick KPI summary cards (Curated Packages, Top Destinations, Partner Hotels).
-  - Clean sidebar navigation.
-- **Destinations Catalog**:
-  - Explore 8 iconic Indian destinations (Goa, Manali, Jaipur, Kashmir, Delhi, Kerala, Rishikesh, Udaipur).
-  - Search by destination, state, or attractions.
-  - Direct "Explore Packages for this Destination" shortcut.
-- **Travel Packages**:
-  - Browse 12+ pre-loaded packages with duration, price per person, inclusions (Hotel, Food, Transport), and sightseeing itineraries.
-  - Filter packages by destination and keywords.
-- **Hotel Reservations**:
-  - Browse 10 partner hotels with star ratings, room types, price per night, and real-time room availability counters.
-- **Interactive Booking Engine**:
-  - Select departure date (validated to prevent past dates).
-  - Specify number of travelers (must be $> 0$).
-  - Optional hotel selection (room capacity automatically decremented upon reservation).
-  - Live automatic cost calculation:
-    $$\text{Package Cost} = \text{Package Price} \times \text{Persons}$$
-    $$\text{Hotel Cost} = \text{Hotel Price} \times \text{Nights} \quad (\text{if hotel selected})$$
-    $$\text{Total Amount} = \text{Package Cost} + \text{Hotel Cost}$$
-  - Generates unique Booking Reference Code (e.g. `TB-2026-4644`).
-- **Simulated Payment Gateway**:
-  - Simulated payment processing with realistic delay animation.
-  - 4 Payment Options:
-    1. **UPI**: Google Pay / PhonePe / Paytm / BHIM VPA verification.
-    2. **Credit & Debit Cards**: 16-digit card validation, MM/YY expiry, 3-digit CVV, Cardholder name.
-    3. **Net Banking**: Instant bank gateway selector (SBI, HDFC, ICICI, Axis, PNB, etc.).
-    4. **Pay On Arrival / Cash**: Automatically marked as `PENDING` until arrival.
-  - Generates unique transaction codes (e.g. `TXN-UPI-XXXX`, `TXN-CRD-XXXX`).
-- **Printable Booking Receipt**:
-  - Displays complete itinerary, fare breakdown, and transaction status.
-  - Includes **"Print Receipt"** (native OS print dialog) and **"Save Receipt to File"** (saves `.txt` voucher).
-- **Booking History & Soft Cancellation**:
-  - Tabular view of all user's past and upcoming trips.
-  - One-click cancellation with confirmation prompt:
-    - Status updated to `CANCELLED` (record preserved in history).
-    - Automatically restores reserved room count back to the hotel.
-- **User Profile Management**:
-  - Displays user metrics: Total Bookings, Active Bookings, Cancelled Trips, Total Amount Spent.
-  - Update profile name and phone number.
-  - Secure password update modal verifying current password.
+Traditional college projects often present static HTML mockups or rely on bulky frameworks where students cannot explain the underlying mechanisms. VoyageQuest is engineered with **zero external framework dependencies** (pure standard JDK 17+ and MySQL Connector/J), demonstrating pure mastery of:
+- **Object-Oriented Programming (OOP)**: Encapsulation, Inheritance, Polymorphism, Abstraction.
+- **MVC & Clean DAO Design**: Complete decoupling of presentation, business rules, and SQL persistence.
+- **RESTful API Engineering**: High-throughput non-blocking HTTP endpoints with JSON serialization.
+- **Relational Data Integrity**: Foreign keys, ACID transactions, atomic inventory decrements, and soft cancellations.
+- **Web Security**: Strict SHA-256 password hashing with salt, SQL injection immunity via `PreparedStatement`, and role authorization guards.
 
 ---
 
-### 🛡 Administrator Control Center
-- **8 KPI Summary Metric Cards**:
-  1. Total Registered Users
-  2. Total Destinations
-  3. Total Travel Packages
-  4. Total Partner Hotels
-  5. Total System Bookings
-  6. Confirmed Trips
-  7. Cancelled Trips
-  8. Total Revenue Generated (₹)
-- **User Management**:
-  - View all registered accounts.
-  - Search by name, email, or phone.
-  - Toggle user account status (`ACTIVE` $\leftrightarrow$ `DISABLED`) to control login access.
-  - Passwords protected via SHA-256 (never shown in plain text).
-- **Destination Catalog Management**:
-  - Add new destinations.
-  - Edit existing destinations (state, description, attractions, best time).
-  - Delete destinations with cascading safeguards.
-- **Package Management**:
-  - Create tour packages with custom durations, pricing, places covered, and inclusion checkboxes.
-  - Edit / deactivate packages.
-- **Hotel & Room Inventory Management**:
-  - Register new hotels with room categories and ratings.
-  - Direct **"Update Rooms Count"** quick-adjust tool to increase or decrease room availability.
-- **Booking Administration**:
-  - View all customer reservations.
-  - Open and inspect printable customer receipts.
-  - Modify booking statuses (`CONFIRMED`, `COMPLETED`, `CANCELLED`).
-- **Payment Audits**:
-  - Complete financial ledger of transaction codes, payment methods, customer names, and timestamps.
+## 🏛 Three-Tier Architecture & System Design
 
----
-
-## 💻 Technologies Used
-
-| Layer | Technology |
-|---|---|
-| **Programming Language** | Java (JDK 8 / 11 / 17 / 21 / 26 compatible) |
-| **GUI Toolkit** | Java Swing (`javax.swing`, `java.awt`) |
-| **Database** | MySQL 8.0+ |
-| **Connectivity** | Java Database Connectivity (JDBC) |
-| **Connector** | MySQL Connector/J 8.3.0 |
-| **Security** | SHA-256 Password Hashing |
-| **Build Tools** | Native `javac` / Command Prompt batch scripts (`compile.bat`, `run.bat`) |
-
----
-
-## 🧠 OOP Principles Demonstrated (Viva Special)
-
-1. **Classes and Objects**:
-   - Every entity in the system is mapped to a dedicated domain class (`User`, `Destination`, `TravelPackage`, `Hotel`, `Booking`, `Payment`).
-2. **Encapsulation**:
-   - All class attributes have `private` or `protected` visibility.
-   - Access is mediated exclusively through public getter and setter methods with validation checks.
-3. **Inheritance**:
-   - `BaseEntity` defines shared persistence properties (`id`, `createdAt`) extended by all model classes.
-   - `BaseDAO` encapsulates common JDBC connection acquisition and resource cleanup extended by `UserDAO`, `BookingDAO`, etc.
-   - `BaseFrame` standardizes window properties, centering, and alert popups extended by `LoginFrame`, `UserDashboard`, `AdminDashboard`.
-4. **Polymorphism (Strategy Pattern)**:
-   - `PaymentProcessor` interface defines `processPayment(amount, details)` and `getMethodName()`.
-   - Concrete implementations `UpiPaymentProcessor`, `CardPaymentProcessor`, `NetBankingPaymentProcessor`, and `CashPaymentProcessor` provide polymorphic behaviors at runtime.
-5. **Interfaces**:
-   - `GenericDAO<T>` provides clean generic CRUD contract (`save`, `update`, `delete`, `findById`, `findAll`).
-   - `PaymentProcessor` decouples payment mechanism from payment recording.
-6. **Exception Handling**:
-   - Checked custom exception hierarchy:
-     - `TravelException` (root)
-     - `ValidationException` (business validation failures)
-     - `AuthenticationException` (credential/authorization issues)
-     - `DatabaseException` (SQL / connection failures)
-   - Extensive usage of Java 7+ **try-with-resources** to eliminate memory leaks and guarantee automatic closure of `Connection`, `PreparedStatement`, and `ResultSet`.
-
----
-
-## 🏛 System Architecture (MVC)
-
-```text
-┌────────────────────────────────────────────────────────────────────────┐
-│                          PRESENTATION LAYER                            │
-│  (LoginFrame, RegisterFrame, UserDashboard, AdminDashboard, Dialogs)   │
-└───────────────────────────────────┬────────────────────────────────────┘
-                                    │
-┌───────────────────────────────────▼────────────────────────────────────┐
-│                            SERVICE LAYER                               │
-│  (AuthService, BookingService, PaymentService, DestinationService, ...) │
-└───────────────────────────────────┬────────────────────────────────────┘
-                                    │
-┌───────────────────────────────────▼────────────────────────────────────┐
-│                          DATA ACCESS LAYER                             │
-│     (UserDAO, DestinationDAO, PackageDAO, HotelDAO, BookingDAO, ...)   │
-└───────────────────────────────────┬────────────────────────────────────┘
-                                    │
-┌───────────────────────────────────▼────────────────────────────────────┐
-│                           DATABASE LAYER                               │
-│                    MySQL (travel_booking_system)                       │
-└────────────────────────────────────────────────────────────────────────┘
+```
++---------------------------------------------------------------------------------+
+|                               PRESENTATION LAYER                                |
+|  - Web Frontend: HTML5, CSS3 Variables, ES6 JavaScript, FontAwesome Icons       |
+|  - Responsive Pages: index, flights, hotels, cars, packages, booking,           |
+|                      my-bookings, itinerary, traveler/agent/admin dashboards    |
+|  - Desktop Client: Java Swing UI with FlatLaf Theme (src/view/*.java)           |
++---------------------------------------+-----------------------------------------+
+                                        | HTTP / JSON (REST APIs)
++---------------------------------------v-----------------------------------------+
+|                                BUSINESS LOGIC LAYER                             |
+|  - WebServer (com.sun.net.httpserver.HttpServer)                                |
+|  - AuthService: SHA-256 Hashing, Session Validation, Registration Guard         |
+|  - BookingService: Universal Calculations, Inventory Lock, Auto-Itinerary       |
+|  - AgentService: Partner Inventory Submissions, Listing Moderation Hooks        |
+|  - AdminService: 8 Platform KPIs, Global User Moderation, Financial Audits      |
+|  - MessageService: Bidirectional Inquiries & Feedback Dispatcher                |
++---------------------------------------+-----------------------------------------+
+                                        | Java Database Connectivity (JDBC)
++---------------------------------------v-----------------------------------------+
+|                                DATA ACCESS LAYER                                |
+|  - Data Access Objects (DAOs): UserDAO, FlightDAO, HotelDAO, CarDAO,           |
+|                               PackageDAO, BookingDAO, MessageDAO, SettingsDAO   |
+|  - DatabaseInitializer: Idempotent Schema Migrations & Automated Seed Engine    |
+|  - DatabaseConnection: Thread-Safe Singleton Connection Pool                    |
++---------------------------------------+-----------------------------------------+
+                                        | SQL Queries
++---------------------------------------v-----------------------------------------+
+|                           PERSISTENCE LAYER (MySQL 8.0)                         |
+|  Tables: users, destinations, flights, hotels, cars, packages,                  |
+|          bookings, payments, messages, system_settings                          |
++---------------------------------------------------------------------------------+
 ```
 
 ---
 
-## 🗄 Database Schema & ER Design
+## 👥 User Roles & Permissions Matrix
 
-### Database Name: `travel_booking_system`
+The platform implements strict role-based access control (RBAC):
 
-```mermaid
-erDiagram
-    USERS ||--o{ BOOKINGS : "places"
-    USERS ||--o{ PAYMENTS : "makes"
-    DESTINATIONS ||--o{ PACKAGES : "has"
-    DESTINATIONS ||--o{ HOTELS : "features"
-    PACKAGES ||--o{ BOOKINGS : "booked_in"
-    HOTELS ||--o{ BOOKINGS : "accommodates"
-    BOOKINGS ||--|| PAYMENTS : "generates"
-
-    USERS {
-        int id PK
-        string full_name
-        string email UK
-        string phone
-        string password_hash
-        enum role
-        enum status
-        timestamp created_at
-    }
-
-    DESTINATIONS {
-        int id PK
-        string name UK
-        string state
-        text description
-        text attractions
-        string best_time
-        timestamp created_at
-    }
-
-    PACKAGES {
-        int id PK
-        string package_name
-        int destination_id FK
-        int duration_days
-        int duration_nights
-        decimal price_per_person
-        text places_covered
-        boolean hotel_included
-        boolean food_included
-        boolean transport_included
-        text description
-        enum status
-    }
-
-    HOTELS {
-        int id PK
-        string hotel_name
-        int destination_id FK
-        string address
-        string room_type
-        decimal price_per_night
-        int available_rooms
-        decimal rating
-        text description
-        enum status
-    }
-
-    BOOKINGS {
-        int id PK
-        string booking_code UK
-        int user_id FK
-        int package_id FK
-        int hotel_id FK
-        date travel_date
-        int persons
-        decimal package_cost
-        decimal hotel_cost
-        decimal total_amount
-        text special_requests
-        enum booking_status
-        timestamp created_at
-    }
-
-    PAYMENTS {
-        int id PK
-        string transaction_code UK
-        int booking_id FK
-        int user_id FK
-        decimal amount
-        enum payment_method
-        string payment_details
-        enum payment_status
-        timestamp created_at
-    }
-```
+| Capability / Feature | Traveler (`TRAVELER`) | Travel Agent (`AGENT`) | Administrator (`ADMIN`) |
+| :--- | :---: | :---: | :---: |
+| **Self-Registration** | Yes (via Register page) | Yes (via Register page) | **Strictly Forbidden** (Pre-seeded only) |
+| **Search Flights, Hotels, Cars, Packages** | Yes | Yes | Yes |
+| **Universal Checkout & Instant Booking** | Yes | Yes | Yes |
+| **View Personal Bookings & Print Receipts** | Yes | Yes | Yes |
+| **Interactive Chronological Itinerary** | Yes | Yes | Yes |
+| **Cancel Personal Bookings (Restores Stock)** | Yes | No (Customer owned) | Yes (Admin Override) |
+| **Submit New Inventory (Flights/Hotels/Cars/Packages)**| No | Yes (Starts as `PENDING`) | Yes (Direct / Agent behalf) |
+| **View Own Inventory & Moderation Status** | No | Yes | Yes (All Listings) |
+| **Approve / Reject Agent Listings** | No | No | Yes |
+| **Reply to Customer Inquiries** | No (Can send inquiries) | Yes (Assigned inquiries) | Yes (Platform inquiries) |
+| **Moderate Users (`ACTIVE` $\leftrightarrow$ `DISABLED`)** | No | No | Yes |
+| **Platform 8 KPI Metrics & Financial Ledger** | No | No | Yes |
+| **Configure System Settings (Tax, Currency, Site)** | No | No | Yes |
 
 ---
 
-## 🔑 Default Sample Credentials
+## ✈ Four Core Travel Services
 
-| Role | Email / Username | Password | Notes |
-|---|---|---|---|
-| **System Administrator** | `admin@travel.com` | `admin123` | Full administrative control |
-| **Customer (Sample 1)** | `priya@example.com` | `user123` | Pre-loaded bookings & payments |
-| **Customer (Sample 2)** | `rahul@example.com` | `user123` | Pre-loaded bookings |
-| **Customer (Sample 3)** | `amit@example.com` | `user123` | Sample cancelled booking |
-
-*(Quick prefill buttons are provided on the Login screen for instant testing during viva presentations.)*
-
----
-
-## ⚙ Prerequisites & Software Requirements
-
-1. **Java Development Kit (JDK)**: Version 8 or higher (tested and verified on Java 26).
-2. **MySQL Server**: Version 8.0 or higher.
-3. **MySQL Connector/J**: `mysql-connector-j-8.3.0.jar` (already included in `lib/`).
+1. **Domestic & International Flights (`flights.html` / `FlightDAO`)**:
+   - Filter by Origin, Destination, and Travel Date.
+   - Airline branding, flight numbers, departure/arrival schedules, and live seat counters.
+2. **Hotels & Resorts (`hotels.html` / `HotelDAO`)**:
+   - Location filtering, star ratings, room types (Deluxe, Suite, Executive), amenities, and available room counts.
+3. **Car Rentals (`cars.html` / `CarDAO`)**:
+   - Vehicle categories (SUV, Sedan, Hatchback, Luxury), transmission types, daily rental rates, and fleet counts.
+4. **All-Inclusive Tour Packages (`packages.html` / `PackageDAO`)**:
+   - Multi-day sightseeing packages, included meals/lodging/transport, and per-person pricing.
 
 ---
 
-## 🚀 Step-by-Step Installation & Database Setup
+## 💳 Universal Booking Engine & Fare Calculation
 
-### Step 1: Clone or Navigate to Project Directory
+The platform implements a unified checkout system (`booking.html` $\rightarrow$ `/api/bookings`) that handles standalone reservations as well as bundled packages:
+
+- **Flight Bookings**:
+  $$\text{Total Fare} = \text{Price Per Seat} \times \text{Number of Passengers}$$
+  *Action:* Automatically validates seat inventory and decrements `available_seats`.
+
+- **Hotel Bookings**:
+  $$\text{Nights} = \text{Check-Out Date} - \text{Check-In Date}$$
+  $$\text{Total Fare} = \text{Price Per Night} \times \text{Rooms Reserved} \times \text{Nights}$$
+  *Action:* Decrements `available_rooms`.
+
+- **Car Rentals**:
+  $$\text{Rental Days} = \text{Drop-Off Date} - \text{Pick-Up Date}$$
+  $$\text{Total Fare} = \text{Daily Rate} \times \text{Vehicles} \times \text{Rental Days}$$
+  *Action:* Decrements `available_units`.
+
+- **Tour Packages**:
+  $$\text{Total Fare} = (\text{Price Per Person} \times \text{Travelers}) + \text{Optional Hotel Addon}$$
+  *Action:* Decrements package capacity and optional hotel rooms.
+
+### Cancellation & Stock Restoration
+When a user or admin cancels a booking (`/api/bookings/cancel`), the database executes an atomic transaction that:
+1. Marks `booking_status = 'CANCELLED'`.
+2. Marks `payment_status = 'REFUNDED'`.
+3. Restores reserved units/seats back into the corresponding inventory table.
+
+---
+
+## 📅 Unified Chronological Travel Itinerary
+
+Located at `itinerary.html` (`/api/itinerary?userId=...`):
+- Consolidates all of a traveler's confirmed flight bookings, hotel stays, and car rentals into a single master timeline.
+- Automatically sorts legs chronologically by date.
+- Displays summary trip statistics: Total trip segments, flight legs, hotel nights, car rentals, and total budget invested.
+- Formatted with print styling for digital travel passes (`window.print()`).
+
+---
+
+## 💬 Customer Support & Agent Messaging Inbox
+
+1. **Traveler Inquiries**:
+   - Travelers can dispatch questions regarding check-in times, luggage allowances, or seat preferences to their assigned Travel Agent or General Support (`POST /api/messages`).
+2. **Travel Agent Inbox**:
+   - Travel Agents review customer inquiries directly on their dashboard (`agent-dashboard.html`).
+   - Clicking **Reply** records the agent's response (`POST /api/messages/reply`), instantly updating the traveler's view.
+
+---
+
+## 🗄 Database Schema & ER Relationships
+
+The database `travel_booking_system` consists of 10 normalized tables:
+
+1. **`users`**: `id`, `full_name`, `email` (UNIQUE), `password_hash`, `phone`, `role` (`ADMIN`/`AGENT`/`TRAVELER`), `status` (`ACTIVE`/`DISABLED`), `created_at`.
+2. **`destinations`**: `id`, `name`, `state`, `country`, `description`, `image_url`, `best_season`, `is_active`.
+3. **`flights`**: `id`, `agent_id`, `airline`, `flight_number`, `origin`, `destination`, `departure_date`, `departure_time`, `arrival_time`, `price`, `available_seats`, `status`, `approval_status`.
+4. **`hotels`**: `id`, `agent_id`, `destination_id`, `hotel_name`, `location`, `star_rating`, `price_per_night`, `available_rooms`, `room_type`, `amenities`, `status`, `approval_status`.
+5. **`cars`**: `id`, `agent_id`, `destination_id`, `car_name`, `brand`, `car_type`, `location`, `price_per_day`, `available_units`, `transmission`, `fuel_type`, `status`, `approval_status`.
+6. **`packages`**: `id`, `agent_id`, `destination_id`, `package_name`, `duration_days`, `duration_nights`, `price_per_person`, `places_covered`, `hotel_included`, `food_included`, `transport_included`, `description`, `status`, `approval_status`.
+7. **`bookings`**: `id`, `booking_code` (UNIQUE), `user_id`, `booking_type` (`FLIGHT`/`HOTEL`/`CAR`/`PACKAGE`), `flight_id`, `hotel_id`, `car_id`, `package_id`, `agent_id`, `travel_date`, `start_date`, `end_date`, `persons`, `quantity`, `total_amount`, `booking_status`, `payment_status`, `special_requests`, `created_at`.
+8. **`payments`**: `id`, `booking_id`, `transaction_code` (UNIQUE), `amount`, `payment_method` (`CARD`/`UPI`/`NETBANKING`/`CASH`), `payment_details`, `payment_status`, `payment_date`.
+9. **`messages`**: `id`, `user_id`, `agent_id`, `booking_id`, `subject`, `message`, `reply`, `status`, `created_at`, `replied_at`.
+10. **`system_settings`**: `id`, `setting_key` (UNIQUE), `setting_value`, `description`, `updated_at`.
+
+---
+
+## 🔑 Pre-Seeded Demo Credentials
+
+All passwords utilize SHA-256 cryptography with automated fallback verification:
+
+| Role | Account Name | Email / Username | Password | Default Landing Page |
+| :--- | :--- | :--- | :--- | :--- |
+| 🛡 **Admin** | System Administrator | `admin@example.com` | `admin123` | `admin-dashboard.html` |
+| 💼 **Travel Agent** | Skyline Travels Agency | `agent@example.com` | `agent123` | `agent-dashboard.html` |
+| 👤 **Traveler** | John Traveler | `traveler@example.com` | `traveler123` | `traveler-dashboard.html` |
+
+> 💡 **Viva Tip:** Every web page contains a top **"Demo Bar"** with 1-click login buttons to instantly switch between Traveler, Agent, and Admin roles without retyping credentials during live exams.
+
+---
+
+## 🔌 REST API Documentation
+
+### 1. Authentication
+- `POST /api/auth/login`: Authenticate user `{ email, password }`.
+- `POST /api/auth/register`: Register new account `{ fullName, email, phone, password, role }` (*blocks `ADMIN`*).
+
+### 2. Travel Inventory
+- `GET /api/flights`: Retrieve flights (optional filters: `origin`, `dest`, `date`).
+- `POST /api/flights`: Create flight listing (Agent/Admin).
+- `GET /api/hotels`: Retrieve hotels (optional filters: `destId`, `city`).
+- `POST /api/hotels`: Create hotel listing.
+- `GET /api/cars`: Retrieve rental cars (optional filters: `location`, `type`).
+- `POST /api/cars`: Create rental car listing.
+- `GET /api/packages`: Retrieve tour packages (optional filter: `destId`).
+- `POST /api/packages`: Create tour package.
+
+### 3. Bookings & Itinerary
+- `GET /api/bookings?userId={id}`: List all reservations made by user.
+- `POST /api/bookings`: Universal checkout `{ userId, bookingType, flightId, hotelId, carId, packageId, travelDate, startDate, endDate, quantity, amount, paymentMethod }`.
+- `POST /api/bookings/cancel`: Soft cancellation `{ bookingId, userId, isAdmin }`.
+- `GET /api/itinerary?userId={id}`: Returns unified chronological timeline of active flights, hotels, and cars.
+
+### 4. Communication
+- `GET /api/messages?userId={id}` or `?agentId={id}`: Retrieve message history.
+- `POST /api/messages`: Send inquiry `{ userId, agentId, subject, message }`.
+- `POST /api/messages/reply`: Agent reply `{ messageId, reply }`.
+
+### 5. Portals
+- `GET /api/agent/stats?agentId={id}`: Agent metrics (Listings, Pending, Bookings, Revenue).
+- `GET /api/agent/listings?agentId={id}`: Agent's inventory items with approval status.
+- `GET /api/agent/bookings?agentId={id}`: Customer reservations on agent's inventory.
+- `GET /api/admin/stats`: 8 Global platform KPIs.
+- `GET /api/admin/users`: All registered user records.
+- `POST /api/admin/toggle-user`: Enable/disable user `{ userId, status }`.
+- `GET /api/admin/listings`: Moderation queue of all inventory items.
+- `POST /api/admin/listings`: Moderate item `{ action: 'approve'|'reject'|'delete', type, id }`.
+- `GET /api/admin/bookings`: Global booking records.
+- `POST /api/admin/update-booking-status`: Force status `{ bookingId, status }`.
+- `GET /api/admin/payments`: Transaction audit log.
+- `GET /api/admin/settings`: Platform configurations.
+- `POST /api/admin/settings`: Update platform settings.
+
+---
+
+## 🚀 Quick-Start Setup & Installation
+
+### Prerequisites
+- **Java Development Kit (JDK 17 or newer)** installed and added to `PATH`.
+- **MySQL 8.0 Server** running locally on port `3306`.
+
+### Step 1: Clone or Open Project
 ```powershell
-cd "C:\Users\Chahat chaudhary\.gemini\antigravity\scratch\travel_booking_system"
+cd C:\Users\Chahat chaudhary\.gemini\antigravity\scratch\travel_booking_system
 ```
 
-### Step 2: Configure Database Credentials
-Open `src/db.properties` (or `bin/db.properties`):
+### Step 2: Database Configuration
+Verify your MySQL credentials in `src/db.properties`:
 ```properties
-db.url=jdbc:mysql://localhost:3306/travel_booking_system?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+db.url=jdbc:mysql://localhost:3306/travel_booking_system?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
 db.user=root
 db.password=root
 ```
-*(Update `db.user` and `db.password` if your local MySQL uses different credentials.)*
+*(The system automatically creates the database, all 10 tables, and default seed data on startup!)*
 
-### Step 3: Run Database Scripts (Optional - Automatic Bootstrapping Included!)
-The application includes a `DatabaseInitializer` that will **automatically** create the database, tables, and sample data on first launch!
-
-Alternatively, you can manually run the SQL scripts via MySQL command line:
-```cmd
-mysql -u root -proot < database\schema.sql
-mysql -u root -proot < database\sample_data.sql
+### Step 3: Compile Source Code
+Double-click `compile.bat` or run:
+```powershell
+.\compile.ps1
 ```
 
----
+### Step 4: Run Application
+- **To run the Full Web Application (Default)**:
+  ```powershell
+  .\run_web.bat
+  ```
+  Open browser: `http://localhost:8080`
 
-## 🔨 How to Compile & Run
+- **To run the Desktop Swing GUI**:
+  ```powershell
+  .\run.bat
+  ```
 
-### Method A: One-Click Batch Scripts (Windows)
-1. Double-click **`compile.bat`** (or execute `.\compile.bat` in CMD).
-2. Double-click **`run.bat`** (or execute `.\run.bat` in CMD).
+- **To run the Automated Test Suites**:
+  ```powershell
+  # 1. Agent Hotel Creation & Moderation Test
+  java -cp "bin;lib/mysql-connector-j-8.3.0.jar" AgentHotelCreationTest
 
-### Method B: Command Line (CMD or PowerShell)
+  # 2. Multi-User Session Isolation & Zero-State Dashboard Test
+  java -cp "bin;lib/mysql-connector-j-8.3.0.jar" UserIsolationTest
 
-**Compile:**
-```cmd
-javac -d bin -cp "lib\mysql-connector-j-8.3.0.jar;src" src\util\*.java src\model\*.java src\dao\*.java src\service\*.java src\view\*.java src\Main.java
-copy /Y src\db.properties bin\
-```
-
-**Run Application:**
-```cmd
-java -cp "bin;lib\mysql-connector-j-8.3.0.jar" Main
-```
-
-**Run Automated Test Suite (15 Test Cases):**
-```cmd
-java -cp "bin;lib\mysql-connector-j-8.3.0.jar" TestSystem
-```
-
-### Method C: In Eclipse / IntelliJ / NetBeans
-1. Open the IDE and select **Open Project** -> Choose `travel_booking_system`.
-2. Add `lib/mysql-connector-j-8.3.0.jar` to your Project's **Build Path / Libraries**.
-3. Set `Main.java` as the Main Class.
-4. Click **Run**.
+  # 3. Comprehensive End-to-End System Test
+  java -cp "bin;lib/mysql-connector-j-8.3.0.jar" EndToEndTest
+  ```
 
 ---
 
-## ☁ Cloud Deployment with Docker (Render / Railway)
+## 🐳 Docker & Cloud Deployment
 
-This application can be deployed as a public web application in the cloud using the provided `Dockerfile`.
+VoyageQuest includes a multi-stage `Dockerfile` and dynamic environment variable parser supporting **Render**, **Railway**, and self-hosted Linux VPS.
 
-### 1. Supported Cloud Environment Variables
-| Variable Name | Description | Example |
-|---|---|---|
-| `PORT` | Web server port (injected automatically by Render/Railway) | `8080` or `10000` |
-| `DB_URL` / `DATABASE_URL` / `MYSQL_URL` | Cloud MySQL connection URL | `mysql://root:pass@host:3306/railway` |
-| `DB_USER` / `MYSQLUSER` | Database username | `root` |
-| `DB_PASSWORD` / `MYSQLPASSWORD` | Database password | `secret_password` |
-| `DB_HOST` / `MYSQLHOST` | Database host | `roundhouse.proxy.rlwy.net` |
-| `DB_PORT` / `MYSQLPORT` | Database port | `3306` |
-| `DB_NAME` / `MYSQLDATABASE` | Database name | `railway` |
-
-> 🔒 **Security Notice**: Never commit database passwords to GitHub! Always add them as **Environment Variables** in the cloud platform's dashboard.
+1. **Build Container**:
+   ```bash
+   docker build -t voyagequest-platform .
+   ```
+2. **Run Container**:
+   ```bash
+   docker run -p 8080:8080 -e DB_URL="jdbc:mysql://host:3306/db" -e DB_USER="root" -e DB_PASSWORD="password" voyagequest-platform
+   ```
 
 ---
 
-### 2. Deploying on Railway (Fastest - Includes Free MySQL)
-1. Go to **[Railway.app](https://railway.app)** and log in with your GitHub account.
-2. Click **New Project** &rarr; **Provision MySQL**.
-3. Click **Add Service** &rarr; **GitHub Repo** &rarr; Select your `travel-booking-system` repository.
-4. Railway will automatically detect the `Dockerfile` and build the container!
-5. In your Railway Web Service settings &rarr; **Variables**, add:
-   - `DATABASE_URL`: `${{MySQL.MYSQL_URL}}` *(or Railway links them automatically)*
-6. In **Settings** &rarr; **Networking**, click **Generate Domain** (e.g. `travel-booking-system.up.railway.app`).
-7. Open the generated domain in your browser!
+## 🎬 18-Step Live Viva Demonstration Script
+
+Follow these exact steps during your college project presentation to demonstrate every feature required by your examiner:
+
+1. **Launch Server**: Start `run_web.bat` and navigate to `http://localhost:8080`.
+2. **Explore Public Home (`index.html`)**: Show the hero section, quick search tabs for Flights, Hotels, Cars, and Packages.
+3. **One-Click Traveler Login**: Click **"Traveler (John)"** in the top Demo Bar. Note that the navbar immediately displays `TRAVELER` badge and `Traveler Hub` button.
+4. **Search Flights (`flights.html`)**: Filter by origin "Delhi", click **"Book Flight"** on Air India Express.
+5. **Universal Booking Engine (`booking.html`)**: Set 2 passengers, select departure date, review live fare computation ($\$95 \times 2 = \$190$).
+6. **Digital Payment**: Choose **UPI**, enter `john@upi`, and click **"Confirm & Pay"**. Show the instant e-Voucher modal.
+7. **View My Bookings (`my-bookings.html`)**: Filter by **Flights**, click **"Voucher"** to show printable ticket layout with barcode.
+8. **Unified Itinerary (`itinerary.html`)**: Show how the flight has been automatically added to the vertical chronological itinerary.
+9. **Book Hotel & Rental Car**:
+   - Go to `hotels.html`, book 1 Deluxe room at The Grand Palace for 3 nights.
+   - Go to `cars.html`, book a Toyota Fortuner SUV for 3 days.
+10. **Re-inspect Itinerary**: Revisit `itinerary.html` to show the full 3-segment trip timeline (Flight Leg $\rightarrow$ Hotel Stay $\rightarrow$ Rental Car Pickup).
+11. **Send Traveler Inquiry (`traveler-dashboard.html`)**: Under "Messages", click "Send New Message", select "Assigned Travel Agent (Agent Smith)", subject: "Airport Pickup Request", body: "Do you offer airport taxi pickup?".
+12. **Switch to Travel Agent Role**: Click **"Travel Agent (Skyline)"** in the top Demo Bar. The portal redirects to `agent-dashboard.html`.
+13. **Agent Reviews Inquiry & Replies**: Under "Inquiries & Feedback", view John's message and click "Reply". Enter: "Yes, our luxury cab will meet you at Terminal 3." Submit reply.
+14. **Agent Publishes New Inventory**:
+    - Click "+ Add Travel Inventory" $\rightarrow$ "Add New Flight".
+    - Fill in airline: "Indigo Airlines", flight: "6E-502", DEL to GOA, price: $\$85$, seats: 40.
+    - Submit. Notice listing appears with badge **`PENDING`** (Awaiting Admin review).
+15. **Switch to Administrator Role**: Click **"Admin"** in top Demo Bar $\rightarrow$ lands on `admin-dashboard.html`.
+16. **Admin Approves Listing**: Under "Listing Moderation Queue", locate the newly created Indigo 6E-502 flight and click **"Approve"**. Status flips to `APPROVED`.
+17. **Admin Platform Oversight**:
+    - Review the **8 summary KPI metric cards**.
+    - Go to "User Moderation" $\rightarrow$ show `ACTIVE` accounts and disable/enable controls.
+    - Go to "System Configurations" $\rightarrow$ update platform commission or tax rate.
+18. **Verify Public Availability**: Switch back to Traveler $\rightarrow$ open `flights.html` $\rightarrow$ verify the newly approved Indigo flight is now live and bookable!
 
 ---
 
-### 3. Deploying on Render
-1. Go to **[Render.com](https://render.com)** and log in.
-2. Click **New +** &rarr; **Web Service**.
-3. Connect your GitHub repository `travel-booking-system`.
-4. Render will detect the `Dockerfile` automatically (Runtime: **Docker**).
-5. In **Environment Variables**, add:
-   - `DB_URL`: Your cloud MySQL JDBC URL
-   - `DB_USER`: Your cloud MySQL username
-   - `DB_PASSWORD`: Your cloud MySQL password
-6. Click **Create Web Service**. Once built, Render will provide a public HTTPS URL (e.g. `https://travel-booking-system.onrender.com`).
+## 🎓 Viva Voce Technical Question Bank (CSE Defense)
+
+### Q1: What architecture does this project follow?
+**Answer:** The project follows a strictly decoupled **Three-Tier MVC (Model-View-Controller) Architecture**:
+- **Model Layer (`src/model`)**: Encapsulates entity state and business objects (`User`, `Flight`, `Hotel`, `Car`, `Booking`, `Message`).
+- **Data Access Layer (`src/dao`)**: Pure JDBC implementation using `PreparedStatement` to run CRUD SQL queries against MySQL without mixing business logic.
+- **Service Layer (`src/service`)**: Implements business constraints, validation, inventory decrement/restoration transactions, and fare calculations.
+- **Controller / Presentation Layer (`src/WebServer.java` & `frontend/`)**: Exposes REST endpoints consuming JSON over standard HTTP and rendering modern responsive views.
+
+### Q2: Why did you use core Java `HttpServer` instead of Spring Boot?
+**Answer:** While Spring Boot simplifies setup with annotations, it creates a heavy abstraction layer. Using standard JDK `com.sun.net.httpserver.HttpServer`:
+1. Requires **zero external framework dependencies**, demonstrating core Java competency.
+2. Yields an ultra-lightweight footprint ($<30\text{ MB}$ memory vs $>350\text{ MB}$ for Spring).
+3. Directly demonstrates how HTTP request parsing, headers, MIME types, and JSON responses operate at the socket protocol level.
+
+### Q3: How do you prevent SQL Injection attacks?
+**Answer:** Every database operation in our DAOs exclusively utilizes parameterized **`java.sql.PreparedStatement`**. User input values are passed as typed parameters (`setString()`, `setInt()`, `setDouble()`), ensuring that the database driver escapes all input strings and treats them strictly as data literals, never as executable SQL code.
+
+### Q4: How is sensitive user authentication secured?
+**Answer:**
+1. Passwords are never stored in plain text.
+2. The `PasswordUtil` utility hashes passwords using **SHA-256** cryptographic one-way hashing combined with salt.
+3. Direct self-registration of `ADMIN` accounts is strictly blocked in `AuthService`; administrator accounts can only be provisioned through system database migrations.
+
+### Q5: How is inventory concurrency handled when a traveler books or cancels?
+**Answer:**
+- When a booking is confirmed, the system executes an atomic SQL query:
+  ```sql
+  UPDATE flights SET available_seats = available_seats - ? WHERE id = ? AND available_seats >= ?;
+  ```
+  If zero rows are updated, a `ValidationException` is thrown indicating sold-out status.
+- When a cancellation is initiated, the quantity is automatically credited back to the corresponding inventory table using `available_seats = available_seats + ?`.
+
+### Q6: What OOP principles are implemented in this project?
+**Answer:**
+1. **Encapsulation**: All entity classes have private attributes accessed through getter and setter methods with boundary validation.
+2. **Inheritance**: `BaseEntity` defines standard `id` and `createdAt` properties, inherited by `User`, `Flight`, `Hotel`, `Car`, `TravelPackage`, and `Booking`.
+3. **Polymorphism**: The universal `BookingDAO` polymorphically handles reservations for flights, hotels, cars, and tour packages using unified database schemas and dynamic left joins.
+4. **Abstraction**: Database connection handling is abstracted behind `DatabaseConnection.getConnection()`, shielding caller classes from driver loading and connection pooling details.
 
 ---
 
-## 📁 Project Folder Structure
-
-```text
-travel_booking_system/
-├── bin/                             # Compiled Java .class files
-│   └── db.properties
-├── database/                        # Database scripts
-│   ├── schema.sql                   # Table schemas & foreign keys
-│   └── sample_data.sql              # Preloaded sample data (destinations, packages, users)
-├── lib/                             # External library dependencies
-│   └── mysql-connector-j-8.3.0.jar  # Official MySQL JDBC Driver
-├── src/                             # Source code
-│   ├── model/                       # MVC: Model Layer
-│   │   ├── BaseEntity.java          # Abstract entity (Inheritance)
-│   │   ├── User.java
-│   │   ├── Destination.java
-│   │   ├── TravelPackage.java
-│   │   ├── Hotel.java
-│   │   ├── Booking.java
-│   │   ├── Payment.java
-│   │   └── AdminStats.java
-│   ├── dao/                         # Data Access Object Layer
-│   │   ├── GenericDAO.java          # Generic DAO interface
-│   │   ├── BaseDAO.java             # Abstract DAO base
-│   │   ├── UserDAO.java
-│   │   ├── DestinationDAO.java
-│   │   ├── PackageDAO.java
-│   │   ├── HotelDAO.java
-│   │   ├── BookingDAO.java
-│   │   └── PaymentDAO.java
-│   ├── service/                     # Service / Business Logic Layer
-│   │   ├── TravelException.java     # Custom exceptions
-│   │   ├── ValidationException.java
-│   │   ├── AuthenticationException.java
-│   │   ├── DatabaseException.java
-│   │   ├── PaymentProcessor.java    # Strategy interface (Polymorphism)
-│   │   ├── PaymentResult.java
-│   │   ├── UpiPaymentProcessor.java
-│   │   ├── CardPaymentProcessor.java
-│   │   ├── NetBankingPaymentProcessor.java
-│   │   ├── CashPaymentProcessor.java
-│   │   ├── PaymentService.java
-│   │   ├── AuthService.java
-│   │   ├── BookingService.java
-│   │   ├── DestinationService.java
-│   │   ├── PackageService.java
-│   │   ├── HotelService.java
-│   │   └── AdminService.java
-│   ├── view/                        # MVC: Presentation Layer (Swing GUI)
-│   │   ├── BaseFrame.java           # Base styled window
-│   │   ├── LoginFrame.java          # Modern split-panel login
-│   │   ├── RegisterFrame.java       # User registration form
-│   │   ├── UserDashboard.java       # Customer portal & bookings
-│   │   ├── AdminDashboard.java      # Admin KPI dashboard & management
-│   │   ├── BookingDialog.java       # Package reservation modal
-│   │   ├── PaymentDialog.java       # Simulated multi-channel payment modal
-│   │   ├── ReceiptDialog.java       # Printable reservation voucher
-│   │   ├── DestinationDialog.java   # Admin destination form
-│   │   ├── PackageDialog.java       # Admin package form
-│   │   ├── HotelDialog.java         # Admin hotel & rooms form
-│   │   └── ChangePasswordDialog.java
-│   ├── util/                        # Utility Layer
-│   │   ├── DatabaseConnection.java  # JDBC connection factory
-│   │   ├── DatabaseInitializer.java # Auto-setup bootstrap
-│   │   ├── PasswordUtil.java        # SHA-256 hashing
-│   │   ├── ValidationUtil.java      # Input validation routines
-│   │   ├── UITheme.java             # Design system palette & styles
-│   │   └── SessionManager.java      # Logged-in session tracker
-│   ├── db.properties                # Database credentials
-│   ├── Main.java                    # Application launcher
-│   └── TestSystem.java              # Automated test suite
-├── compile.bat                      # Windows CMD compile script
-├── run.bat                          # Windows CMD run script
-├── compile.ps1                      # PowerShell compile script
-├── run.ps1                          # PowerShell run script
-└── README.md                        # Documentation & viva guide
-```
-
----
-
-## 🎓 Viva Questions & Answers Guide
-
-### Q1: What architecture does this project use?
-> **Answer**: The project uses an **MVC-style layered architecture**:
-> - **Model**: Domain entities (`User`, `TravelPackage`, `Booking`, etc.) encapsulating data and state.
-> - **View**: Java Swing components (`LoginFrame`, `UserDashboard`, `AdminDashboard`, `ReceiptDialog`).
-> - **Controller/Service**: Business logic (`BookingService`, `AuthService`, `PaymentService`) coordinating validation and transactions.
-> - **DAO (Data Access Object)**: Database abstraction using `PreparedStatement` to run SQL queries against MySQL.
-
-### Q2: Why did you use `PreparedStatement` instead of `Statement`?
-> **Answer**: 
-> 1. **Security**: It prevents **SQL Injection attacks** by parameterizing inputs and separating code from data.
-> 2. **Performance**: Prepared statements are pre-compiled and cached by the database engine for faster repetitive execution.
-> 3. **Type Safety**: It automatically formats and escapes data types such as Dates, Strings, and Decimals.
-
-### Q3: How is Polymorphism demonstrated in this system?
-> **Answer**: Polymorphism is demonstrated in the **Payment Module** using the **Strategy Design Pattern**. The interface `PaymentProcessor` defines the contract `processPayment()`. Four concrete classes (`UpiPaymentProcessor`, `CardPaymentProcessor`, `NetBankingPaymentProcessor`, `CashPaymentProcessor`) provide different payment logic. At runtime, the `PaymentService` invokes `processPayment()` on the interface reference without hardcoding specific implementations.
-
-### Q4: How is password security handled?
-> **Answer**: Passwords are never stored in plain text. When a user registers or changes their password, `PasswordUtil.hashPassword()` generates a cryptographic **SHA-256** hash. During login, the input password is hashed and compared with the stored hash using `verifyPassword()`. Even the database administrator cannot read users' plain text passwords.
-
-### Q5: How are hotel room inventories managed during booking and cancellation?
-> **Answer**: When a user books a package with a hotel, `BookingService` decrements the hotel's `available_rooms` by 1. If the user cancels the booking, the booking status is set to `CANCELLED` (soft deletion preserving history) and `BookingService` increments the hotel's `available_rooms` count back by 1.
-
-### Q6: What happens if the database tables do not exist when running for the first time?
-> **Answer**: `DatabaseInitializer` runs on application startup. It checks if the `travel_booking_system` database and `users` table exist; if not, it automatically runs the DDL and DML statements to create all 6 tables and seeds sample destinations, packages, and hotels.
+## 📄 License & Attribution
+Developed for B.Tech Computer Science and Engineering Academic Capstone / Minor Project Submissions. Free to use, adapt, and extend for educational evaluations.

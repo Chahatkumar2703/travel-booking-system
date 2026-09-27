@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hotels - VoyageQuest Online Travel Booking Platform</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- Demo Bar -->
+  <div class="demo-bar">
+    <span>🎓 <b>College Project Demo Mode:</b> <span id="demoUserText">Not logged in</span></span>
+    <div>
+      <span>Quick Switch:</span>
+      <button onclick="Auth.quickDemoLogin('traveler')">Traveler (John)</button>
+      <button onclick="Auth.quickDemoLogin('agent')">Travel Agent (Skyline)</button>
+      <button onclick="Auth.quickDemoLogin('admin')">Admin</button>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-brand">✈ Voyage<span>Quest</span></a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="flights.html">Flights</a></li>
+        <li><a href="hotels.html" class="active">Hotels</a></li>
+        <li><a href="cars.html">Rental Cars</a></li>
+        <li><a href="packages.html">Packages</a></li>
+        <li><a href="my-bookings.html">My Bookings</a></li>
+        <li><a href="itinerary.html">Itinerary</a></li>
+      </ul>
+      <div class="nav-auth" id="navAuth"></div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="section-header">
+      <div>
+        <h1 class="section-title">🏨 Partner Hotels & Accommodations</h1>
+        <p class="section-subtitle">Reserve certified hotel suites, beach resorts, and alpine retreats.</p>
+      </div>
+    </div>
+
+    <!-- Search Filters Card -->
+    <div class="search-widget" style="margin: 0 0 35px 0;">
+      <div class="search-fields-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) 110px;">
+        <div class="form-group" style="margin:0;">
+          <label>City / Location</label>
+          <input type="text" id="hotelLocationInput" class="form-control" placeholder="e.g. Goa, Manali, Jaipur" />
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label>Minimum Star Rating</label>
+          <select id="ratingSelect" class="form-control">
+            <option value="">Any Rating</option>
+            <option value="4.5">⭐ 4.5+ (Luxury)</option>
+            <option value="4.0">⭐ 4.0+ (Superior)</option>
+            <option value="3.5">⭐ 3.5+ (Comfort)</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label>Max Price / Night (₹)</label>
+          <input type="number" id="maxPriceInput" class="form-control" placeholder="Any" />
+        </div>
+        <button class="btn btn-primary btn-block" onclick="loadHotels()">Filter</button>
+      </div>
+    </div>
+
+    <!-- Hotel Results Grid -->
+    <div class="grid" id="hotelsList">
+      <p style="color:var(--text-muted);">Searching hotels...</p>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-bottom">
+      <p>&copy; 2026 VoyageQuest Online Travel Booking Platform. (College Demonstration Project)</p>
+    </div>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    async function loadHotels() {
+      const location = document.getElementById('hotelLocationInput').value.trim();
+      const rating = document.getElementById('ratingSelect').value;
+      const maxPrice = document.getElementById('maxPriceInput').value.trim();
+
+      const container = document.getElementById('hotelsList');
+      container.innerHTML = '<p style="color:var(--text-muted);">Loading hotels...</p>';
+
+      try {
+        const hotels = await API.getHotels({ location, rating, maxPrice });
+        if (!hotels || hotels.length === 0) {
+          container.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:50px; background:#fff; border-radius:12px; border:1px dashed var(--border);"><p style="font-size:1.1rem; color:var(--text-muted);">No hotels match your filters.</p></div>';
+          return;
+        }
+
+        container.innerHTML = hotels.map(h => `
+          <div class="card">
+            <img src="${getHotelImageUrl(h)}"
+                 class="card-img" alt="${escapeHtml(h.hotelName)}" onerror="handleImageError(this, 'hotel')" />
+            <div class="card-body">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span class="badge badge-warning">⭐ ${h.rating} / 5.0</span>
+                <span class="badge badge-primary">${h.roomType}</span>
+              </div>
+              <h3 class="card-title">${h.hotelName}</h3>
+              <p class="card-desc">${h.description}</p>
+              <div class="card-meta">
+                <span>📍 Location: <b>${h.location || h.address}</b></span>
+                <span>🏨 Rooms Available: <b>${h.availableRooms}</b></span>
+                <span>🏢 Host Agency: <b>${h.agentName || 'Verified Partner'}</b></span>
+              </div>
+              <div class="card-footer">
+                <div class="price-tag">${formatCurrency(h.pricePerNight)} <small>/ night</small></div>
+                <a href="booking.html?type=hotel&id=${h.id}" class="btn btn-sm btn-primary">Book Room</a>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      } catch (err) {
+        container.innerHTML = '<p style="color:var(--danger);">Error loading hotels: ' + err.message + '</p>';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const loc = getQueryParam('location');
+      const maxP = getQueryParam('maxPrice');
+      if (loc) document.getElementById('hotelLocationInput').value = loc;
+      if (maxP) document.getElementById('maxPriceInput').value = maxP;
+
+      loadHotels();
+    });
+  </script>
+</body>
+</html>

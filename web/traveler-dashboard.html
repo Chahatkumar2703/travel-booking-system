@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Traveler Dashboard - Online Travel Booking Platform</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .welcome-card {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      color: white;
+      padding: 32px;
+      border-radius: 16px;
+      margin-bottom: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .quick-service-pills {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+    .service-pill-btn {
+      background: rgba(255,255,255,0.18);
+      color: white;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+    .service-pill-btn:hover {
+      background: white;
+      color: #0284c7;
+    }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+    .kpi-stat-card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 22px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    }
+    .kpi-icon-box {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+    }
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 900px) {
+      .dashboard-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header id="main-header" class="site-header"></header>
+
+  <main class="page-container" style="max-width: 1200px; margin: 36px auto; padding: 0 20px;">
+    
+    <!-- Welcome Header -->
+    <div class="welcome-card">
+      <div>
+        <span style="background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; text-transform: uppercase;">
+          <i class="fa-solid fa-compass"></i> Traveler Hub
+        </span>
+        <h1 style="margin: 12px 0 6px 0; font-size: 2rem; font-weight: 800;" id="welcomeName">Welcome back!</h1>
+        <p style="margin: 0; opacity: 0.9; font-size: 0.95rem;">
+          Track your reservations, view real-time trip itineraries, and connect with your travel agent.
+        </p>
+
+        <div class="quick-service-pills">
+          <a href="flights.html" class="service-pill-btn"><i class="fa-solid fa-plane"></i> Book Flight</a>
+          <a href="hotels.html" class="service-pill-btn"><i class="fa-solid fa-hotel"></i> Book Hotel</a>
+          <a href="cars.html" class="service-pill-btn"><i class="fa-solid fa-car"></i> Rent Car</a>
+          <a href="packages.html" class="service-pill-btn"><i class="fa-solid fa-suitcase-rolling"></i> Tour Packages</a>
+        </div>
+      </div>
+
+      <div>
+        <a href="itinerary.html" class="btn" style="background: white; color: #0369a1; font-weight: 700; border-radius: 8px; padding: 12px 20px; display: inline-flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-route"></i> View Itinerary
+        </a>
+      </div>
+    </div>
+
+    <!-- KPI Metric Cards -->
+    <div class="kpi-grid">
+      <div class="kpi-stat-card">
+        <div class="kpi-icon-box" style="background: #e0f2fe; color: #0284c7;">
+          <i class="fa-solid fa-receipt"></i>
+        </div>
+        <div>
+          <div style="font-size: 1.6rem; font-weight: 800; color: #0f172a;" id="statTotalBookings">0</div>
+          <div style="font-size: 0.85rem; color: #64748b; font-weight: 600;">Total Bookings</div>
+        </div>
+      </div>
+
+      <div class="kpi-stat-card">
+        <div class="kpi-icon-box" style="background: #dcfce7; color: #16a34a;">
+          <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <div>
+          <div style="font-size: 1.6rem; font-weight: 800; color: #0f172a;" id="statConfirmedTrips">0</div>
+          <div style="font-size: 0.85rem; color: #64748b; font-weight: 600;">Confirmed Bookings</div>
+        </div>
+      </div>
+
+      <div class="kpi-stat-card">
+        <div class="kpi-icon-box" style="background: #f3e8ff; color: #9333ea;">
+          <i class="fa-solid fa-wallet"></i>
+        </div>
+        <div>
+          <div style="font-size: 1.6rem; font-weight: 800; color: #0f172a;" id="statTotalSpent">$0</div>
+          <div style="font-size: 0.85rem; color: #64748b; font-weight: 600;">Total Investment</div>
+        </div>
+      </div>
+
+      <div class="kpi-stat-card">
+        <div class="kpi-icon-box" style="background: #ffedd5; color: #ea580c;">
+          <i class="fa-solid fa-comments"></i>
+        </div>
+        <div>
+          <div style="font-size: 1.6rem; font-weight: 800; color: #0f172a;" id="statMessages">0</div>
+          <div style="font-size: 0.85rem; color: #64748b; font-weight: 600;">Support Inquiries</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2-Column Section: Left (Recent Bookings), Right (Upcoming Trip & Support) -->
+    <div class="dashboard-layout">
+      
+      <!-- Recent Bookings Table / Card List -->
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h2 style="font-size: 1.35rem; font-weight: 700; margin: 0; color: #0f172a;">
+            <i class="fa-solid fa-clock-rotate-left text-primary"></i> Recent Reservations
+          </h2>
+          <a href="my-bookings.html" style="font-size: 0.88rem; font-weight: 600; color: #0284c7; text-decoration: none;">
+            View All Bookings <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+
+        <div id="recentBookingsContainer" style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
+          <div style="padding: 40px; text-align: center; color: #64748b;">
+            <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+            <p style="margin-top: 10px;">Loading reservations...</p>
+          </div>
+        </div>
+
+        <!-- Support Messages & Inquiries -->
+        <div style="margin-top: 32px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h2 style="font-size: 1.35rem; font-weight: 700; margin: 0; color: #0f172a;">
+              <i class="fa-solid fa-message text-primary"></i> Messages & Agent Inquiries
+            </h2>
+            <button onclick="openMessageModal()" class="btn btn-outline" style="font-size: 0.85rem; padding: 6px 14px; border-radius: 6px;">
+              <i class="fa-solid fa-paper-plane"></i> Send New Message
+            </button>
+          </div>
+
+          <div id="messagesContainer" style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.02); padding: 16px;">
+            <p style="text-align: center; color: #64748b; margin: 20px 0;">Loading communication history...</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Next Trip Highlight & Quick Support Form -->
+      <div>
+        
+        <!-- Next Trip Highlight Card -->
+        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 24px; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
+          <span style="font-size: 0.78rem; font-weight: 700; color: #0284c7; text-transform: uppercase; letter-spacing: 0.5px;">
+            <i class="fa-solid fa-suitcase"></i> Up Next
+          </span>
+          <h3 style="margin: 8px 0 12px 0; font-size: 1.15rem; color: #0f172a;">Upcoming Itinerary Stop</h3>
+          <div id="nextTripContent">
+            <p style="color: #64748b; font-size: 0.9rem;">Checking trip calendar...</p>
+          </div>
+        </div>
+
+        <!-- Quick Help / Viva Details Card -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px;">
+          <h4 style="margin: 0 0 10px 0; font-size: 1rem; color: #1e293b;">
+            <i class="fa-solid fa-circle-info text-primary"></i> Need Travel Assistance?
+          </h4>
+          <p style="font-size: 0.85rem; color: #64748b; line-height: 1.5; margin-bottom: 16px;">
+            Have questions about flight schedules, hotel check-in policies, or vehicle pick-up locations? Travel Agents and administrators are ready to reply.
+          </p>
+          <button onclick="openMessageModal()" class="btn btn-primary" style="width: 100%; border-radius: 8px; justify-content: center;">
+            <i class="fa-solid fa-envelope"></i> Contact Support / Agent
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Message Modal -->
+  <div id="messageModal" class="modal-backdrop" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+    <div style="background: white; border-radius: 16px; max-width: 500px; width: 90%; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
+      <div style="background: #0f172a; color: white; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="margin: 0; font-size: 1.2rem; font-weight: 700;">
+          <i class="fa-solid fa-paper-plane text-primary"></i> Send Message to Agent / Support
+        </h3>
+        <button onclick="closeMessageModal()" style="background: transparent; border: none; color: white; font-size: 1.25rem; cursor: pointer;">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="messageForm" onsubmit="handleSendMessage(event)" style="padding: 24px;">
+        <div style="margin-bottom: 16px;">
+          <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 6px;">Subject</label>
+          <input type="text" id="msgSubject" required placeholder="e.g. Flight Seat Preference or Hotel Check-in"
+                 style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem;">
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 6px;">Recipient Department / Agent</label>
+          <select id="msgAgentId" style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem;">
+            <option value="2">Assigned Travel Agent (Agent Smith)</option>
+            <option value="">General Support / Platform Admin</option>
+          </select>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 6px;">Message Inquiry</label>
+          <textarea id="msgBody" rows="4" required placeholder="Type your inquiry or feedback here..."
+                    style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; resize: vertical;"></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" class="btn btn-outline" onclick="closeMessageModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btnSubmitMessage">
+            <i class="fa-solid fa-paper-plane"></i> Send Inquiry
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer id="main-footer" class="site-footer"></footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    let currentUser = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      currentUser = Auth.getUser();
+      if (!currentUser) {
+        showToast('Please sign in to access your dashboard', 'warning');
+        setTimeout(() => window.location.href = 'login.html', 1000);
+        return;
+      }
+
+      // Check role
+      if (currentUser.role === 'ADMIN') {
+        window.location.href = 'admin-dashboard.html';
+        return;
+      } else if (currentUser.role === 'AGENT') {
+        window.location.href = 'agent-dashboard.html';
+        return;
+      }
+
+      document.getElementById('welcomeName').textContent = `Welcome back, ${currentUser.fullName || 'Traveler'}!`;
+
+      await loadDashboardData();
+    });
+
+    async function loadDashboardData() {
+      try {
+        const [bookings, messages, itinerary] = await Promise.all([
+          Api.getBookings({ userId: currentUser.id }),
+          Api.getMessages({ userId: currentUser.id }),
+          Api.getItinerary(currentUser.id)
+        ]);
+
+        const bookingList = Array.isArray(bookings) ? bookings : [];
+        const msgList = Array.isArray(messages) ? messages : [];
+        const segments = (itinerary && Array.isArray(itinerary.segments)) ? itinerary.segments : [];
+
+        // KPI calculations
+        const total = bookingList.length;
+        const confirmed = bookingList.filter(b => (b.bookingStatus || '').toUpperCase() === 'CONFIRMED').length;
+        const spent = bookingList.filter(b => (b.bookingStatus || '').toUpperCase() !== 'CANCELLED')
+                                 .reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+
+        document.getElementById('statTotalBookings').textContent = total;
+        document.getElementById('statConfirmedTrips').textContent = confirmed;
+        document.getElementById('statTotalSpent').textContent = formatCurrency(spent);
+        document.getElementById('statMessages').textContent = msgList.length;
+
+        // Render Recent Bookings
+        renderRecentBookings(bookingList);
+
+        // Render Next Trip
+        renderNextTrip(segments);
+
+        // Render Messages
+        renderMessages(msgList);
+
+      } catch (err) {
+        console.error('Error loading dashboard:', err);
+        showToast('Failed to load some dashboard metrics', 'danger');
+      }
+    }
+
+    function renderRecentBookings(bookings) {
+      const container = document.getElementById('recentBookingsContainer');
+      if (bookings.length === 0) {
+        container.innerHTML = `
+          <div style="padding: 40px; text-align: center; color: #64748b;">
+            <i class="fa-solid fa-calendar-xmark fa-2x" style="color: #cbd5e1; margin-bottom: 10px;"></i>
+            <p style="margin: 0 0 16px 0;">No travel reservations yet.</p>
+            <a href="index.html" class="btn btn-primary" style="font-size: 0.85rem; border-radius: 6px;">Start Exploring</a>
+          </div>
+        `;
+        return;
+      }
+
+      const recent = bookings.slice(0, 4);
+      let html = '<div class="table-responsive"><table class="data-table" style="margin: 0;"><thead><tr><th>Code</th><th>Service</th><th>Date</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody>';
+      
+      recent.forEach(b => {
+        const isCancelled = (b.bookingStatus || '').toUpperCase() === 'CANCELLED';
+        const dateDisplay = b.travelDate || b.startDate || 'Upcoming';
+        html += `
+          <tr>
+            <td style="font-family: monospace; font-weight: 600; color: #0284c7;">#${escapeHtml(b.bookingCode || 'BK-' + b.id)}</td>
+            <td style="font-weight: 600;">${escapeHtml(b.itemName || 'Booking')}</td>
+            <td>${dateDisplay}</td>
+            <td style="font-weight: 700;">${formatCurrency(b.totalAmount)}</td>
+            <td>
+              <span class="badge ${isCancelled ? 'badge-danger' : 'badge-success'}">
+                ${b.bookingStatus}
+              </span>
+            </td>
+            <td>
+              <a href="my-bookings.html" class="btn btn-outline" style="padding: 4px 10px; font-size: 0.78rem;">View</a>
+            </td>
+          </tr>
+        `;
+      });
+      html += '</tbody></table></div>';
+      container.innerHTML = html;
+    }
+
+    function renderNextTrip(segments) {
+      const container = document.getElementById('nextTripContent');
+      if (segments.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 20px 0; color: #64748b;">
+            <i class="fa-solid fa-route fa-2x" style="color: #cbd5e1; margin-bottom: 8px;"></i>
+            <p style="margin: 0; font-size: 0.88rem;">No scheduled trip stops yet.</p>
+          </div>
+        `;
+        return;
+      }
+
+      const next = segments[0];
+      const dateDisplay = next.travelDate || next.startDate || 'Scheduled Soon';
+      container.innerHTML = `
+        <div style="background: #f1f5f9; border-radius: 10px; padding: 16px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span class="badge badge-primary">${next.type}</span>
+            <span style="font-size: 0.8rem; font-weight: 600; color: #475569;">${dateDisplay}</span>
+          </div>
+          <h4 style="margin: 0 0 6px 0; font-size: 1.05rem; color: #0f172a;">${escapeHtml(next.title)}</h4>
+          <div style="font-size: 0.82rem; color: #64748b; margin-bottom: 12px;">Booking: #${escapeHtml(next.bookingCode)}</div>
+          <a href="itinerary.html" class="btn btn-outline" style="width: 100%; justify-content: center; font-size: 0.82rem; border-radius: 6px;">
+            Open Unified Itinerary
+          </a>
+        </div>
+      `;
+    }
+
+    function renderMessages(messages) {
+      const container = document.getElementById('messagesContainer');
+      if (messages.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 24px; color: #64748b;">
+            <p style="margin: 0 0 10px 0;">No active communications or inquiries yet.</p>
+            <button onclick="openMessageModal()" class="btn btn-outline" style="font-size: 0.82rem;">Ask a Question</button>
+          </div>
+        `;
+        return;
+      }
+
+      let html = '<div style="display: flex; flex-direction: column; gap: 12px;">';
+      messages.forEach(m => {
+        const hasReply = !!m.reply;
+        html += `
+          <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; background: ${hasReply ? '#f0fdf4' : '#ffffff'};">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+              <strong style="color: #0f172a; font-size: 0.95rem;">${escapeHtml(m.subject)}</strong>
+              <span class="badge ${hasReply ? 'badge-success' : 'badge-warning'}">
+                ${hasReply ? 'Answered' : 'Pending Reply'}
+              </span>
+            </div>
+            <p style="margin: 0 0 8px 0; font-size: 0.88rem; color: #334155;">${escapeHtml(m.message)}</p>
+            
+            ${hasReply ? `
+              <div style="margin-top: 8px; padding-top: 8px; border-top: 1px dashed #cbd5e1; font-size: 0.85rem; color: #166534;">
+                <i class="fa-solid fa-reply"></i> <strong>Agent Reply:</strong> ${escapeHtml(m.reply)}
+              </div>
+            ` : ''}
+
+            <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 6px;">
+              Sent to: ${escapeHtml(m.agentName || 'Support')} &bull; ${m.createdAt || 'Recent'}
+            </div>
+          </div>
+        `;
+      });
+      html += '</div>';
+      container.innerHTML = html;
+    }
+
+    function openMessageModal() {
+      document.getElementById('messageModal').style.display = 'flex';
+    }
+
+    function closeMessageModal() {
+      document.getElementById('messageModal').style.display = 'none';
+      document.getElementById('messageForm').reset();
+    }
+
+    async function handleSendMessage(e) {
+      e.preventDefault();
+      const subject = document.getElementById('msgSubject').value.trim();
+      const agentId = document.getElementById('msgAgentId').value;
+      const message = document.getElementById('msgBody').value.trim();
+
+      if (!subject || !message) {
+        showToast('Please fill out all required fields', 'warning');
+        return;
+      }
+
+      const btn = document.getElementById('btnSubmitMessage');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
+
+      try {
+        const payload = {
+          userId: currentUser.id,
+          subject: subject,
+          message: message
+        };
+        if (agentId) payload.agentId = agentId;
+
+        const res = await Api.sendMessage(payload);
+        if (res && res.success) {
+          showToast('Inquiry sent successfully! Your travel agent will reply shortly.', 'success');
+          closeMessageModal();
+          await loadDashboardData();
+        } else {
+          showToast(res.message || 'Failed to send message', 'danger');
+        }
+      } catch (err) {
+        showToast(err.message || 'Network error sending inquiry', 'danger');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send Inquiry';
+      }
+    }
+  </script>
+</body>
+</html>

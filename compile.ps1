@@ -5,7 +5,7 @@ if (!(Test-Path "bin")) {
     New-Item -ItemType Directory -Path "bin" | Out-Null
 }
 
-javac -d bin -cp "lib/mysql-connector-j-8.3.0.jar;src" src/util/*.java src/model/*.java src/dao/*.java src/service/*.java src/view/*.java src/Main.java
+javac -d bin -cp "lib/mysql-connector-j-8.3.0.jar;src" src/util/*.java src/model/*.java src/dao/*.java src/service/*.java src/view/*.java src/Main.java src/WebServer.java src/EndToEndTest.java src/UserIsolationTest.java src/AgentHotelCreationTest.java
 
 if ($LASTEXITCODE -eq 0) {
     Copy-Item "src/db.properties" -Destination "bin/" -Force

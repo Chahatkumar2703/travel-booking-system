@@ -6,12 +6,21 @@ package model;
 public class AdminStats {
 
     private int totalUsers;
+    private int totalTravelers;
+    private int totalAgents;
     private int totalDestinations;
     private int totalPackages;
     private int totalHotels;
+    private int totalFlights;
+    private int totalCars;
+    private int pendingApprovals;
     private int totalBookings;
     private int confirmedBookings;
     private int cancelledBookings;
+    private int flightBookings;
+    private int hotelBookings;
+    private int carBookings;
+    private int packageBookings;
     private double totalRevenue;
 
     public AdminStats() {
@@ -35,6 +44,22 @@ public class AdminStats {
 
     public void setTotalUsers(int totalUsers) {
         this.totalUsers = totalUsers;
+    }
+
+    public int getTotalTravelers() {
+        return totalTravelers;
+    }
+
+    public void setTotalTravelers(int totalTravelers) {
+        this.totalTravelers = totalTravelers;
+    }
+
+    public int getTotalAgents() {
+        return totalAgents;
+    }
+
+    public void setTotalAgents(int totalAgents) {
+        this.totalAgents = totalAgents;
     }
 
     public int getTotalDestinations() {
@@ -61,6 +86,30 @@ public class AdminStats {
         this.totalHotels = totalHotels;
     }
 
+    public int getTotalFlights() {
+        return totalFlights;
+    }
+
+    public void setTotalFlights(int totalFlights) {
+        this.totalFlights = totalFlights;
+    }
+
+    public int getTotalCars() {
+        return totalCars;
+    }
+
+    public void setTotalCars(int totalCars) {
+        this.totalCars = totalCars;
+    }
+
+    public int getPendingApprovals() {
+        return pendingApprovals;
+    }
+
+    public void setPendingApprovals(int pendingApprovals) {
+        this.pendingApprovals = pendingApprovals;
+    }
+
     public int getTotalBookings() {
         return totalBookings;
     }
@@ -83,6 +132,38 @@ public class AdminStats {
 
     public void setCancelledBookings(int cancelledBookings) {
         this.cancelledBookings = cancelledBookings;
+    }
+
+    public int getFlightBookings() {
+        return flightBookings;
+    }
+
+    public void setFlightBookings(int flightBookings) {
+        this.flightBookings = flightBookings;
+    }
+
+    public int getHotelBookings() {
+        return hotelBookings;
+    }
+
+    public void setHotelBookings(int hotelBookings) {
+        this.hotelBookings = hotelBookings;
+    }
+
+    public int getCarBookings() {
+        return carBookings;
+    }
+
+    public void setCarBookings(int carBookings) {
+        this.carBookings = carBookings;
+    }
+
+    public int getPackageBookings() {
+        return packageBookings;
+    }
+
+    public void setPackageBookings(int packageBookings) {
+        this.packageBookings = packageBookings;
     }
 
     public double getTotalRevenue() {

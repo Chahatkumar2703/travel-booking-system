@@ -49,10 +49,16 @@ public class AuthService {
     }
 
     /**
-     * Registers a new customer account.
+     * Registers a new customer or travel agent account.
      */
     public User register(String fullName, String email, String phone,
                          String password, String confirmPassword)
+            throws ValidationException, DatabaseException {
+        return register(fullName, email, phone, password, confirmPassword, "TRAVELER");
+    }
+
+    public User register(String fullName, String email, String phone,
+                         String password, String confirmPassword, String role)
             throws ValidationException, DatabaseException {
 
         // Validate empty fields
@@ -72,6 +78,14 @@ public class AuthService {
             throw new ValidationException("Passwords do not match.");
         }
 
+        // Security check: disallow registering as ADMIN
+        String targetRole = "TRAVELER";
+        if ("ADMIN".equalsIgnoreCase(role)) {
+            throw new ValidationException("Administrator accounts cannot be registered directly. Please contact system support.");
+        } else if ("AGENT".equalsIgnoreCase(role)) {
+            targetRole = "AGENT";
+        }
+
         try {
             // Duplicate email check
             User existing = userDAO.findByEmail(email.trim());
@@ -80,7 +94,7 @@ public class AuthService {
             }
 
             String passwordHash = PasswordUtil.hashPassword(password);
-            User newUser = new User(0, fullName.trim(), email.trim(), phone.trim(), passwordHash, "USER", "ACTIVE");
+            User newUser = new User(0, fullName.trim(), email.trim(), phone.trim(), passwordHash, targetRole, "ACTIVE");
             boolean created = userDAO.save(newUser);
 
             if (!created) {

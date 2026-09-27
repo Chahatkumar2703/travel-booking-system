@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Bookings - Online Travel Booking Platform</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .booking-filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 24px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .filter-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .filter-pill {
+      background: var(--card-bg, #ffffff);
+      border: 1px solid var(--border-color, #e2e8f0);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .filter-pill:hover, .filter-pill.active {
+      background: var(--primary, #0284c7);
+      color: #fff;
+      border-color: var(--primary, #0284c7);
+    }
+    .filter-pill .badge-count {
+      background: rgba(0,0,0,0.1);
+      padding: 2px 7px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+    }
+    .filter-pill.active .badge-count {
+      background: rgba(255,255,255,0.25);
+    }
+    .booking-card {
+      background: var(--card-bg, #ffffff);
+      border: 1px solid var(--border-color, #e2e8f0);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 20px;
+      align-items: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .booking-card:hover {
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+    }
+    .booking-type-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+    .type-FLIGHT { background: #e0f2fe; color: #0284c7; }
+    .type-HOTEL { background: #ffedd5; color: #ea580c; }
+    .type-CAR { background: #dcfce7; color: #16a34a; }
+    .type-PACKAGE { background: #f3e8ff; color: #9333ea; }
+    .booking-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 8px;
+      font-size: 0.88rem;
+      color: #64748b;
+    }
+    .booking-meta span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .voucher-modal-card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      max-width: 650px;
+      width: 90%;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+    .voucher-header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: white;
+      padding: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .voucher-body {
+      padding: 24px;
+    }
+    .voucher-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px dashed #e2e8f0;
+    }
+    @media (max-width: 768px) {
+      .booking-card {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .booking-card-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header id="main-header" class="site-header"></header>
+
+  <main class="page-container" style="max-width: 1200px; margin: 40px auto; padding: 0 20px;">
+    
+    <!-- Breadcrumb / Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 28px;">
+      <div>
+        <h1 style="font-size: 1.85rem; font-weight: 700; margin: 0 0 6px 0; color: #0f172a;">
+          <i class="fa-solid fa-receipt text-primary"></i> My Bookings & Reservations
+        </h1>
+        <p style="color: #64748b; margin: 0;">View, download vouchers, and manage your booked flights, hotels, cars, and tour packages.</p>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <a href="itinerary.html" class="btn btn-outline" style="border-radius: 8px;">
+          <i class="fa-solid fa-route"></i> View Travel Itinerary
+        </a>
+        <a href="index.html" class="btn btn-primary" style="border-radius: 8px;">
+          <i class="fa-solid fa-plus"></i> Book More Services
+        </a>
+      </div>
+    </div>
+
+    <!-- Filter & Search Bar -->
+    <div class="booking-filter-bar">
+      <div class="filter-pills">
+        <button class="filter-pill active" onclick="filterBookings('ALL')">
+          <i class="fa-solid fa-layer-group"></i> All Bookings <span id="count-ALL" class="badge-count">0</span>
+        </button>
+        <button class="filter-pill" onclick="filterBookings('FLIGHT')">
+          <i class="fa-solid fa-plane"></i> Flights <span id="count-FLIGHT" class="badge-count">0</span>
+        </button>
+        <button class="filter-pill" onclick="filterBookings('HOTEL')">
+          <i class="fa-solid fa-hotel"></i> Hotels <span id="count-HOTEL" class="badge-count">0</span>
+        </button>
+        <button class="filter-pill" onclick="filterBookings('CAR')">
+          <i class="fa-solid fa-car"></i> Cars <span id="count-CAR" class="badge-count">0</span>
+        </button>
+        <button class="filter-pill" onclick="filterBookings('PACKAGE')">
+          <i class="fa-solid fa-suitcase-rolling"></i> Packages <span id="count-PACKAGE" class="badge-count">0</span>
+        </button>
+      </div>
+
+      <div style="position: relative; min-width: 250px;">
+        <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 14px; top: 12px; color: #94a3b8;"></i>
+        <input type="text" id="searchInput" placeholder="Search by code or title..." oninput="handleSearch()"
+               style="width: 100%; padding: 10px 14px 10px 38px; border: 1px solid #cbd5e1; border-radius: 20px; font-size: 0.9rem;">
+      </div>
+    </div>
+
+    <!-- Bookings List Container -->
+    <div id="bookingsListContainer">
+      <div style="text-align: center; padding: 60px 0;">
+        <i class="fa-solid fa-circle-notch fa-spin fa-2x" style="color: var(--primary);"></i>
+        <p style="margin-top: 12px; color: #64748b;">Loading your reservations...</p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Voucher / Ticket Receipt Modal -->
+  <div id="voucherModal" class="modal-backdrop" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+    <div class="voucher-modal-card" id="printableVoucher">
+      <div class="voucher-header">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="background: rgba(255,255,255,0.2); width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+            <i class="fa-solid fa-ticket"></i>
+          </div>
+          <div>
+            <h3 style="margin: 0; font-size: 1.25rem; font-weight: 700;">VoyagePass Confirmation</h3>
+            <span style="font-size: 0.82rem; opacity: 0.85;">Official e-Voucher & Travel Receipt</span>
+          </div>
+        </div>
+        <button onclick="closeVoucherModal()" style="background: transparent; border: none; color: white; font-size: 1.25rem; cursor: pointer;">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="voucher-body" id="voucherBodyContent">
+        <!-- Injected via JavaScript -->
+      </div>
+
+      <div style="padding: 16px 24px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 0.8rem; color: #64748b;">
+          <i class="fa-solid fa-shield-check text-success"></i> Verified Booking & Payment Confirmed
+        </span>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn btn-outline" onclick="closeVoucherModal()">Close</button>
+          <button class="btn btn-primary" onclick="window.print()">
+            <i class="fa-solid fa-print"></i> Print Voucher
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer id="main-footer" class="site-footer"></footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    let allBookings = [];
+    let currentFilter = 'ALL';
+    let searchQuery = '';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Guard: User must be logged in
+      const user = Auth.getUser();
+      if (!user) {
+        showToast('Please sign in to view your bookings', 'warning');
+        setTimeout(() => window.location.href = 'login.html?redirect=my-bookings.html', 1000);
+        return;
+      }
+
+      await loadUserBookings(user.id);
+    });
+
+    async function loadUserBookings(userId) {
+      try {
+        const response = await Api.getBookings({ userId: userId });
+        allBookings = Array.isArray(response) ? response : [];
+        updateCounters();
+        renderBookings();
+      } catch (err) {
+        document.getElementById('bookingsListContainer').innerHTML = `
+          <div class="alert alert-danger" style="margin-top: 20px;">
+            <i class="fa-solid fa-triangle-exclamation"></i> Failed to load bookings: ${err.message || 'Server error'}
+          </div>
+        `;
+      }
+    }
+
+    function updateCounters() {
+      const counts = { ALL: allBookings.length, FLIGHT: 0, HOTEL: 0, CAR: 0, PACKAGE: 0 };
+      allBookings.forEach(b => {
+        const type = (b.bookingType || 'PACKAGE').toUpperCase();
+        if (counts[type] !== undefined) counts[type]++;
+      });
+      document.getElementById('count-ALL').textContent = counts.ALL;
+      document.getElementById('count-FLIGHT').textContent = counts.FLIGHT;
+      document.getElementById('count-HOTEL').textContent = counts.HOTEL;
+      document.getElementById('count-CAR').textContent = counts.CAR;
+      document.getElementById('count-PACKAGE').textContent = counts.PACKAGE;
+    }
+
+    function filterBookings(type) {
+      currentFilter = type;
+      document.querySelectorAll('.filter-pill').forEach(pill => pill.classList.remove('active'));
+      const activeBtn = document.querySelector(`button[onclick="filterBookings('${type}')"]`);
+      if (activeBtn) activeBtn.classList.add('active');
+      renderBookings();
+    }
+
+    function handleSearch() {
+      searchQuery = document.getElementById('searchInput').value.trim().toLowerCase();
+      renderBookings();
+    }
+
+    function renderBookings() {
+      const container = document.getElementById('bookingsListContainer');
+      let filtered = allBookings;
+
+      if (currentFilter !== 'ALL') {
+        filtered = filtered.filter(b => (b.bookingType || 'PACKAGE').toUpperCase() === currentFilter);
+      }
+
+      if (searchQuery) {
+        filtered = filtered.filter(b => 
+          (b.bookingCode && b.bookingCode.toLowerCase().includes(searchQuery)) ||
+          (b.itemName && b.itemName.toLowerCase().includes(searchQuery)) ||
+          (b.specialRequests && b.specialRequests.toLowerCase().includes(searchQuery))
+        );
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 60px 20px; background: white; border-radius: 12px; border: 1px dashed #cbd5e1; margin-top: 20px;">
+            <div style="width: 70px; height: 70px; border-radius: 50%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 1.8rem; color: #94a3b8;">
+              <i class="fa-solid fa-calendar-xmark"></i>
+            </div>
+            <h3 style="margin: 0 0 8px 0; color: #1e293b;">No reservations found</h3>
+            <p style="color: #64748b; max-width: 450px; margin: 0 auto 20px;">
+              ${searchQuery ? `No reservations matching "${searchQuery}".` : `You haven't made any reservations under this category yet.`}
+            </p>
+            <a href="index.html" class="btn btn-primary" style="border-radius: 8px;">
+              <i class="fa-solid fa-compass"></i> Explore Travel Services
+            </a>
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+      filtered.forEach(b => {
+        const type = (b.bookingType || 'PACKAGE').toUpperCase();
+        let icon = 'fa-suitcase-rolling';
+        if (type === 'FLIGHT') icon = 'fa-plane-departure';
+        else if (type === 'HOTEL') icon = 'fa-hotel';
+        else if (type === 'CAR') icon = 'fa-car';
+
+        const isCancelled = (b.bookingStatus || '').toUpperCase() === 'CANCELLED';
+        const isConfirmed = (b.bookingStatus || '').toUpperCase() === 'CONFIRMED';
+        
+        let statusBadge = `<span class="badge" style="background:#e0f2fe; color:#0369a1;"><i class="fa-solid fa-clock"></i> ${b.bookingStatus || 'PENDING'}</span>`;
+        if (isConfirmed) {
+          statusBadge = `<span class="badge badge-success"><i class="fa-solid fa-circle-check"></i> CONFIRMED</span>`;
+        } else if (isCancelled) {
+          statusBadge = `<span class="badge badge-danger"><i class="fa-solid fa-circle-xmark"></i> CANCELLED</span>`;
+        }
+
+        const dateDisplay = b.travelDate ? b.travelDate : (b.startDate ? `${b.startDate} to ${b.endDate}` : 'Flexible');
+        const qtyLabel = type === 'HOTEL' ? 'Rooms' : (type === 'CAR' ? 'Days' : 'Travelers');
+        const qtyVal = b.persons || b.quantity || 1;
+
+        html += `
+          <div class="booking-card ${isCancelled ? 'style-cancelled' : ''}" style="${isCancelled ? 'opacity: 0.75; background: #fafafa;' : ''}">
+            <div class="booking-type-icon type-${type}">
+              <i class="fa-solid ${icon}"></i>
+            </div>
+            
+            <div>
+              <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 4px;">
+                <span style="font-weight: 700; font-size: 1.15rem; color: #0f172a;">${escapeHtml(b.itemName || 'Travel Reservation')}</span>
+                ${statusBadge}
+                <span style="font-size: 0.8rem; background: #f1f5f9; padding: 2px 8px; border-radius: 4px; font-family: monospace; font-weight: 600; color: #475569;">
+                  #${escapeHtml(b.bookingCode || 'BK-' + b.id)}
+                </span>
+              </div>
+
+              <div class="booking-meta">
+                <span><i class="fa-regular fa-calendar"></i> ${dateDisplay}</span>
+                <span><i class="fa-solid fa-user-group"></i> ${qtyVal} ${qtyLabel}</span>
+                <span><i class="fa-solid fa-credit-card"></i> ${b.paymentStatus || 'PAID'}</span>
+                ${b.specialRequests ? `<span><i class="fa-regular fa-comment-dots"></i> ${escapeHtml(b.specialRequests)}</span>` : ''}
+              </div>
+            </div>
+
+            <div style="text-align: right;" class="booking-card-actions">
+              <div style="font-size: 1.35rem; font-weight: 800; color: #0f172a; margin-bottom: 10px;">
+                ${formatCurrency(b.totalAmount)}
+              </div>
+              <div style="display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap;">
+                <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.85rem;" onclick="viewVoucher(${b.id})">
+                  <i class="fa-solid fa-file-invoice"></i> Voucher
+                </button>
+                ${!isCancelled ? `
+                  <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.85rem; color: #dc2626; border-color: #fca5a5;" onclick="confirmCancelBooking(${b.id}, '${escapeHtml(b.bookingCode || '')}')">
+                    <i class="fa-solid fa-ban"></i> Cancel
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function viewVoucher(bookingId) {
+      const b = allBookings.find(item => item.id === bookingId);
+      if (!b) return;
+
+      const user = Auth.getUser() || {};
+      const type = (b.bookingType || 'PACKAGE').toUpperCase();
+      const dateDisplay = b.travelDate ? b.travelDate : (b.startDate ? `${b.startDate} to ${b.endDate}` : 'Flexible');
+      const qtyLabel = type === 'HOTEL' ? 'Rooms / Units' : (type === 'CAR' ? 'Rental Period' : 'Passengers / Guests');
+      const qtyVal = b.persons || b.quantity || 1;
+
+      const content = `
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+          <div>
+            <h2 style="margin: 0 0 4px 0; font-size: 1.4rem; color: #0f172a;">${escapeHtml(b.itemName || 'Travel Booking')}</h2>
+            <span style="font-size: 0.9rem; color: #64748b;"><i class="fa-solid fa-tag"></i> Category: ${type}</span>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-family: monospace; font-size: 1.1rem; font-weight: 700; color: #0284c7;">${escapeHtml(b.bookingCode)}</div>
+            <span style="font-size: 0.8rem; color: #64748b;">Booking Reference</span>
+          </div>
+        </div>
+
+        <div class="voucher-row">
+          <div>
+            <span style="font-size: 0.8rem; color: #64748b; text-transform: uppercase; font-weight: 600;">Traveler Information</span>
+            <div style="font-weight: 600; color: #1e293b; margin-top: 4px;">${escapeHtml(user.fullName || b.userName || 'Valued Customer')}</div>
+            <div style="font-size: 0.85rem; color: #64748b;">${escapeHtml(user.email || b.userEmail || '')}</div>
+          </div>
+          <div>
+            <span style="font-size: 0.8rem; color: #64748b; text-transform: uppercase; font-weight: 600;">Status & Payment</span>
+            <div style="font-weight: 600; color: #16a34a; margin-top: 4px;">
+              <i class="fa-solid fa-circle-check"></i> ${b.bookingStatus} / ${b.paymentStatus || 'PAID'}
+            </div>
+            <div style="font-size: 0.85rem; color: #64748b;">Transaction: Online Gateway Voucher</div>
+          </div>
+        </div>
+
+        <div class="voucher-row">
+          <div>
+            <span style="font-size: 0.8rem; color: #64748b; text-transform: uppercase; font-weight: 600;">Schedule / Travel Date</span>
+            <div style="font-weight: 600; color: #1e293b; margin-top: 4px;">${dateDisplay}</div>
+          </div>
+          <div>
+            <span style="font-size: 0.8rem; color: #64748b; text-transform: uppercase; font-weight: 600;">Party Size / Details</span>
+            <div style="font-weight: 600; color: #1e293b; margin-top: 4px;">${qtyVal} ${qtyLabel}</div>
+          </div>
+        </div>
+
+        ${b.specialRequests ? `
+          <div style="background: #f8fafc; border-radius: 8px; padding: 12px; margin-bottom: 16px; font-size: 0.88rem;">
+            <strong>Special Requests / Notes:</strong> ${escapeHtml(b.specialRequests)}
+          </div>
+        ` : ''}
+
+        <div style="background: #eff6ff; border-radius: 10px; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <span style="font-size: 0.85rem; color: #1e40af; font-weight: 600;">TOTAL FARE PAID</span>
+            <div style="font-size: 0.75rem; color: #64748b;">Includes all taxes, service fees & regulatory surcharges</div>
+          </div>
+          <div style="font-size: 1.6rem; font-weight: 800; color: #0284c7;">
+            ${formatCurrency(b.totalAmount)}
+          </div>
+        </div>
+
+        <div style="margin-top: 20px; text-align: center; border-top: 1px dashed #cbd5e1; padding-top: 16px;">
+          <div style="font-family: monospace; letter-spacing: 4px; font-weight: bold; color: #64748b; font-size: 1.1rem;">
+            *${escapeHtml(b.bookingCode)}*
+          </div>
+          <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 4px;">Present this digital pass or printed QR document upon check-in.</div>
+        </div>
+      `;
+
+      document.getElementById('voucherBodyContent').innerHTML = content;
+      document.getElementById('voucherModal').style.display = 'flex';
+    }
+
+    function closeVoucherModal() {
+      document.getElementById('voucherModal').style.display = 'none';
+    }
+
+    async function confirmCancelBooking(bookingId, code) {
+      if (!confirm(`Are you sure you want to cancel booking ${code}? Your reservation will be released and inventory restored.`)) {
+        return;
+      }
+
+      const user = Auth.getUser();
+      try {
+        const res = await Api.cancelBooking(bookingId, user.id);
+        if (res && res.success) {
+          showToast(`Booking ${code} has been cancelled successfully.`, 'success');
+          await loadUserBookings(user.id);
+        } else {
+          showToast(res.message || 'Failed to cancel booking', 'danger');
+        }
+      } catch (err) {
+        showToast(err.message || 'Error communicating with server', 'danger');
+      }
+    }
+  </script>
+</body>
+</html>

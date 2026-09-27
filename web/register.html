@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register Account - VoyageQuest Travel Booking Platform</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .auth-container {
+      max-width: 480px;
+      margin: 40px auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 35px 30px;
+      box-shadow: var(--shadow-lg);
+    }
+    .auth-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--primary);
+      text-align: center;
+      margin-bottom: 6px;
+    }
+    .auth-subtitle {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 25px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Demo Bar -->
+  <div class="demo-bar">
+    <span>🎓 <b>College Project Demo Mode</b></span>
+    <div>
+      <a href="index.html">← Back to Public Website</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="auth-container">
+      <div style="text-align:center; font-size:2.2rem; margin-bottom:10px;">✨</div>
+      <h2 class="auth-title">Create Account</h2>
+      <p class="auth-subtitle">Join VoyageQuest as a Traveler or certified Travel Agency.</p>
+
+      <form id="registerForm" onsubmit="handleRegister(event)">
+        <div class="form-group">
+          <label for="regName">Full Name / Agency Name</label>
+          <input type="text" id="regName" class="form-control" required placeholder="e.g. Rahul Sharma" />
+        </div>
+        <div class="form-group">
+          <label for="regEmail">Email Address</label>
+          <input type="email" id="regEmail" class="form-control" required placeholder="rahul@example.com" />
+        </div>
+        <div class="form-group">
+          <label for="regPhone">10-Digit Mobile Phone</label>
+          <input type="tel" id="regPhone" class="form-control" required placeholder="9811223344" maxlength="10" />
+        </div>
+        <div class="form-group">
+          <label for="regRole">Account Type / Role</label>
+          <select id="regRole" class="form-control" required>
+            <option value="TRAVELER">Traveler / Customer (Book flights, hotels, cars, packages)</option>
+            <option value="AGENT">Travel Agent (Publish & manage travel listings)</option>
+          </select>
+          <small style="color:var(--text-muted); font-size:0.78rem; display:block; margin-top:4px;">
+            🛡 Note: Administrator accounts cannot be registered publicly for security reasons.
+          </small>
+        </div>
+        <div class="form-group">
+          <label for="regPass">Password (min 6 characters)</label>
+          <input type="password" id="regPass" class="form-control" required minlength="6" placeholder="••••••••" />
+        </div>
+        <div class="form-group">
+          <label for="regConfirm">Confirm Password</label>
+          <input type="password" id="regConfirm" class="form-control" required minlength="6" placeholder="••••••••" />
+        </div>
+        <button type="submit" id="regBtn" class="btn btn-primary btn-block" style="padding:10px; margin-top:10px;">
+          Complete Registration
+        </button>
+      </form>
+
+      <p style="text-align:center; font-size:0.88rem; margin-top:20px; color:var(--text-muted);">
+        Already have an account? <a href="login.html" style="color:var(--primary); font-weight:600; text-decoration:none;">Sign in here</a>
+      </p>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    async function handleRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById('regName').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const phone = document.getElementById('regPhone').value.trim();
+      const role = document.getElementById('regRole').value;
+      const pass = document.getElementById('regPass').value;
+      const confirm = document.getElementById('regConfirm').value;
+      const btn = document.getElementById('regBtn');
+
+      if (pass !== confirm) {
+        showToast('Passwords do not match!', 'error');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Creating account...';
+
+      try {
+        const res = await API.register(name, email, phone, pass, confirm, role);
+        if (res.success && res.user) {
+          Auth.setUser(res.user, res.token);
+          showToast('Account registered successfully! Redirecting...', 'success');
+          setTimeout(() => {
+            if (res.user.role === 'AGENT') window.location.href = 'agent-dashboard.html';
+            else window.location.href = 'traveler-dashboard.html';
+          }, 800);
+        } else {
+          showToast(res.message || 'Registration failed.', 'error');
+          btn.disabled = false;
+          btn.textContent = 'Complete Registration';
+        }
+      } catch (err) {
+        showToast('Error connecting to server: ' + err.message, 'error');
+        btn.disabled = false;
+        btn.textContent = 'Complete Registration';
+      }
+    }
+  </script>
+</body>
+</html>
