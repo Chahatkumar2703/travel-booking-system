@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Confirm Booking - VoyageQuest Online Travel Booking Platform</title>
+  <title>Confirm Booking - Tripzy Online Travel Booking Platform</title>
   <link rel="stylesheet" href="css/style.css" />
   <style>
     .booking-layout {
@@ -87,7 +87,15 @@
   <!-- Navbar -->
   <header class="navbar">
     <div class="nav-container">
-      <a href="index.html" class="nav-brand">✈ Voyage<span>Quest</span></a>
+      <a href="index.html" class="nav-brand tripzy-brand">
+        <span class="tripzy-logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 18C7 18 10.5 15.5 14 11" stroke="#f97316" stroke-width="2" stroke-linecap="round"/>
+            <path d="M19.5 5.5L13.8 9.8L9.5 8.2L11.2 10.8L9.5 12.5L12.2 13L13.8 16.5L15 13.5L19.5 5.5Z" fill="#ffffff" stroke="#ffffff" stroke-width="0.5" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span class="tripzy-brand-text">Trip<span class="brand-zy">zy</span></span>
+      </a>
       <ul class="nav-links">
         <li><a href="index.html">Home</a></li>
         <li><a href="flights.html">Flights</a></li>
@@ -227,7 +235,7 @@
 
   <footer>
     <div class="footer-bottom">
-      <p>&copy; 2026 VoyageQuest Online Travel Booking Platform. (College Demonstration Project)</p>
+      <p>&copy; 2026 Tripzy Online Travel Booking Platform. (College Demonstration Project)</p>
     </div>
   </footer>
 
@@ -539,8 +547,8 @@
       const dateStr = new Date().toLocaleString();
       const receipt = `
 ========================================================================
-                 ✈ VOYAGEQUEST ONLINE TRAVEL PLATFORM
-                   OFFICIAL BOOKING CONFIRMATION VOUCHER
+                   ✈ TRIPZY ONLINE TRAVEL PLATFORM
+                    OFFICIAL BOOKING CONFIRMATION VOUCHER
 ========================================================================
 Booking Reference : ${res.bookingCode}
 Transaction Ref   : ${res.txnCode}
@@ -565,8 +573,8 @@ Total Fare Paid   : ${formatCurrency(res.totalAmount)}
 Payment Method    : ${selectedPayMethod} (${getPayDetailsString()})
 Service Tax (GST) : INCLUDED (0% Waived)
 ========================================================================
-  Thank you for booking with VoyageQuest! Have a safe and pleasant trip.
-  For support inquiries, contact support@travelbooking.com
+  Thank you for booking with Tripzy! Have a safe and pleasant trip.
+  For support inquiries, contact support@tripzy.com
 ========================================================================`;
 
       document.getElementById('receiptText').textContent = receipt.trim();

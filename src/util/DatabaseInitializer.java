@@ -286,6 +286,7 @@ public class DatabaseInitializer {
         safeExecute(stmt, "ALTER TABLE bookings ADD COLUMN end_date DATE NULL");
         safeExecute(stmt, "ALTER TABLE bookings ADD COLUMN quantity INT NOT NULL DEFAULT 1");
         safeExecute(stmt, "ALTER TABLE bookings MODIFY COLUMN booking_status VARCHAR(20) DEFAULT 'CONFIRMED'");
+        safeExecute(stmt, "UPDATE hotels SET available_rooms = 15 WHERE id = 1 AND available_rooms <= 0");
     }
 
     private static void safeExecute(Statement stmt, String sql) {
@@ -381,7 +382,7 @@ public class DatabaseInitializer {
         // System Settings
         stmt.executeUpdate(
                 "INSERT INTO system_settings (setting_key, setting_value) VALUES " +
-                "('site_name', 'VoyageQuest - Online Travel Booking Platform'), " +
+                "('site_name', 'Tripzy - Online Travel Booking Platform'), " +
                 "('contact_email', 'support@travelbooking.com'), " +
                 "('support_phone', '+91 98765 43210'), " +
                 "('booking_enabled', 'true'), " +

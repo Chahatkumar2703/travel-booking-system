@@ -1,4 +1,4 @@
-# ✈ VoyageQuest - Online Travel Booking Platform
+# ✈ Tripzy - Online Travel Booking Platform
 
 > **Comprehensive Full-Stack Java Web Application & College Project**  
 > Built with **Core Java JDK (Standard `HttpServer`)**, **JDBC**, **MySQL**, and a **Modern Responsive Multi-Page Web Frontend** (with dual Desktop Swing UI support).  
@@ -26,9 +26,9 @@
 
 ## 🌟 Project Overview & Objectives
 
-**VoyageQuest** is an end-to-end travel booking platform that bridges travelers, independent travel agencies, and system administrators into a single unified ecosystem. 
+**Tripzy** is an end-to-end travel booking platform that bridges travelers, independent travel agencies, and system administrators into a single unified ecosystem. 
 
-Traditional college projects often present static HTML mockups or rely on bulky frameworks where students cannot explain the underlying mechanisms. VoyageQuest is engineered with **zero external framework dependencies** (pure standard JDK 17+ and MySQL Connector/J), demonstrating pure mastery of:
+Traditional college projects often present static HTML mockups or rely on bulky frameworks where students cannot explain the underlying mechanisms. Tripzy is engineered with **zero external framework dependencies** (pure standard JDK 17+ and MySQL Connector/J), demonstrating pure mastery of:
 - **Object-Oriented Programming (OOP)**: Encapsulation, Inheritance, Polymorphism, Abstraction.
 - **MVC & Clean DAO Design**: Complete decoupling of presentation, business rules, and SQL persistence.
 - **RESTful API Engineering**: High-throughput non-blocking HTTP endpoints with JSON serialization.
@@ -290,15 +290,15 @@ Double-click `compile.bat` or run:
 
 ## 🐳 Docker & Cloud Deployment
 
-VoyageQuest includes a multi-stage `Dockerfile` and dynamic environment variable parser supporting **Render**, **Railway**, and self-hosted Linux VPS.
+Tripzy includes a multi-stage `Dockerfile` and dynamic environment variable parser supporting **Render**, **Railway**, and self-hosted Linux VPS.
 
 1. **Build Container**:
    ```bash
-   docker build -t voyagequest-platform .
+   docker build -t tripzy-platform .
    ```
 2. **Run Container**:
    ```bash
-   docker run -p 8080:8080 -e DB_URL="jdbc:mysql://host:3306/db" -e DB_USER="root" -e DB_PASSWORD="password" voyagequest-platform
+   docker run -p 8080:8080 -e DB_URL="jdbc:mysql://host:3306/db" -e DB_USER="root" -e DB_PASSWORD="password" tripzy-platform
    ```
 
 ---

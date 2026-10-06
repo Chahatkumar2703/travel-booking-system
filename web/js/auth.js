@@ -109,6 +109,7 @@ const Auth = {
 
       navAuth.innerHTML = `
         <span class="badge ${badgeClass}">${user.role}</span>
+        <a href="profile.html" class="btn btn-sm btn-outline"><i class="fa-solid fa-user"></i> Profile</a>
         <a href="${dashboardUrl}" class="btn btn-sm btn-outline">⚡ ${dashboardLabel}</a>
         <button class="btn btn-sm btn-danger" onclick="Auth.logout()">Logout</button>
       `;

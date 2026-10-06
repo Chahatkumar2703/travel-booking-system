@@ -62,7 +62,7 @@ public class AdminDashboard extends BaseFrame {
     private DefaultTableModel paymentModel;
 
     public AdminDashboard() {
-        super("VoyageQuest Travel - Administrative Control Center", 1180, 750);
+        super("Tripzy Travel - Administrative Control Center", 1180, 750);
         this.adminService = new AdminService();
         this.destinationService = new DestinationService();
         this.packageService = new PackageService();
@@ -83,7 +83,7 @@ public class AdminDashboard extends BaseFrame {
 
         JPanel titleBox = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
         titleBox.setOpaque(false);
-        JLabel logoLbl = new JLabel("🛡 VOYAGEQUEST ADMIN");
+        JLabel logoLbl = new JLabel("🛡 TRIPZY ADMIN");
         logoLbl.setFont(new Font("Segoe UI", Font.BOLD, 20));
         logoLbl.setForeground(Color.WHITE);
         titleBox.add(logoLbl);

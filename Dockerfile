@@ -1,5 +1,5 @@
 # ==========================================================
-# VoyageQuest - Online Travel Booking System Dockerfile
+# Tripzy - Online Travel Booking System Dockerfile
 # Optimized for cloud deployment on Render, Railway, or VPS
 # ==========================================================
 

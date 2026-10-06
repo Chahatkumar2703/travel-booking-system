@@ -53,8 +53,18 @@ public class BookingService {
 
     public String generateBookingCode() {
         int currentYear = Year.now().getValue();
-        int randomSuffix = 1000 + RANDOM.nextInt(9000);
-        return String.format("TB-%d-%d", currentYear, randomSuffix);
+        for (int i = 0; i < 20; i++) {
+            long suffix = (System.currentTimeMillis() % 100000L) * 1000L + RANDOM.nextInt(1000);
+            String candidate = String.format("TB-%d-%d", currentYear, suffix);
+            try {
+                if (bookingDAO.findByBookingCode(candidate) == null) {
+                    return candidate;
+                }
+            } catch (SQLException ignored) {
+                return candidate;
+            }
+        }
+        return "TB-" + currentYear + "-" + System.currentTimeMillis();
     }
 
     /**

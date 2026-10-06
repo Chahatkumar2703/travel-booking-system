@@ -86,7 +86,7 @@ public class ReceiptDialog extends JDialog {
     private String generateReceiptText() {
         StringBuilder sb = new StringBuilder();
         sb.append("========================================================\n");
-        sb.append("             VOYAGEQUEST TRAVEL BOOKINGS                \n");
+        sb.append("               TRIPZY TRAVEL BOOKINGS                   \n");
         sb.append("         Certified Tour Operator & Travel Agency         \n");
         sb.append("========================================================\n\n");
 
@@ -129,8 +129,8 @@ public class ReceiptDialog extends JDialog {
             sb.append(String.format("Payment Status     : %s\n", booking.getPaymentStatus() != null ? booking.getPaymentStatus() : "CONFIRMED"));
         }
         sb.append("========================================================\n");
-        sb.append("  Thank you for choosing VoyageQuest! Have a safe trip. \n");
-        sb.append("  Helpline: +91 1800-VOYAGE | support@travelbooking.com \n");
+        sb.append("    Thank you for choosing Tripzy! Have a safe trip.    \n");
+        sb.append("    Helpline: +91 1800-TRIPZY | support@tripzy.com      \n");
         sb.append("========================================================\n");
         return sb.toString();
     }

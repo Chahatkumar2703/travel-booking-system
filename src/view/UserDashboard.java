@@ -68,7 +68,7 @@ public class UserDashboard extends BaseFrame {
     private JComboBox<String> hotelDestFilterCombo;
 
     public UserDashboard() {
-        super("VoyageQuest Travel - Customer Portal", 1120, 720);
+        super("Tripzy Travel - Customer Portal", 1120, 720);
         this.currentUser = SessionManager.getCurrentUser();
         this.destinationService = new DestinationService();
         this.packageService = new PackageService();
@@ -90,7 +90,7 @@ public class UserDashboard extends BaseFrame {
 
         JPanel titleBox = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         titleBox.setOpaque(false);
-        JLabel logoLbl = new JLabel("✈ VOYAGEQUEST");
+        JLabel logoLbl = new JLabel("✈ TRIPZY");
         logoLbl.setFont(new Font("Segoe UI", Font.BOLD, 20));
         logoLbl.setForeground(Color.WHITE);
         titleBox.add(logoLbl);

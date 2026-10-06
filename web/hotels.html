@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hotels - VoyageQuest Online Travel Booking Platform</title>
+  <title>Hotels - Tripzy Online Travel Booking Platform</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -22,7 +22,15 @@
   <!-- Navbar -->
   <header class="navbar">
     <div class="nav-container">
-      <a href="index.html" class="nav-brand">✈ Voyage<span>Quest</span></a>
+      <a href="index.html" class="nav-brand tripzy-brand">
+        <span class="tripzy-logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 18C7 18 10.5 15.5 14 11" stroke="#f97316" stroke-width="2" stroke-linecap="round"/>
+            <path d="M19.5 5.5L13.8 9.8L9.5 8.2L11.2 10.8L9.5 12.5L12.2 13L13.8 16.5L15 13.5L19.5 5.5Z" fill="#ffffff" stroke="#ffffff" stroke-width="0.5" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span class="tripzy-brand-text">Trip<span class="brand-zy">zy</span></span>
+      </a>
       <ul class="nav-links">
         <li><a href="index.html">Home</a></li>
         <li><a href="flights.html">Flights</a></li>
@@ -76,7 +84,7 @@
 
   <footer>
     <div class="footer-bottom">
-      <p>&copy; 2026 VoyageQuest Online Travel Booking Platform. (College Demonstration Project)</p>
+      <p>&copy; 2026 Tripzy Online Travel Booking Platform. (College Demonstration Project)</p>
     </div>
   </footer>
 
@@ -114,13 +122,12 @@
 
         container.innerHTML = hotels.map(h => `
           <div class="card">
-            <img src="${getHotelImageUrl(h)}"
-                 class="card-img" alt="${escapeHtml(h.hotelName)}" onerror="handleImageError(this, 'hotel')" />
+            <div class="hotel-card-media">
+              <img src="${getHotelImageUrl(h)}" alt="${escapeHtml(h.hotelName)}" onerror="handleImageError(this, 'hotel')" />
+              <span class="hotel-badge-rating">⭐ ${h.rating} / 5.0</span>
+              <span class="hotel-badge-type">${h.roomType}</span>
+            </div>
             <div class="card-body">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <span class="badge badge-warning">⭐ ${h.rating} / 5.0</span>
-                <span class="badge badge-primary">${h.roomType}</span>
-              </div>
               <h3 class="card-title">${h.hotelName}</h3>
               <p class="card-desc">${h.description}</p>
               <div class="card-meta">

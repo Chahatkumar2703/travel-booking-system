@@ -40,6 +40,22 @@ public class UserDAO extends BaseDAO implements GenericDAO<User> {
         return null;
     }
 
+    public User findByPhone(String phone) throws SQLException {
+        if (phone == null || phone.trim().isEmpty()) return null;
+        String cleanPhone = phone.trim().replaceAll("[\\s-]", "");
+        String sql = "SELECT * FROM users WHERE phone = ?;";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, cleanPhone);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapRow(rs);
+                }
+            }
+        }
+        return null;
+    }
+
     @Override
     public List<User> findAll() throws SQLException {
         List<User> list = new ArrayList<>();
@@ -105,6 +121,36 @@ public class UserDAO extends BaseDAO implements GenericDAO<User> {
             ps.setString(1, user.getFullName());
             ps.setString(2, user.getPhone());
             ps.setInt(3, user.getId());
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    public boolean updateName(int userId, String newName) throws SQLException {
+        String sql = "UPDATE users SET full_name = ? WHERE id = ?;";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, newName.trim());
+            ps.setInt(2, userId);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    public boolean updateEmail(int userId, String newEmail) throws SQLException {
+        String sql = "UPDATE users SET email = ? WHERE id = ?;";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, newEmail.toLowerCase().trim());
+            ps.setInt(2, userId);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    public boolean updatePhone(int userId, String newPhone) throws SQLException {
+        String sql = "UPDATE users SET phone = ? WHERE id = ?;";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, newPhone != null ? newPhone.trim() : "");
+            ps.setInt(2, userId);
             return ps.executeUpdate() > 0;
         }
     }

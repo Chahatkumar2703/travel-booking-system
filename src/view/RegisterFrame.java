@@ -23,7 +23,7 @@ public class RegisterFrame extends BaseFrame {
     private JPasswordField confirmPassField;
 
     public RegisterFrame() {
-        super("VoyageQuest - Create New Account", 520, 680);
+        super("Tripzy - Create New Account", 520, 680);
         this.authService = new AuthService();
         initComponents();
     }
@@ -41,7 +41,7 @@ public class RegisterFrame extends BaseFrame {
         titleLbl.setForeground(Color.WHITE);
         headerPanel.add(titleLbl);
 
-        JLabel subLbl = new JLabel("Join VoyageQuest & Explore Beautiful Destinations", JLabel.CENTER);
+        JLabel subLbl = new JLabel("Join Tripzy & Explore Beautiful Destinations", JLabel.CENTER);
         subLbl.setFont(UITheme.FONT_SUBTITLE);
         subLbl.setForeground(UITheme.PRIMARY_LIGHT);
         headerPanel.add(subLbl);
@@ -69,7 +69,7 @@ public class RegisterFrame extends BaseFrame {
         phoneField = UITheme.createTextField(20);
         card.add(phoneField);
 
-        card.add(new JLabel("Password (min 6 characters):"));
+        card.add(new JLabel("Password (min 8 chars with uppercase, lowercase & digit):"));
         passField = UITheme.createPasswordField(20);
         card.add(passField);
 

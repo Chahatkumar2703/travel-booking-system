@@ -14,7 +14,7 @@ public class EndToEndTest {
 
     public static void main(String[] args) {
         System.out.println("==========================================================");
-        System.out.println("  VOYAGEQUEST TRAVEL PLATFORM - END-TO-END INTEGRATION TEST ");
+        System.out.println("    TRIPZY TRAVEL PLATFORM - END-TO-END INTEGRATION TEST   ");
         System.out.println("==========================================================");
 
         int passed = 0;
@@ -244,9 +244,9 @@ public class EndToEndTest {
                 failed++;
             }
 
-            settingsService.updateSetting("site_name", "VoyageQuest - Verified Platform");
+            settingsService.updateSetting("site_name", "Tripzy - Verified Platform");
             String siteName = settingsService.getSetting("site_name", "");
-            if ("VoyageQuest - Verified Platform".equals(siteName)) {
+            if ("Tripzy - Verified Platform".equals(siteName)) {
                 System.out.println("[PASS] 8.2 System Settings Persistence OK: " + siteName);
                 passed++;
             } else {

@@ -64,6 +64,198 @@ const API = {
     }
   },
 
+  async initiateRegistration(fullName, email, phone, password, confirmPassword, role = 'TRAVELER', termsAccepted = true) {
+    try {
+      const res = await fetch('/api/auth/register/initiate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fullName, email, phone, password, confirmPassword, role, termsAccepted })
+      });
+      return await this.safeJson(res);
+    } catch (err) {
+      return { success: false, error: err.message || 'Connection error', message: err.message || 'Connection error' };
+    }
+  },
+
+  async verifyEmailRegistrationOtp(registrationId, otp) {
+    try {
+      const res = await fetch('/api/auth/register/verify-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ registrationId, otp })
+      });
+      return await this.safeJson(res);
+    } catch (err) {
+      return { success: false, error: err.message || 'Connection error', message: err.message || 'Connection error' };
+    }
+  },
+
+  async resendEmailRegistrationOtp(registrationId) {
+    try {
+      const res = await fetch('/api/auth/register/resend-email-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ registrationId })
+      });
+      return await this.safeJson(res);
+    } catch (err) {
+      return { success: false, error: err.message || 'Connection error', message: err.message || 'Connection error' };
+    }
+  },
+
+  async verifyRegistrationOtp(registrationId, otp) {
+    try {
+      const res = await fetch('/api/auth/verify-registration-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ registrationId, otp })
+      });
+      return await this.safeJson(res);
+    } catch (err) {
+      return { success: false, error: err.message || 'Connection error', message: err.message || 'Connection error' };
+    }
+  },
+
+  async verifyMobileRegistrationOtp(registrationId, otp) {
+    try {
+      const res = await fetch('/api/auth/register/verify-mobile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ registrationId, otp })
+      });
+      return await this.safeJson(res);
+    } catch (err) {
+      return { success: false, error: err.message || 'Connection error', message: err.message || 'Connection error' };
+    }
+  },
+
+  async resendMobileRegistrationOtp(registrationId) {
+    try {
+      const res = await fetch('/api/auth/register/resend-mobile-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ registrationId })
+      });
+      return await this.safeJson(res);
+    } catch (err) {
+      return { success: false, error: err.message || 'Connection error', message: err.message || 'Connection error' };
+    }
+  },
+
+  async forgotPassword(identifier) {
+    try {
+      const res = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifier, email: identifier, phone: identifier })
+      });
+      return await this.safeJson(res);
+    } catch (err) {
+      return { success: false, error: err.message || 'Connection error', message: err.message || 'Connection error' };
+    }
+  },
+
+  async resetPassword(identifier, otp, newPassword, confirmPassword) {
+    try {
+      const res = await fetch('/api/auth/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifier, email: identifier, phone: identifier, otp, newPassword, confirmPassword })
+      });
+      return await this.safeJson(res);
+    } catch (err) {
+      return { success: false, error: err.message || 'Connection error', message: err.message || 'Connection error' };
+    }
+  },
+
+  // Profile Management APIs
+  async getProfile() {
+    try {
+      const res = await this.fetchAuth('/api/profile');
+      return await this.safeJson(res);
+    } catch (err) {
+      return { success: false, error: err.message || 'Connection error', message: err.message || 'Connection error' };
+    }
+  },
+
+  async updateProfileName(fullName) {
+    try {
+      const res = await this.fetchAuth('/api/profile/name', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fullName })
+      });
+      return await this.safeJson(res);
+    } catch (err) {
+      return { success: false, error: err.message || 'Connection error', message: err.message || 'Connection error' };
+    }
+  },
+
+  async requestEmailChangeOtp(email) {
+    try {
+      const res = await this.fetchAuth('/api/profile/email/request-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      return await this.safeJson(res);
+    } catch (err) {
+      return { success: false, error: err.message || 'Connection error', message: err.message || 'Connection error' };
+    }
+  },
+
+  async verifyEmailChange(email, otp) {
+    try {
+      const res = await this.fetchAuth('/api/profile/email/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, otp })
+      });
+      return await this.safeJson(res);
+    } catch (err) {
+      return { success: false, error: err.message || 'Connection error', message: err.message || 'Connection error' };
+    }
+  },
+
+  async requestMobileChangeOtp(phone) {
+    try {
+      const res = await this.fetchAuth('/api/profile/mobile/request-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone })
+      });
+      return await this.safeJson(res);
+    } catch (err) {
+      return { success: false, error: err.message || 'Connection error', message: err.message || 'Connection error' };
+    }
+  },
+
+  async verifyMobileChange(phone, otp) {
+    try {
+      const res = await this.fetchAuth('/api/profile/mobile/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, otp })
+      });
+      return await this.safeJson(res);
+    } catch (err) {
+      return { success: false, error: err.message || 'Connection error', message: err.message || 'Connection error' };
+    }
+  },
+
+  async changePassword(oldPassword, newPassword, confirmPassword) {
+    try {
+      const res = await this.fetchAuth('/api/profile/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ oldPassword, newPassword, confirmPassword })
+      });
+      return await this.safeJson(res);
+    } catch (err) {
+      return { success: false, error: err.message || 'Connection error', message: err.message || 'Connection error' };
+    }
+  },
+
   // Flights
   async getFlights(filters = {}) {
     const query = new URLSearchParams(filters).toString();

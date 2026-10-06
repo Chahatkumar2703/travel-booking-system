@@ -104,7 +104,7 @@ ON DUPLICATE KEY UPDATE subject=VALUES(subject);
 
 -- 10. Insert System Settings
 INSERT INTO system_settings (setting_key, setting_value) VALUES
-('site_name', 'VoyageQuest - Online Travel Booking Platform'),
+('site_name', 'Tripzy - Online Travel Booking Platform'),
 ('contact_email', 'support@travelbooking.com'),
 ('support_phone', '+91 98765 43210'),
 ('booking_enabled', 'true'),

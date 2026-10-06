@@ -3,10 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VoyageQuest - Online Travel Booking Platform</title>
+  <title>Tripzy - Online Travel Booking Platform</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
+
+  <!-- Initial Minimal Tripzy Opening Animation (~1s) -->
+  <div id="tripzyIntro" class="tripzy-intro" aria-hidden="true">
+    <div class="intro-brand-stage">
+      <div class="intro-logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 18C7 18 10.5 15.5 14 11" stroke="#f97316" stroke-width="2" stroke-linecap="round"/>
+          <path d="M19.5 5.5L13.8 9.8L9.5 8.2L11.2 10.8L9.5 12.5L12.2 13L13.8 16.5L15 13.5L19.5 5.5Z" fill="#ffffff" stroke="#ffffff" stroke-width="0.5" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="intro-logo-text">Trip<span class="intro-zy">zy</span></div>
+    </div>
+  </div>
 
   <!-- Top Demo Bar for College Viva Presentation -->
   <div class="demo-bar">
@@ -22,7 +35,15 @@
   <!-- Navbar -->
   <header class="navbar">
     <div class="nav-container">
-      <a href="index.html" class="nav-brand">✈ Voyage<span>Quest</span></a>
+      <a href="index.html" class="nav-brand tripzy-brand">
+        <span class="tripzy-logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 18C7 18 10.5 15.5 14 11" stroke="#f97316" stroke-width="2" stroke-linecap="round"/>
+            <path d="M19.5 5.5L13.8 9.8L9.5 8.2L11.2 10.8L9.5 12.5L12.2 13L13.8 16.5L15 13.5L19.5 5.5Z" fill="#ffffff" stroke="#ffffff" stroke-width="0.5" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span class="tripzy-brand-text">Trip<span class="brand-zy">zy</span></span>
+      </a>
       <ul class="nav-links">
         <li><a href="index.html" class="active">Home</a></li>
         <li><a href="flights.html">Flights</a></li>
@@ -40,8 +61,11 @@
 
   <!-- Hero Section -->
   <section class="hero">
-    <h1>Explore. Book. Travel.</h1>
-    <p>Discover India's top tourist destinations, reserve flights, book boutique hotels, rent cars, and customize dream tour packages with instant confirmation.</p>
+    <div class="hero-content">
+      <div class="hero-badge">✨ India's Premier Online Travel Network</div>
+      <h1>Your Journey Starts With <span>Tripzy</span></h1>
+      <p>Discover flights, hotels, cars and unforgettable journeys.</p>
+    </div>
   </section>
 
   <!-- Quick Travel Search Widget -->
@@ -123,8 +147,64 @@
   <!-- Main Container -->
   <main class="container">
 
-    <!-- 1. Popular Destinations -->
+    <!-- 1. Recommended Flights -->
     <section style="margin-bottom: 50px;">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Recommended Flights</h2>
+          <p class="section-subtitle">Real-time scheduled domestic routes verified with instant seat confirmation.</p>
+        </div>
+        <a href="flights.html" class="btn btn-outline">View All Flights →</a>
+      </div>
+      <div class="grid" id="flightsGrid">
+        <p style="color:var(--text-muted);">Loading flights...</p>
+      </div>
+    </section>
+
+    <!-- 2. Recommended Hotels -->
+    <section style="margin-bottom: 50px;">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Recommended Hotels</h2>
+          <p class="section-subtitle">Handpicked luxury suites, heritage palaces, and coastal beach resorts ranked by guest ratings.</p>
+        </div>
+        <a href="hotels.html" class="btn btn-outline">Explore All Hotels →</a>
+      </div>
+      <div class="grid" id="hotelsGrid">
+        <p style="color:var(--text-muted);">Loading hotels...</p>
+      </div>
+    </section>
+
+    <!-- 3. Recommended Rental Cars -->
+    <section style="margin-bottom: 50px;">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Recommended Rental Cars</h2>
+          <p class="section-subtitle">Self-drive SUVs, sedans, and luxury vehicles ready for instant dispatch.</p>
+        </div>
+        <a href="cars.html" class="btn btn-outline">Browse Rental Fleet →</a>
+      </div>
+      <div class="grid" id="carsGrid">
+        <p style="color:var(--text-muted);">Loading rental cars...</p>
+      </div>
+    </section>
+
+    <!-- 4. Recommended Tour Packages -->
+    <section style="margin-bottom: 50px;">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Recommended Tour Packages</h2>
+          <p class="section-subtitle">All-inclusive holiday packages with stays, sightseeing, and transport included.</p>
+        </div>
+        <a href="packages.html" class="btn btn-outline">See All Packages →</a>
+      </div>
+      <div class="grid" id="packagesGrid">
+        <p style="color:var(--text-muted);">Loading tour packages...</p>
+      </div>
+    </section>
+
+    <!-- 5. Popular Destinations -->
+    <section style="margin-bottom: 60px;">
       <div class="section-header">
         <div>
           <h2 class="section-title">Popular Destinations</h2>
@@ -136,88 +216,32 @@
       </div>
     </section>
 
-    <!-- 2. Popular Flights -->
-    <section style="margin-bottom: 50px;">
-      <div class="section-header">
-        <div>
-          <h2 class="section-title">Popular Flights</h2>
-          <p class="section-subtitle">Book approved non-stop domestic routes at transparent rates.</p>
-        </div>
-        <a href="flights.html" class="btn btn-outline">View All Flights →</a>
-      </div>
-      <div class="grid" id="flightsGrid">
-        <p style="color:var(--text-muted);">Loading flights...</p>
-      </div>
-    </section>
-
-    <!-- 3. Featured Hotels -->
-    <section style="margin-bottom: 50px;">
-      <div class="section-header">
-        <div>
-          <h2 class="section-title">Featured Partner Hotels</h2>
-          <p class="section-subtitle">Verified partner luxury lodges, heritage havelis, and beach resorts.</p>
-        </div>
-        <a href="hotels.html" class="btn btn-outline">Explore All Hotels →</a>
-      </div>
-      <div class="grid" id="hotelsGrid">
-        <p style="color:var(--text-muted);">Loading hotels...</p>
-      </div>
-    </section>
-
-    <!-- 4. Rental Cars -->
-    <section style="margin-bottom: 50px;">
-      <div class="section-header">
-        <div>
-          <h2 class="section-title">Rental Cars</h2>
-          <p class="section-subtitle">Self-drive SUVs, sedans, and luxury vehicles with instant confirmation.</p>
-        </div>
-        <a href="cars.html" class="btn btn-outline">Browse Rental Fleet →</a>
-      </div>
-      <div class="grid" id="carsGrid">
-        <p style="color:var(--text-muted);">Loading rental cars...</p>
-      </div>
-    </section>
-
-    <!-- 5. Holiday Packages -->
-    <section style="margin-bottom: 60px;">
-      <div class="section-header">
-        <div>
-          <h2 class="section-title">Trending Holiday Packages</h2>
-          <p class="section-subtitle">All-inclusive tour packages with accommodation, sightseeing, and dining.</p>
-        </div>
-        <a href="packages.html" class="btn btn-outline">See All Packages →</a>
-      </div>
-      <div class="grid" id="packagesGrid">
-        <p style="color:var(--text-muted);">Loading tour packages...</p>
-      </div>
-    </section>
-
     <!-- Why Choose Us -->
-    <section style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:40px 30px; margin-bottom:40px;">
+    <section class="features-container">
       <div style="text-align:center; max-width:650px; margin:0 auto 35px;">
-        <h2 style="font-size:1.8rem; font-weight:800; margin-bottom:8px;">Why Book With VoyageQuest?</h2>
+        <h2 style="font-size:1.85rem; font-weight:800; margin-bottom:8px; letter-spacing:-0.02em;">Why Choose Tripzy?</h2>
         <p style="color:var(--text-muted); font-size:0.95rem;">A trusted full-stack Java platform connecting travelers directly with licensed travel agencies and verified operators.</p>
       </div>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:25px; text-align:center;">
-        <div>
-          <div style="font-size:2.5rem; margin-bottom:12px;">🛡</div>
-          <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:6px;">Verified Listings</h3>
-          <p style="font-size:0.88rem; color:var(--text-muted);">All agent flights, hotels, and cars must pass strict administrative verification before appearing in catalog.</p>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">🛡</div>
+          <h3>Verified Listings</h3>
+          <p>All agent flights, hotels, and cars must pass strict administrative verification before appearing in catalog.</p>
         </div>
-        <div>
-          <div style="font-size:2.5rem; margin-bottom:12px;">⚡</div>
-          <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:6px;">Instant Confirmation</h3>
-          <p style="font-size:0.88rem; color:var(--text-muted);">Real-time inventory deduction for seats and rooms with immediate booking reference voucher generation.</p>
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">⚡</div>
+          <h3>Instant Confirmation</h3>
+          <p>Real-time inventory deduction for seats and rooms with immediate booking reference voucher generation.</p>
         </div>
-        <div>
-          <div style="font-size:2.5rem; margin-bottom:12px;">🗺</div>
-          <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:6px;">Unified Itinerary</h3>
-          <p style="font-size:0.88rem; color:var(--text-muted);">Combines flights, hotel check-ins, and car rentals into a single chronological trip timeline.</p>
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">🗺</div>
+          <h3>Unified Itinerary</h3>
+          <p>Combines flights, hotel check-ins, and car rentals into a single chronological trip timeline.</p>
         </div>
-        <div>
-          <div style="font-size:2.5rem; margin-bottom:12px;">💬</div>
-          <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:6px;">Direct Interaction</h3>
-          <p style="font-size:0.88rem; color:var(--text-muted);">Built-in feedback and messaging between travelers and operators for special requests.</p>
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">💬</div>
+          <h3>Direct Interaction</h3>
+          <p>Built-in feedback and messaging between travelers and operators for special requests.</p>
         </div>
       </div>
     </section>
@@ -228,7 +252,7 @@
   <footer>
     <div class="footer-container">
       <div class="footer-col">
-        <h4>✈ VoyageQuest Platform</h4>
+        <h4>✈ Tripzy Platform</h4>
         <p style="font-size:0.88rem; line-height:1.6;">A complete full-stack Java, JDBC, MySQL, and REST API travel booking platform designed as a comprehensive B.Tech CSE college project.</p>
       </div>
       <div class="footer-col">
@@ -254,7 +278,7 @@
       <div class="footer-col">
         <h4>Support & Viva Info</h4>
         <ul>
-          <li>Email: support@travelbooking.com</li>
+          <li>Email: support@tripzy.com</li>
           <li>Phone: +91 98765 43210</li>
           <li>Stack: Java + MySQL + HTTP REST</li>
           <li>Status: Fully Functional</li>
@@ -262,22 +286,49 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <p>&copy; 2026 VoyageQuest Online Travel Booking Platform. All rights reserved. (College Demonstration Project)</p>
+      <p>&copy; 2026 Tripzy Online Travel Booking Platform. All rights reserved. (College Demonstration Project)</p>
     </div>
   </footer>
 
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/search-widget.js"></script>
   <script>
+    // Smooth minimal Tripzy opening animation (~1.0s) with reduced-motion support
+    function initIntroAnimation() {
+      const intro = document.getElementById('tripzyIntro');
+      if (!intro) return;
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReduced) {
+        intro.style.display = 'none';
+        return;
+      }
+      setTimeout(() => {
+        intro.classList.add('intro-dismissed');
+        setTimeout(() => {
+          intro.style.display = 'none';
+        }, 360);
+      }, 650);
+    }
+
     function switchSearchTab(tab) {
       document.querySelectorAll('.search-tab-btn').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
+      if (event && event.target) {
+        event.target.classList.add('active');
+      }
 
       document.getElementById('searchFormFlights').style.display = tab === 'flights' ? 'grid' : 'none';
       document.getElementById('searchFormHotels').style.display = tab === 'hotels' ? 'grid' : 'none';
       document.getElementById('searchFormCars').style.display = tab === 'cars' ? 'grid' : 'none';
       document.getElementById('searchFormPackages').style.display = tab === 'packages' ? 'grid' : 'none';
+
+      // Clear recommendation box and close open dropdowns if switching tabs
+      document.querySelectorAll('.search-recommendation-box').forEach(b => b.remove());
+      document.querySelectorAll('.autocomplete-dropdown').forEach(d => {
+        d.classList.remove('open');
+        d.innerHTML = '';
+      });
     }
 
     function executeSearch(tab) {
@@ -303,18 +354,22 @@
 
     // Load initial showcase data
     document.addEventListener('DOMContentLoaded', async () => {
+      initIntroAnimation();
       // 1. Destinations
       try {
         const dests = await API.getDestinations();
         const grid = document.getElementById('destinationsGrid');
         if (Array.isArray(dests) && dests.length > 0) {
           grid.innerHTML = dests.slice(0, 4).map(d => `
-            <div class="card">
-              <img src="${getDestinationImageUrl(d)}"
-                   class="card-img" alt="${escapeHtml(d.name)}" onerror="handleImageError(this, 'destination')" />
+            <div class="dest-card">
+              <div class="dest-card-media">
+                <img src="${getDestinationImageUrl(d)}" alt="${escapeHtml(d.name)}" onerror="handleImageError(this, 'destination')" />
+                <span class="dest-card-badge">${d.state}</span>
+                <div class="dest-card-overlay">
+                  <h3>${d.name}</h3>
+                </div>
+              </div>
               <div class="card-body">
-                <span class="badge badge-primary" style="margin-bottom:8px;">${d.state}</span>
-                <h3 class="card-title">${d.name}</h3>
                 <p class="card-desc">${d.description}</p>
                 <div class="card-meta">
                   <span>📍 <b>Attractions:</b> ${d.attractions}</span>
@@ -331,22 +386,40 @@
         console.error('Destinations load error:', e);
       }
 
-      // 2. Flights
+      // 2. Flights (strictly available seats > 0)
       try {
-        const flights = await API.getFlights();
+        const flightsRes = await API.getFlights();
+        const flights = Array.isArray(flightsRes) ? flightsRes : (flightsRes.flights || flightsRes.data || []);
         const grid = document.getElementById('flightsGrid');
-        if (Array.isArray(flights) && flights.length > 0) {
-          grid.innerHTML = flights.slice(0, 3).map(f => `
-            <div class="card">
-              <div class="card-body">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                  <span class="badge badge-info">✈ ${f.airline}</span>
-                  <span style="font-weight:700; font-size:0.85rem; color:var(--text-muted);">${f.flightNumber}</span>
+        const availableFlights = flights.filter(f => (f.availableSeats || 0) > 0);
+        if (availableFlights.length > 0) {
+          grid.innerHTML = availableFlights.slice(0, 4).map(f => `
+            <div class="flight-card">
+              <div class="flight-card-banner">
+                <img src="${getFlightImageUrl(f)}" alt="${escapeHtml(f.airline)}" onerror="handleImageError(this, 'flight')" />
+                <div class="flight-card-banner-overlay">
+                  <span class="flight-card-banner-airline">✈ ${f.airline}</span>
+                  <span class="flight-card-banner-num">${f.flightNumber}</span>
                 </div>
-                <h3 class="card-title">${f.origin} → ${f.destination}</h3>
-                <div class="card-meta" style="margin-top:10px;">
-                  <span>🗓 Departure: <b>${f.departureDate}</b></span>
-                  <span>⏰ Time: <b>${f.departureTime} - ${f.arrivalTime}</b></span>
+              </div>
+              <div class="card-body">
+                <div class="flight-route-visual">
+                  <div class="flight-city-box">
+                    <span class="city-code">${f.origin}</span>
+                    <span class="city-label">Departure</span>
+                  </div>
+                  <div class="flight-path">
+                    <span class="flight-type-badge">Non-Stop</span>
+                    <div class="flight-path-line"></div>
+                    <span style="font-size:0.75rem; color:var(--text-muted);">${f.departureDate}</span>
+                  </div>
+                  <div class="flight-city-box dest">
+                    <span class="city-code">${f.destination}</span>
+                    <span class="city-label">Arrival</span>
+                  </div>
+                </div>
+                <div class="card-meta">
+                  <span>⏰ Flight Timings: <b>${f.departureTime} – ${f.arrivalTime}</b></span>
                   <span>💺 Available Seats: <b>${f.availableSeats}</b></span>
                 </div>
                 <div class="card-footer">
@@ -361,24 +434,27 @@
         console.error('Flights load error:', e);
       }
 
-      // 3. Hotels
+      // 3. Hotels (strictly available rooms > 0 and sorted by rating DESC)
       try {
-        const hotels = await API.getHotels();
+        const hotelsRes = await API.getHotels();
+        const hotels = Array.isArray(hotelsRes) ? hotelsRes : (hotelsRes.hotels || hotelsRes.data || []);
         const grid = document.getElementById('hotelsGrid');
-        if (Array.isArray(hotels) && hotels.length > 0) {
-          grid.innerHTML = hotels.slice(0, 3).map(h => `
+        const availableHotels = hotels
+          .filter(h => (h.availableRooms || 0) > 0)
+          .sort((a, b) => (parseFloat(b.rating) || 0) - (parseFloat(a.rating) || 0));
+        if (availableHotels.length > 0) {
+          grid.innerHTML = availableHotels.slice(0, 4).map(h => `
             <div class="card">
-              <img src="${getHotelImageUrl(h)}"
-                   class="card-img" alt="${escapeHtml(h.hotelName)}" onerror="handleImageError(this, 'hotel')" />
+              <div class="hotel-card-media">
+                <img src="${getHotelImageUrl(h)}" alt="${escapeHtml(h.hotelName)}" onerror="handleImageError(this, 'hotel')" />
+                <span class="hotel-badge-rating">⭐ ${h.rating} / 5.0</span>
+                <span class="hotel-badge-type">${h.roomType}</span>
+              </div>
               <div class="card-body">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                  <span class="badge badge-warning">⭐ ${h.rating} / 5.0</span>
-                  <span class="badge badge-primary">${h.roomType}</span>
-                </div>
                 <h3 class="card-title">${h.hotelName}</h3>
                 <p class="card-desc">${h.description}</p>
                 <div class="card-meta">
-                  <span>📍 Location: ${h.location || h.address}</span>
+                  <span>📍 Location: <b>${h.location || h.address}</b></span>
                   <span>🏨 Rooms Available: <b>${h.availableRooms}</b></span>
                 </div>
                 <div class="card-footer">
@@ -393,12 +469,14 @@
         console.error('Hotels load error:', e);
       }
 
-      // 4. Cars
+      // 4. Rental Cars (strictly available units > 0)
       try {
-        const cars = await API.getCars();
+        const carsRes = await API.getCars();
+        const cars = Array.isArray(carsRes) ? carsRes : (carsRes.cars || carsRes.data || []);
         const grid = document.getElementById('carsGrid');
-        if (Array.isArray(cars) && cars.length > 0) {
-          grid.innerHTML = cars.slice(0, 3).map(c => `
+        const availableCars = cars.filter(c => (c.availableUnits || 0) > 0);
+        if (availableCars.length > 0) {
+          grid.innerHTML = availableCars.slice(0, 4).map(c => `
             <div class="card">
               <img src="${getCarImageUrl(c)}"
                    class="card-img" alt="${escapeHtml(c.carName)}" onerror="handleImageError(this, 'car')" />
@@ -421,12 +499,13 @@
         console.error('Cars load error:', e);
       }
 
-      // 5. Packages
+      // 5. Tour Packages
       try {
-        const pkgs = await API.getPackages();
+        const pkgsRes = await API.getPackages();
+        const pkgs = Array.isArray(pkgsRes) ? pkgsRes : (pkgsRes.packages || pkgsRes.data || []);
         const grid = document.getElementById('packagesGrid');
-        if (Array.isArray(pkgs) && pkgs.length > 0) {
-          grid.innerHTML = pkgs.slice(0, 3).map(p => `
+        if (pkgs.length > 0) {
+          grid.innerHTML = pkgs.slice(0, 4).map(p => `
             <div class="card">
               <img src="${getPackageImageUrl(p)}"
                    class="card-img" alt="${escapeHtml(p.packageName)}" onerror="handleImageError(this, 'package')" />

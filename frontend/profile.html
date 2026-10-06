@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Profile - Tripzy Travel Platform</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    .profile-hero-card {
+      background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+      color: white;
+      border-radius: var(--radius);
+      padding: 36px 32px;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 24px;
+      box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.3);
+    }
+    .profile-avatar-circle {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      border: 3px solid rgba(255, 255, 255, 0.6);
+      color: white;
+      font-size: 2rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-transform: uppercase;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .profile-grid-layout {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 900px) {
+      .profile-grid-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+    .profile-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 24px;
+    }
+    .profile-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .profile-card-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .contact-item-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      border-radius: var(--radius-sm);
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .contact-details {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .contact-icon-box {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: #eef2ff;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+    .badge-verified-custom {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #dcfce7;
+      color: #15803d;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 14px;
+      font-size: 0.78rem;
+    }
+    .badge-unverified-custom {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #fef3c7;
+      color: #b45309;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 14px;
+      font-size: 0.78rem;
+    }
+    .badge-notprovided-custom {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #f1f5f9;
+      color: #64748b;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 14px;
+      font-size: 0.78rem;
+    }
+    .stat-mini-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    .stat-mini-val {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .stat-mini-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+    .demo-otp-banner-profile {
+      background: #fef3c7;
+      border: 1px solid #fde68a;
+      border-radius: 8px;
+      padding: 12px;
+      margin: 14px 0;
+      font-size: 0.85rem;
+      color: #92400e;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header id="main-header" class="site-header"></header>
+
+  <main class="container" style="max-width: 1100px; margin: 32px auto; padding: 0 16px;">
+    
+    <!-- Hero Header -->
+    <div class="profile-hero-card">
+      <div style="display: flex; align-items: center; gap: 20px;">
+        <div class="profile-avatar-circle" id="profileInitials">U</div>
+        <div>
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <h1 style="margin: 0; font-size: 1.7rem; font-weight: 800;" id="profileHeaderName">Loading...</h1>
+            <span class="badge badge-accent" id="profileRoleBadge" style="text-transform: uppercase;">TRAVELER</span>
+          </div>
+          <p style="margin: 6px 0 0 0; opacity: 0.9; font-size: 0.88rem;" id="profileJoinDate">Member since: Tripzy verified traveler</p>
+        </div>
+      </div>
+      <div>
+        <button class="btn btn-outline" style="background: rgba(255,255,255,0.15); color: white; border-color: rgba(255,255,255,0.4);" onclick="openEditNameModal()">
+          <i class="fa-solid fa-pen-to-square"></i> Edit Name
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Profile Content Grid -->
+    <div class="profile-grid-layout">
+      
+      <!-- Left Column: Verified Contacts & Security -->
+      <div>
+        
+        <!-- Contact Methods Card -->
+        <div class="profile-card">
+          <div class="profile-card-header">
+            <div class="profile-card-title">
+              <i class="fa-solid fa-address-book" style="color: var(--primary);"></i>
+              Contact & Verification Details
+            </div>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">At least 1 verified contact required</span>
+          </div>
+
+          <!-- Email Row -->
+          <div class="contact-item-row">
+            <div class="contact-details">
+              <div class="contact-icon-box">
+                <i class="fa-solid fa-envelope"></i>
+              </div>
+              <div>
+                <div style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Email Address</div>
+                <div style="font-size: 0.98rem; font-weight: 700; color: var(--text); margin-top: 2px;" id="profileEmailText">Not provided</div>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span id="profileEmailBadge" class="badge-notprovided-custom">Not provided</span>
+              <button id="profileEmailBtn" class="btn btn-sm btn-outline" onclick="openEmailModal()">
+                Add Email
+              </button>
+            </div>
+          </div>
+
+          <!-- Mobile Row -->
+          <div class="contact-item-row">
+            <div class="contact-details">
+              <div class="contact-icon-box" style="background: #ecfdf5; color: #059669;">
+                <i class="fa-solid fa-phone"></i>
+              </div>
+              <div>
+                <div style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Indian Mobile Number</div>
+                <div style="font-size: 0.98rem; font-weight: 700; color: var(--text); margin-top: 2px;" id="profilePhoneText">Not provided</div>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span id="profilePhoneBadge" class="badge-notprovided-custom">Not provided</span>
+              <button id="profilePhoneBtn" class="btn btn-sm btn-outline" onclick="openMobileModal()">
+                Add Mobile
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Account Security Card -->
+        <div class="profile-card">
+          <div class="profile-card-header">
+            <div class="profile-card-title">
+              <i class="fa-solid fa-shield-halved" style="color: #0284c7;"></i>
+              Security & Credentials
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0;">
+            <div>
+              <div style="font-weight: 700; font-size: 0.95rem;">Account Password</div>
+              <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px;">
+                Securely hashed using BCrypt. Minimum 8 characters with upper, lower, and numeric rules.
+              </div>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="openChangePasswordModal()">
+              <i class="fa-solid fa-key"></i> Change Password
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Booking & Account Stats -->
+      <div>
+        <div class="profile-card">
+          <div class="profile-card-header">
+            <div class="profile-card-title">
+              <i class="fa-solid fa-chart-pie" style="color: var(--primary);"></i>
+              Traveler Statistics
+            </div>
+          </div>
+
+          <div class="stat-mini-card">
+            <div class="stat-mini-val" id="statsTotalBookings">0</div>
+            <div class="stat-mini-label">Total Bookings</div>
+          </div>
+
+          <div class="stat-mini-card" style="background: #f0fdf4; border-color: #bbf7d0;">
+            <div class="stat-mini-val" style="color: #16a34a;" id="statsConfirmedBookings">0</div>
+            <div class="stat-mini-label" style="color: #15803d;">Confirmed Trips</div>
+          </div>
+
+          <div class="stat-mini-card">
+            <div class="stat-mini-val" id="statsSpentAmount">₹0.00</div>
+            <div class="stat-mini-label">Total Travel Investment</div>
+          </div>
+
+          <div style="margin-top: 18px; text-align: center;">
+            <a href="my-bookings.html" class="btn btn-primary btn-block btn-sm">
+              <i class="fa-solid fa-list-check"></i> View My Bookings
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- MODALS                                                                    -->
+  <!-- ========================================================================= -->
+
+  <!-- 1. Edit Name Modal -->
+  <div id="modalEditName" class="modal-backdrop" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+    <div style="background:white; border-radius:12px; max-width:440px; width:90%; padding:24px; box-shadow:var(--shadow-lg);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <h3 style="margin:0; font-size:1.2rem; font-weight:700;">Edit Full Name</h3>
+        <button onclick="closeModal('modalEditName')" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">&times;</button>
+      </div>
+      <div id="editNameError" class="step-alert-error" style="display:none; margin-bottom:12px;"></div>
+      <form onsubmit="handleSaveName(event)">
+        <div class="form-group">
+          <label for="inputEditName">Full Name *</label>
+          <input type="text" id="inputEditName" class="form-control" required minlength="2" maxlength="100" />
+          <span class="field-hint">Minimum 2 characters</span>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:16px;">
+          <button type="button" class="btn btn-outline btn-sm" onclick="closeModal('modalEditName')">Cancel</button>
+          <button type="submit" id="btnSaveName" class="btn btn-primary btn-sm">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. Add / Change Email Modal -->
+  <div id="modalEmail" class="modal-backdrop" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+    <div style="background:white; border-radius:12px; max-width:460px; width:90%; padding:24px; box-shadow:var(--shadow-lg);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <h3 style="margin:0; font-size:1.2rem; font-weight:700;" id="modalEmailTitle">Add / Change Email</h3>
+        <button onclick="closeModal('modalEmail')" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">&times;</button>
+      </div>
+
+      <div id="emailModalError" class="step-alert-error" style="display:none; margin-bottom:12px;"></div>
+
+      <!-- Step 1: Input Email -->
+      <div id="emailStep1">
+        <form onsubmit="handleRequestEmailOtp(event)">
+          <div class="form-group">
+            <label for="inputNewEmail">New Email Address *</label>
+            <input type="email" id="inputNewEmail" class="form-control" placeholder="user@example.com" required />
+            <span class="field-hint">A demo 6-digit verification code will be generated.</span>
+          </div>
+          <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:16px;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="closeModal('modalEmail')">Cancel</button>
+            <button type="submit" id="btnSendEmailOtp" class="btn btn-primary btn-sm">Get Verification OTP →</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Step 2: Verify OTP -->
+      <div id="emailStep2" style="display:none;">
+        <p style="font-size:0.86rem; color:var(--text-muted); margin-bottom:10px;">
+          Enter the verification code to confirm <b id="displayEmailPending"></b>
+        </p>
+
+        <!-- Demo Mode Callout -->
+        <div class="demo-otp-banner-profile">
+          <div style="font-weight:700;">Demo Mode: OTP is displayed for testing.</div>
+          <div style="margin-top:4px;">
+            DEMO MODE — OTP for testing: <b id="demoEmailProfileCode" style="font-size:1.15rem; letter-spacing:2px; color:#b45309;">------</b>
+          </div>
+          <button type="button" class="btn btn-xs btn-outline" style="margin-top:6px;" onclick="autofillEmailProfileOtp()">
+            ⚡ Autofill Code
+          </button>
+        </div>
+
+        <form onsubmit="handleVerifyEmailOtp(event)">
+          <div class="form-group" style="text-align:center;">
+            <label for="inputEmailOtp" style="display:block; margin-bottom:6px; font-weight:600;">6-Digit OTP</label>
+            <input type="text" id="inputEmailOtp" class="form-control" maxlength="6" pattern="\d{6}"
+                   placeholder="••••••" style="font-size:1.4rem; letter-spacing:6px; text-align:center; max-width:200px; margin:0 auto;" required
+                   oninput="this.value = this.value.replace(/[^0-9]/g, '');" />
+            <span class="field-hint">Expires in 15 minutes. Single-use only.</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('emailStep1').style.display='block'; document.getElementById('emailStep2').style.display='none';">
+              ← Change Email
+            </button>
+            <button type="submit" id="btnConfirmEmailOtp" class="btn btn-primary btn-sm">Verify & Update Email</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 3. Add / Change Mobile Modal -->
+  <div id="modalMobile" class="modal-backdrop" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+    <div style="background:white; border-radius:12px; max-width:460px; width:90%; padding:24px; box-shadow:var(--shadow-lg);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <h3 style="margin:0; font-size:1.2rem; font-weight:700;" id="modalMobileTitle">Add / Change Mobile</h3>
+        <button onclick="closeModal('modalMobile')" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">&times;</button>
+      </div>
+
+      <div id="mobileModalError" class="step-alert-error" style="display:none; margin-bottom:12px;"></div>
+
+      <!-- Step 1: Input Mobile -->
+      <div id="mobileStep1">
+        <form onsubmit="handleRequestMobileOtp(event)">
+          <div class="form-group">
+            <label for="inputNewPhone">Indian Mobile Number *</label>
+            <div class="phone-input-group">
+              <span class="phone-prefix">🇮🇳 +91</span>
+              <input type="tel" id="inputNewPhone" class="form-control" maxlength="10" placeholder="9811223344" required
+                     oninput="this.value = this.value.replace(/[^0-9]/g, '');" />
+            </div>
+            <span class="field-hint">10 digits starting with 6, 7, 8, or 9.</span>
+          </div>
+          <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:16px;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="closeModal('modalMobile')">Cancel</button>
+            <button type="submit" id="btnSendMobileOtp" class="btn btn-primary btn-sm">Get Verification OTP →</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Step 2: Verify OTP -->
+      <div id="mobileStep2" style="display:none;">
+        <p style="font-size:0.86rem; color:var(--text-muted); margin-bottom:10px;">
+          Enter the verification code to confirm <b id="displayPhonePending"></b>
+        </p>
+
+        <!-- Demo Mode Callout -->
+        <div class="demo-otp-banner-profile">
+          <div style="font-weight:700;">Demo Mode: OTP is displayed for testing.</div>
+          <div style="margin-top:4px;">
+            DEMO MODE — OTP for testing: <b id="demoMobileProfileCode" style="font-size:1.15rem; letter-spacing:2px; color:#b45309;">------</b>
+          </div>
+          <button type="button" class="btn btn-xs btn-outline" style="margin-top:6px;" onclick="autofillMobileProfileOtp()">
+            ⚡ Autofill Code
+          </button>
+        </div>
+
+        <form onsubmit="handleVerifyMobileOtp(event)">
+          <div class="form-group" style="text-align:center;">
+            <label for="inputMobileOtp" style="display:block; margin-bottom:6px; font-weight:600;">6-Digit OTP</label>
+            <input type="text" id="inputMobileOtp" class="form-control" maxlength="6" pattern="\d{6}"
+                   placeholder="••••••" style="font-size:1.4rem; letter-spacing:6px; text-align:center; max-width:200px; margin:0 auto;" required
+                   oninput="this.value = this.value.replace(/[^0-9]/g, '');" />
+            <span class="field-hint">Expires in 15 minutes. Single-use only.</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('mobileStep1').style.display='block'; document.getElementById('mobileStep2').style.display='none';">
+              ← Change Mobile
+            </button>
+            <button type="submit" id="btnConfirmMobileOtp" class="btn btn-primary btn-sm">Verify & Update Mobile</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 4. Change Password Modal -->
+  <div id="modalPassword" class="modal-backdrop" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+    <div style="background:white; border-radius:12px; max-width:440px; width:90%; padding:24px; box-shadow:var(--shadow-lg);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <h3 style="margin:0; font-size:1.2rem; font-weight:700;">Change Password</h3>
+        <button onclick="closeModal('modalPassword')" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">&times;</button>
+      </div>
+
+      <div id="passwordModalError" class="step-alert-error" style="display:none; margin-bottom:12px;"></div>
+
+      <form onsubmit="handleSavePassword(event)">
+        <div class="form-group">
+          <label for="inputOldPass">Current Password *</label>
+          <input type="password" id="inputOldPass" class="form-control" required />
+        </div>
+        <div class="form-group">
+          <label for="inputNewPass">New Password *</label>
+          <input type="password" id="inputNewPass" class="form-control" required minlength="8" />
+          <span class="field-hint">At least 8 chars, 1 uppercase, 1 lowercase, 1 digit</span>
+        </div>
+        <div class="form-group">
+          <label for="inputConfirmPass">Confirm New Password *</label>
+          <input type="password" id="inputConfirmPass" class="form-control" required minlength="8" />
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:18px;">
+          <button type="button" class="btn btn-outline btn-sm" onclick="closeModal('modalPassword')">Cancel</button>
+          <button type="submit" id="btnSavePassword" class="btn btn-primary btn-sm">Update Password</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer id="main-footer"></footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    let userProfile = null;
+    let pendingEmailValue = '';
+    let pendingMobileValue = '';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Require logged-in user
+      if (!Auth.requireAuth()) return;
+      await loadProfileData();
+    });
+
+    async function loadProfileData() {
+      try {
+        const res = await API.getProfile();
+        if (res && res.success && res.user) {
+          userProfile = res.user;
+          renderProfile(res.user, res.stats || {});
+        } else {
+          showToast((res && (res.message || res.error)) || 'Failed to load profile', 'error');
+        }
+      } catch (err) {
+        showToast('Network error loading profile: ' + err.message, 'error');
+      }
+    }
+
+    function renderProfile(user, stats) {
+      // Initials & Header
+      const initials = (user.fullName || 'User')
+        .split(' ')
+        .map(n => n[0])
+        .join('')
+        .slice(0, 2)
+        .toUpperCase();
+      document.getElementById('profileInitials').textContent = initials;
+      document.getElementById('profileHeaderName').textContent = user.fullName || 'Traveler';
+      document.getElementById('profileRoleBadge').textContent = user.role || 'TRAVELER';
+      if (user.createdAt) {
+        document.getElementById('profileJoinDate').textContent = 'Member since ' + user.createdAt.split('T')[0];
+      }
+
+      // Email section
+      const emailText = document.getElementById('profileEmailText');
+      const emailBadge = document.getElementById('profileEmailBadge');
+      const emailBtn = document.getElementById('profileEmailBtn');
+
+      if (user.hasEmail && user.email) {
+        emailText.textContent = user.email;
+        if (user.emailVerified) {
+          emailBadge.className = 'badge-verified-custom';
+          emailBadge.innerHTML = '✓ Verified';
+        } else {
+          emailBadge.className = 'badge-unverified-custom';
+          emailBadge.innerHTML = '○ Not verified';
+        }
+        emailBtn.textContent = 'Change Email';
+      } else {
+        emailText.textContent = 'Not provided';
+        emailBadge.className = 'badge-notprovided-custom';
+        emailBadge.innerHTML = 'Not provided';
+        emailBtn.textContent = 'Add Email';
+      }
+
+      // Mobile section
+      const phoneText = document.getElementById('profilePhoneText');
+      const phoneBadge = document.getElementById('profilePhoneBadge');
+      const phoneBtn = document.getElementById('profilePhoneBtn');
+
+      if (user.hasPhone && user.phone) {
+        phoneText.textContent = '+91 ' + user.phone;
+        if (user.mobileVerified) {
+          phoneBadge.className = 'badge-verified-custom';
+          phoneBadge.innerHTML = '✓ Verified';
+        } else {
+          phoneBadge.className = 'badge-unverified-custom';
+          phoneBadge.innerHTML = '○ Not verified';
+        }
+        phoneBtn.textContent = 'Change Mobile';
+      } else {
+        phoneText.textContent = 'Not provided';
+        phoneBadge.className = 'badge-notprovided-custom';
+        phoneBadge.innerHTML = 'Not provided';
+        phoneBtn.textContent = 'Add Mobile';
+      }
+
+      // Stats
+      document.getElementById('statsTotalBookings').textContent = stats.totalBookings || 0;
+      document.getElementById('statsConfirmedBookings').textContent = stats.confirmedBookings || 0;
+      document.getElementById('statsSpentAmount').textContent = formatCurrency(stats.totalSpent || 0);
+    }
+
+    // Modal display helpers
+    function openModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'flex';
+    }
+
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    }
+
+    // --- 1. Edit Name ---
+    function openEditNameModal() {
+      if (!userProfile) return;
+      document.getElementById('inputEditName').value = userProfile.fullName || '';
+      document.getElementById('editNameError').style.display = 'none';
+      openModal('modalEditName');
+      document.getElementById('inputEditName').focus();
+    }
+
+    async function handleSaveName(e) {
+      e.preventDefault();
+      const name = document.getElementById('inputEditName').value.trim();
+      const errBox = document.getElementById('editNameError');
+      const btn = document.getElementById('btnSaveName');
+
+      if (!name || name.length < 2) {
+        errBox.textContent = 'Please enter a valid full name (minimum 2 characters).';
+        errBox.style.display = 'block';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+
+      try {
+        const res = await API.updateProfileName(name);
+        if (res && res.success) {
+          closeModal('modalEditName');
+          showToast('Name updated successfully!');
+          await loadProfileData();
+        } else {
+          errBox.textContent = (res && (res.message || res.error)) || 'Failed to update name.';
+          errBox.style.display = 'block';
+        }
+      } catch (err) {
+        errBox.textContent = 'Network error: ' + err.message;
+        errBox.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Save Changes';
+      }
+    }
+
+    // --- 2. Add / Change Email ---
+    function openEmailModal() {
+      document.getElementById('emailStep1').style.display = 'block';
+      document.getElementById('emailStep2').style.display = 'none';
+      document.getElementById('inputNewEmail').value = '';
+      document.getElementById('emailModalError').style.display = 'none';
+      openModal('modalEmail');
+      document.getElementById('inputNewEmail').focus();
+    }
+
+    async function handleRequestEmailOtp(e) {
+      e.preventDefault();
+      const email = document.getElementById('inputNewEmail').value.trim();
+      const errBox = document.getElementById('emailModalError');
+      const btn = document.getElementById('btnSendEmailOtp');
+
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        errBox.textContent = 'Please enter a syntactically valid email address.';
+        errBox.style.display = 'block';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Sending OTP...';
+
+      try {
+        const res = await API.requestEmailChangeOtp(email);
+        if (res && res.success) {
+          pendingEmailValue = email;
+          document.getElementById('displayEmailPending').textContent = email;
+          document.getElementById('demoEmailProfileCode').textContent = res.demoOtp || '123456';
+          document.getElementById('emailStep1').style.display = 'none';
+          document.getElementById('emailStep2').style.display = 'block';
+          errBox.style.display = 'none';
+          document.getElementById('inputEmailOtp').value = '';
+          document.getElementById('inputEmailOtp').focus();
+        } else {
+          errBox.textContent = (res && (res.message || res.error)) || 'Failed to generate verification OTP.';
+          errBox.style.display = 'block';
+        }
+      } catch (err) {
+        errBox.textContent = 'Network error: ' + err.message;
+        errBox.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Get Verification OTP →';
+      }
+    }
+
+    function autofillEmailProfileOtp() {
+      const code = document.getElementById('demoEmailProfileCode').textContent;
+      if (code && code !== '------') {
+        document.getElementById('inputEmailOtp').value = code;
+      }
+    }
+
+    async function handleVerifyEmailOtp(e) {
+      e.preventDefault();
+      const otp = document.getElementById('inputEmailOtp').value.trim();
+      const errBox = document.getElementById('emailModalError');
+      const btn = document.getElementById('btnConfirmEmailOtp');
+
+      if (!otp || otp.length !== 6) {
+        errBox.textContent = 'Please enter a valid 6-digit OTP code.';
+        errBox.style.display = 'block';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Verifying...';
+
+      try {
+        const res = await API.verifyEmailChange(pendingEmailValue, otp);
+        if (res && res.success) {
+          closeModal('modalEmail');
+          showToast('Email verified and updated successfully!');
+          await loadProfileData();
+        } else {
+          errBox.textContent = (res && (res.message || res.error)) || 'Verification failed. Check the OTP code.';
+          errBox.style.display = 'block';
+        }
+      } catch (err) {
+        errBox.textContent = 'Network error: ' + err.message;
+        errBox.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Verify & Update Email';
+      }
+    }
+
+    // --- 3. Add / Change Mobile ---
+    function openMobileModal() {
+      document.getElementById('mobileStep1').style.display = 'block';
+      document.getElementById('mobileStep2').style.display = 'none';
+      document.getElementById('inputNewPhone').value = '';
+      document.getElementById('mobileModalError').style.display = 'none';
+      openModal('modalMobile');
+      document.getElementById('inputNewPhone').focus();
+    }
+
+    async function handleRequestMobileOtp(e) {
+      e.preventDefault();
+      const phone = document.getElementById('inputNewPhone').value.trim();
+      const errBox = document.getElementById('mobileModalError');
+      const btn = document.getElementById('btnSendMobileOtp');
+
+      if (!/^[6-9]\d{9}$/.test(phone)) {
+        errBox.textContent = 'Please enter a valid 10-digit Indian mobile number.';
+        errBox.style.display = 'block';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Sending OTP...';
+
+      try {
+        const res = await API.requestMobileChangeOtp(phone);
+        if (res && res.success) {
+          pendingMobileValue = phone;
+          document.getElementById('displayPhonePending').textContent = '+91 ' + phone;
+          document.getElementById('demoMobileProfileCode').textContent = res.demoOtp || '123456';
+          document.getElementById('mobileStep1').style.display = 'none';
+          document.getElementById('mobileStep2').style.display = 'block';
+          errBox.style.display = 'none';
+          document.getElementById('inputMobileOtp').value = '';
+          document.getElementById('inputMobileOtp').focus();
+        } else {
+          errBox.textContent = (res && (res.message || res.error)) || 'Failed to generate verification OTP.';
+          errBox.style.display = 'block';
+        }
+      } catch (err) {
+        errBox.textContent = 'Network error: ' + err.message;
+        errBox.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Get Verification OTP →';
+      }
+    }
+
+    function autofillMobileProfileOtp() {
+      const code = document.getElementById('demoMobileProfileCode').textContent;
+      if (code && code !== '------') {
+        document.getElementById('inputMobileOtp').value = code;
+      }
+    }
+
+    async function handleVerifyMobileOtp(e) {
+      e.preventDefault();
+      const otp = document.getElementById('inputMobileOtp').value.trim();
+      const errBox = document.getElementById('mobileModalError');
+      const btn = document.getElementById('btnConfirmMobileOtp');
+
+      if (!otp || otp.length !== 6) {
+        errBox.textContent = 'Please enter a valid 6-digit OTP code.';
+        errBox.style.display = 'block';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Verifying...';
+
+      try {
+        const res = await API.verifyMobileChange(pendingMobileValue, otp);
+        if (res && res.success) {
+          closeModal('modalMobile');
+          showToast('Mobile number verified and updated successfully!');
+          await loadProfileData();
+        } else {
+          errBox.textContent = (res && (res.message || res.error)) || 'Verification failed. Check the OTP code.';
+          errBox.style.display = 'block';
+        }
+      } catch (err) {
+        errBox.textContent = 'Network error: ' + err.message;
+        errBox.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Verify & Update Mobile';
+      }
+    }
+
+    // --- 4. Change Password ---
+    function openChangePasswordModal() {
+      document.getElementById('inputOldPass').value = '';
+      document.getElementById('inputNewPass').value = '';
+      document.getElementById('inputConfirmPass').value = '';
+      document.getElementById('passwordModalError').style.display = 'none';
+      openModal('modalPassword');
+    }
+
+    async function handleSavePassword(e) {
+      e.preventDefault();
+      const oldPass = document.getElementById('inputOldPass').value;
+      const newPass = document.getElementById('inputNewPass').value;
+      const confirmPass = document.getElementById('inputConfirmPass').value;
+      const errBox = document.getElementById('passwordModalError');
+      const btn = document.getElementById('btnSavePassword');
+
+      if (newPass.length < 8 || !/[A-Z]/.test(newPass) || !/[a-z]/.test(newPass) || !/[0-9]/.test(newPass)) {
+        errBox.textContent = 'New password must be at least 8 characters long and contain uppercase, lowercase, and a number.';
+        errBox.style.display = 'block';
+        return;
+      }
+      if (newPass !== confirmPass) {
+        errBox.textContent = 'New passwords do not match.';
+        errBox.style.display = 'block';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Updating...';
+
+      try {
+        const res = await API.changePassword(oldPass, newPass, confirmPass);
+        if (res && res.success) {
+          closeModal('modalPassword');
+          showToast('Password changed successfully!');
+        } else {
+          errBox.textContent = (res && (res.message || res.error)) || 'Failed to change password.';
+          errBox.style.display = 'block';
+        }
+      } catch (err) {
+        errBox.textContent = 'Network error: ' + err.message;
+        errBox.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Update Password';
+      }
+    }
+  </script>
+</body>
+</html>

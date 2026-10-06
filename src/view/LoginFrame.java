@@ -21,7 +21,7 @@ public class LoginFrame extends BaseFrame {
     private JPasswordField passwordField;
 
     public LoginFrame() {
-        super("VoyageQuest Travel - Login", 860, 560);
+        super("Tripzy Travel - Login", 860, 560);
         this.authService = new AuthService();
         initComponents();
     }
@@ -35,7 +35,7 @@ public class LoginFrame extends BaseFrame {
         brandPanel.setBackground(UITheme.PRIMARY);
         brandPanel.setBorder(new EmptyBorder(40, 35, 40, 35));
 
-        JLabel logoLbl = new JLabel("✈ VOYAGEQUEST");
+        JLabel logoLbl = new JLabel("✈ TRIPZY");
         logoLbl.setFont(new Font("Segoe UI", Font.BOLD, 26));
         logoLbl.setForeground(Color.WHITE);
         logoLbl.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -150,7 +150,7 @@ public class LoginFrame extends BaseFrame {
         formContainer.add(Box.createVerticalStrut(10));
 
         // Register Button
-        JButton regBtn = UITheme.createSecondaryButton("New to VoyageQuest? Create Account");
+        JButton regBtn = UITheme.createSecondaryButton("New to Tripzy? Create Account");
         regBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
         regBtn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
         regBtn.addActionListener(e -> {

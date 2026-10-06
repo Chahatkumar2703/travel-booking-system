@@ -3,20 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Register Account - VoyageQuest Travel Booking Platform</title>
+  <title>Create Account - Tripzy Travel Booking Platform</title>
   <link rel="stylesheet" href="css/style.css" />
   <style>
     .auth-container {
-      max-width: 480px;
+      max-width: 540px;
       margin: 40px auto;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 35px 30px;
+      padding: 36px 32px;
       box-shadow: var(--shadow-lg);
     }
     .auth-title {
-      font-size: 1.6rem;
+      font-size: 1.55rem;
       font-weight: 800;
       color: var(--primary);
       text-align: center;
@@ -25,8 +25,104 @@
     .auth-subtitle {
       text-align: center;
       color: var(--text-muted);
-      font-size: 0.9rem;
-      margin-bottom: 25px;
+      font-size: 0.88rem;
+      margin-bottom: 22px;
+      line-height: 1.4;
+    }
+    .field-hint {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      display: block;
+    }
+    .contact-card-info {
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-size: 0.8rem;
+      color: #475569;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .req-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 12px;
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+    .req-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .req-valid {
+      color: var(--success);
+      font-weight: 600;
+    }
+    .demo-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #fef3c7;
+      border: 1px solid #fde68a;
+      color: #92400e;
+      padding: 5px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: all 0.15s ease;
+    }
+    .demo-chip:hover {
+      background: #fde68a;
+      transform: translateY(-1px);
+    }
+    .verification-icon-stage {
+      width: 58px;
+      height: 58px;
+      border-radius: 18px;
+      background: #eef2ff;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.7rem;
+      margin: 0 auto 14px;
+    }
+    .otp-code-highlight {
+      font-size: 1.25rem;
+      letter-spacing: 3px;
+      color: #b45309;
+      font-weight: 800;
+      font-family: monospace;
+    }
+    .badge-verified-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      background: #dcfce7;
+      color: #15803d;
+    }
+    .badge-unverified-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      background: #fef3c7;
+      color: #b45309;
     }
   </style>
 </head>
@@ -34,57 +130,215 @@
 
   <!-- Demo Bar -->
   <div class="demo-bar">
-    <span>🎓 <b>College Project Demo Mode</b></span>
+    <span>🎓 <b>College Project Demo Mode:</b> Flexible Production Registration Flow</span>
     <div>
-      <a href="index.html">← Back to Public Website</a>
+      <a href="index.html">← Back to Tripzy Home</a>
     </div>
   </div>
 
   <div class="container">
     <div class="auth-container">
-      <div style="text-align:center; font-size:2.2rem; margin-bottom:10px;">✨</div>
-      <h2 class="auth-title">Create Account</h2>
-      <p class="auth-subtitle">Join VoyageQuest as a Traveler or certified Travel Agency.</p>
+      
+      <!-- Brand Logo Mark -->
+      <div style="text-align:center; margin-bottom:12px;">
+        <span class="tripzy-logo-icon" style="width:48px; height:48px; border-radius:14px; display:inline-flex;">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:28px; height:28px;">
+            <path d="M4 18C7 18 10.5 15.5 14 11" stroke="#f97316" stroke-width="2" stroke-linecap="round"/>
+            <path d="M19.5 5.5L13.8 9.8L9.5 8.2L11.2 10.8L9.5 12.5L12.2 13L13.8 16.5L15 13.5L19.5 5.5Z" fill="#ffffff" stroke="#ffffff" stroke-width="0.5" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </div>
 
-      <form id="registerForm" onsubmit="handleRegister(event)">
-        <div class="form-group">
-          <label for="regName">Full Name / Agency Name</label>
-          <input type="text" id="regName" class="form-control" required placeholder="e.g. Rahul Sharma" />
+      <!-- 3-Step Registration Stepper -->
+      <div class="registration-stepper">
+        <div class="step-node active" id="stepNode1">
+          <div class="step-circle" id="circle1">1</div>
+          <div class="step-label">Account</div>
         </div>
-        <div class="form-group">
-          <label for="regEmail">Email Address</label>
-          <input type="email" id="regEmail" class="form-control" required placeholder="rahul@example.com" />
+        <div class="step-line" id="line1"></div>
+        <div class="step-node" id="stepNode2">
+          <div class="step-circle" id="circle2">2</div>
+          <div class="step-label">Verification</div>
         </div>
-        <div class="form-group">
-          <label for="regPhone">10-Digit Mobile Phone</label>
-          <input type="tel" id="regPhone" class="form-control" required placeholder="9811223344" maxlength="10" />
+        <div class="step-line" id="line2"></div>
+        <div class="step-node" id="stepNode3">
+          <div class="step-circle" id="circle3">3</div>
+          <div class="step-label">Activated</div>
         </div>
-        <div class="form-group">
-          <label for="regRole">Account Type / Role</label>
-          <select id="regRole" class="form-control" required>
-            <option value="TRAVELER">Traveler / Customer (Book flights, hotels, cars, packages)</option>
-            <option value="AGENT">Travel Agent (Publish & manage travel listings)</option>
-          </select>
-          <small style="color:var(--text-muted); font-size:0.78rem; display:block; margin-top:4px;">
-            🛡 Note: Administrator accounts cannot be registered publicly for security reasons.
-          </small>
+      </div>
+
+      <!-- =============================================================== -->
+      <!-- STEP 1: CREATE ACCOUNT FORM                                     -->
+      <!-- =============================================================== -->
+      <div id="step1Panel" class="step-panel active">
+        <h2 class="auth-title">Create Tripzy Account</h2>
+        <p class="auth-subtitle">Join Tripzy as a Traveler or certified Travel Agency.</p>
+
+        <div class="contact-card-info">
+          <span>ℹ️</span>
+          <span><b>Contact Requirement:</b> Provide at least one contact method (Email or Indian Mobile Number). Both can also be provided.</span>
         </div>
-        <div class="form-group">
-          <label for="regPass">Password (min 6 characters)</label>
-          <input type="password" id="regPass" class="form-control" required minlength="6" placeholder="••••••••" />
+
+        <div id="step1Error" class="step-alert-error"></div>
+
+        <form id="step1Form" onsubmit="handleStep1Submit(event)">
+          <div class="form-group">
+            <label for="regName">Full Name / Agency Name *</label>
+            <input type="text" id="regName" class="form-control" required minlength="2" maxlength="100" placeholder="e.g. Rahul Sharma" />
+            <span class="field-hint">Minimum 2 characters</span>
+          </div>
+
+          <div class="form-group">
+            <label for="regEmail">Email Address <span style="font-size:0.78rem; font-weight:normal; color:var(--text-muted);">(Optional if Mobile provided)</span></label>
+            <input type="email" id="regEmail" class="form-control" placeholder="rahul@example.com" />
+            <span class="field-hint">Accepts Gmail, Yahoo, Outlook, college domains, etc.</span>
+          </div>
+
+          <div class="form-group">
+            <label for="regPhone">Indian Mobile Number <span style="font-size:0.78rem; font-weight:normal; color:var(--text-muted);">(Optional if Email provided)</span></label>
+            <div class="phone-input-group">
+              <span class="phone-prefix">🇮🇳 +91</span>
+              <input type="tel" id="regPhone" class="form-control" maxlength="10" placeholder="9811223344"
+                     oninput="this.value = this.value.replace(/[^0-9]/g, ''); validatePhoneInput();" />
+            </div>
+            <span id="phoneHint" class="field-hint">10 digits starting with 6, 7, 8, or 9 (dummy numbers rejected)</span>
+          </div>
+
+          <div class="form-group">
+            <label for="regRole">Account Type / Role</label>
+            <select id="regRole" class="form-control" required>
+              <option value="TRAVELER">Traveler / Customer (Book flights, hotels, cars, packages)</option>
+              <option value="AGENT">Travel Agent (Publish & manage travel listings)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="regPass">Password *</label>
+            <input type="password" id="regPass" class="form-control" required minlength="8" placeholder="••••••••" oninput="updateRegPassStrength()" />
+            <div class="password-meter"><div id="regMeterFill" class="password-meter-fill"></div></div>
+            <div class="password-hint">
+              <span>Strength: <b id="regStrengthLevel">None</b></span>
+            </div>
+            <div class="req-list">
+              <span id="reqLen" class="req-item">• 8+ characters</span>
+              <span id="reqUpper" class="req-item">• Uppercase letter</span>
+              <span id="reqLower" class="req-item">• Lowercase letter</span>
+              <span id="reqNum" class="req-item">• Number (0-9)</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="regConfirm">Confirm Password *</label>
+            <input type="password" id="regConfirm" class="form-control" required minlength="8" placeholder="••••••••" oninput="checkRegMatch()" />
+            <div id="regMatchText" style="font-size:0.78rem; margin-top:4px;"></div>
+          </div>
+
+          <div class="form-group" style="margin-top:14px;">
+            <label style="display:flex; align-items:flex-start; gap:8px; font-weight:normal; font-size:0.86rem; cursor:pointer;">
+              <input type="checkbox" id="regTerms" style="margin-top:3px;" required />
+              <span>I agree to the Tripzy <a href="#" style="color:var(--primary); font-weight:600;">Terms of Service</a> and <a href="#" style="color:var(--primary); font-weight:600;">Privacy Policy</a>.</span>
+            </label>
+          </div>
+
+          <button type="submit" id="step1Btn" class="btn btn-primary btn-block" style="padding:10px; margin-top:14px;">
+            Create Account & Verify OTP →
+          </button>
+        </form>
+
+        <p style="text-align:center; font-size:0.88rem; margin-top:20px; color:var(--text-muted);">
+          Already have an account? <a href="login.html" style="color:var(--primary); font-weight:600; text-decoration:none;">Sign in here</a>
+        </p>
+      </div>
+
+      <!-- =============================================================== -->
+      <!-- STEP 2: DEMO OTP VERIFICATION                                   -->
+      <!-- =============================================================== -->
+      <div id="step2Panel" class="step-panel">
+        <div class="verification-icon-stage">🔐</div>
+        <h2 class="auth-title">Verify OTP</h2>
+        <p class="auth-subtitle" id="step2Subtitle">Enter the 6-digit verification code to activate your account.</p>
+
+        <div id="step2Error" class="step-alert-error"></div>
+
+        <!-- Development / Demo Mode Notice Banner -->
+        <div id="demoOtpBox" class="demo-otp-banner" style="background:#fef3c7; border:1px solid #fde68a; border-radius:var(--radius-sm); padding:14px; margin-bottom:18px;">
+          <div style="font-weight:700; color:#92400e; margin-bottom:6px; font-size:0.88rem;">
+            Demo Mode: OTP is displayed for testing.
+          </div>
+          
+          <div id="demoEmailOtpRow" style="margin-bottom:6px; display:none;">
+            <span style="font-size:0.82rem; color:#78350f;">Email OTP: </span>
+            <span id="demoEmailOtpCode" class="otp-code-highlight">------</span>
+            <button type="button" class="demo-chip" style="margin-left:8px;" onclick="autoFillOtp(document.getElementById('demoEmailOtpCode').textContent)">⚡ Autofill</button>
+          </div>
+
+          <div id="demoMobileOtpRow" style="margin-bottom:4px; display:none;">
+            <span style="font-size:0.82rem; color:#78350f;">Mobile OTP: </span>
+            <span id="demoMobileOtpCode" class="otp-code-highlight">------</span>
+            <button type="button" class="demo-chip" style="margin-left:8px;" onclick="autoFillOtp(document.getElementById('demoMobileOtpCode').textContent)">⚡ Autofill</button>
+          </div>
+
+          <div id="demoDualNote" style="font-size:0.75rem; color:#92400e; margin-top:6px; display:none;">
+            ✓ Verify either code to activate your account. You can verify the other from your Profile.
+          </div>
         </div>
-        <div class="form-group">
-          <label for="regConfirm">Confirm Password</label>
-          <input type="password" id="regConfirm" class="form-control" required minlength="6" placeholder="••••••••" />
+
+        <form id="step2Form" onsubmit="handleStep2Submit(event)">
+          <div class="form-group" style="text-align:center;">
+            <label for="otpInput" style="display:block; margin-bottom:8px; font-weight:600;">Enter 6-Digit Verification Code</label>
+            <input type="text" id="otpInput" class="form-control otp-input-field" maxlength="6" pattern="\d{6}"
+                   placeholder="••••••" autofocus required
+                   style="font-size:1.6rem; letter-spacing:8px; text-align:center; max-width:260px; margin:0 auto;"
+                   oninput="this.value = this.value.replace(/[^0-9]/g, '');" />
+            <span class="field-hint" style="margin-top:6px;">Code expires in 15 minutes. Single-use only.</span>
+          </div>
+
+          <button type="submit" id="step2Btn" class="btn btn-primary btn-block" style="padding:11px; font-size:0.95rem; margin-top:12px;">
+            Verify & Activate Account →
+          </button>
+        </form>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:18px; font-size:0.84rem;">
+          <a href="#" onclick="goToStep(1)" style="color:var(--text-muted); text-decoration:none;">← Edit Details</a>
+          <button type="button" id="resendOtpBtn" class="btn btn-outline btn-sm" onclick="handleResendOtp()">
+            Resend OTP
+          </button>
         </div>
-        <button type="submit" id="regBtn" class="btn btn-primary btn-block" style="padding:10px; margin-top:10px;">
-          Complete Registration
+        <div id="resendCooldownText" style="text-align:right; font-size:0.75rem; color:var(--text-muted); margin-top:4px;"></div>
+      </div>
+
+      <!-- =============================================================== -->
+      <!-- STEP 3: ACCOUNT ACTIVATED & COMPLETE                            -->
+      <!-- =============================================================== -->
+      <div id="step3Panel" class="step-panel" style="text-align:center;">
+        <div style="width:68px; height:68px; border-radius:50%; background:#dcfce7; color:#15803d; font-size:2.2rem; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-weight:bold;">
+          ✓
+        </div>
+        <h2 class="auth-title" style="color:var(--success);">Account Created Successfully!</h2>
+        <p class="auth-subtitle" style="font-size:0.95rem; margin-bottom:18px;">
+          Welcome to Tripzy, <b id="welcomeUserName">Traveler</b>!
+        </p>
+
+        <div style="background:#f8fafc; border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px; text-align:left; margin-bottom:24px; font-size:0.86rem; line-height:1.8;">
+          <div id="summaryEmailRow" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <span>Email: <b id="summaryEmail">None</b></span>
+            <span id="summaryEmailBadge" class="badge-verified-pill">✓ Verified</span>
+          </div>
+          <div id="summaryPhoneRow" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <span>Mobile: <b id="summaryPhone">None</b></span>
+            <span id="summaryPhoneBadge" class="badge-verified-pill">✓ Verified</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px; padding-top:6px; border-top:1px dashed #e2e8f0;">
+            <span>Account Role: <b id="summaryRole">TRAVELER</b></span>
+            <span style="color:var(--success); font-weight:700;">ACTIVE</span>
+          </div>
+        </div>
+
+        <button type="button" id="finishBtn" class="btn btn-accent btn-block" style="padding:12px; font-size:1rem;" onclick="handleContinueToDashboard()">
+          Continue to Tripzy →
         </button>
-      </form>
+      </div>
 
-      <p style="text-align:center; font-size:0.88rem; margin-top:20px; color:var(--text-muted);">
-        Already have an account? <a href="login.html" style="color:var(--primary); font-weight:600; text-decoration:none;">Sign in here</a>
-      </p>
     </div>
   </div>
 
@@ -92,42 +346,416 @@
   <script src="js/auth.js"></script>
   <script src="js/main.js"></script>
   <script>
-    async function handleRegister(e) {
+    // State management for multi-step registration
+    let currentStep = 1;
+    let registrationId = null;
+    let registeredEmail = '';
+    let registeredPhone = '';
+    let currentFullName = '';
+    let currentRole = 'TRAVELER';
+    let resendCooldownTimer = null;
+    let activatedUser = null;
+
+    // --- Phone Validation & Hint ---
+    function isDummyNumber(clean) {
+      if (!clean || clean.length !== 10) return true;
+      const allSame = clean.split('').every(c => c === clean[0]);
+      if (allSame) return true;
+      if (clean === '1234567890' || clean === '0123456789') return true;
+      return false;
+    }
+
+    function validatePhoneInput() {
+      const p = document.getElementById('regPhone').value.trim();
+      const hint = document.getElementById('phoneHint');
+      if (!p) {
+        hint.textContent = '10 digits starting with 6, 7, 8, or 9 (dummy numbers rejected)';
+        hint.style.color = 'var(--text-muted)';
+      } else if (isDummyNumber(p)) {
+        hint.textContent = '✗ Obvious dummy numbers are not allowed';
+        hint.style.color = 'var(--danger)';
+      } else if (/^[6-9]\d{9}$/.test(p)) {
+        hint.textContent = '✓ Valid 10-digit Indian mobile number';
+        hint.style.color = 'var(--success)';
+      } else {
+        hint.textContent = `Must be 10 digits starting with 6-9 (${p.length}/10 digits)`;
+        hint.style.color = 'var(--danger)';
+      }
+    }
+
+    // --- Password Strength & Matching ---
+    function updateRegPassStrength() {
+      const p = document.getElementById('regPass').value;
+      const fill = document.getElementById('regMeterFill');
+      const level = document.getElementById('regStrengthLevel');
+
+      const hasLen = p.length >= 8;
+      const hasUpper = /[A-Z]/.test(p);
+      const hasLower = /[a-z]/.test(p);
+      const hasNum = /[0-9]/.test(p);
+
+      document.getElementById('reqLen').className = 'req-item' + (hasLen ? ' req-valid' : '');
+      document.getElementById('reqLen').textContent = (hasLen ? '✓ ' : '• ') + '8+ characters';
+
+      document.getElementById('reqUpper').className = 'req-item' + (hasUpper ? ' req-valid' : '');
+      document.getElementById('reqUpper').textContent = (hasUpper ? '✓ ' : '• ') + 'Uppercase letter';
+
+      document.getElementById('reqLower').className = 'req-item' + (hasLower ? ' req-valid' : '');
+      document.getElementById('reqLower').textContent = (hasLower ? '✓ ' : '• ') + 'Lowercase letter';
+
+      document.getElementById('reqNum').className = 'req-item' + (hasNum ? ' req-valid' : '');
+      document.getElementById('reqNum').textContent = (hasNum ? '✓ ' : '• ') + 'Number (0-9)';
+
+      if (!p) {
+        fill.style.width = '0%';
+        fill.className = 'password-meter-fill';
+        level.textContent = 'None';
+        level.style.color = 'var(--text-muted)';
+        return;
+      }
+
+      let score = 0;
+      if (hasLen) score++;
+      if (hasUpper) score++;
+      if (hasLower) score++;
+      if (hasNum) score++;
+      if (/[^A-Za-z0-9]/.test(p)) score++;
+
+      if (score <= 2) {
+        fill.className = 'password-meter-fill password-weak';
+        level.textContent = 'Weak';
+        level.style.color = 'var(--danger)';
+      } else if (score === 3 || score === 4) {
+        fill.className = 'password-meter-fill password-medium';
+        level.textContent = 'Medium';
+        level.style.color = 'var(--warning)';
+      } else {
+        fill.className = 'password-meter-fill password-strong';
+        level.textContent = 'Strong';
+        level.style.color = 'var(--success)';
+      }
+
+      checkRegMatch();
+    }
+
+    function checkRegMatch() {
+      const p1 = document.getElementById('regPass').value;
+      const p2 = document.getElementById('regConfirm').value;
+      const matchText = document.getElementById('regMatchText');
+      if (!p2) {
+        matchText.textContent = '';
+        return;
+      }
+      if (p1 === p2) {
+        matchText.textContent = '✓ Passwords match';
+        matchText.style.color = 'var(--success)';
+      } else {
+        matchText.textContent = '✗ Passwords do not match';
+        matchText.style.color = 'var(--danger)';
+      }
+    }
+
+    // --- Stepper Navigation ---
+    function goToStep(stepNumber) {
+      currentStep = stepNumber;
+
+      // Update panels
+      document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+      const targetPanel = document.getElementById(`step${stepNumber}Panel`);
+      if (targetPanel) targetPanel.classList.add('active');
+
+      // Update stepper nodes
+      for (let i = 1; i <= 3; i++) {
+        const node = document.getElementById(`stepNode${i}`);
+        const circle = document.getElementById(`circle${i}`);
+        const line = document.getElementById(`line${i}`);
+
+        if (i < stepNumber) {
+          node.className = 'step-node completed';
+          circle.textContent = '✓';
+          if (line) line.className = 'step-line completed';
+        } else if (i === stepNumber) {
+          node.className = 'step-node active';
+          circle.textContent = i;
+          if (line) line.className = 'step-line';
+        } else {
+          node.className = 'step-node';
+          circle.textContent = i;
+          if (line) line.className = 'step-line';
+        }
+      }
+    }
+
+    function showError(elementId, msg) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      if (msg) {
+        el.textContent = msg;
+        el.style.display = 'block';
+      } else {
+        el.textContent = '';
+        el.style.display = 'none';
+      }
+    }
+
+    // --- STEP 1: INITIATE REGISTRATION ---
+    async function handleStep1Submit(e) {
       e.preventDefault();
+      showError('step1Error', '');
+
       const name = document.getElementById('regName').value.trim();
       const email = document.getElementById('regEmail').value.trim();
       const phone = document.getElementById('regPhone').value.trim();
       const role = document.getElementById('regRole').value;
       const pass = document.getElementById('regPass').value;
       const confirm = document.getElementById('regConfirm').value;
-      const btn = document.getElementById('regBtn');
+      const terms = document.getElementById('regTerms').checked;
+      const btn = document.getElementById('step1Btn');
 
+      if (!terms) {
+        showError('step1Error', 'You must accept the Terms of Service and Privacy Policy to proceed.');
+        return;
+      }
+      if (!name || name.length < 2) {
+        showError('step1Error', 'Please enter your full name (minimum 2 characters).');
+        document.getElementById('regName').focus();
+        return;
+      }
+
+      // Check contact: at least ONE required
+      if (!email && !phone) {
+        showError('step1Error', 'Please provide either an email address or mobile number.');
+        return;
+      }
+
+      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showError('step1Error', 'Please enter a valid email address.');
+        document.getElementById('regEmail').focus();
+        return;
+      }
+
+      if (phone) {
+        if (!/^[6-9]\d{9}$/.test(phone)) {
+          showError('step1Error', 'Please enter a valid 10-digit mobile number.');
+          document.getElementById('regPhone').focus();
+          return;
+        }
+        if (isDummyNumber(phone)) {
+          showError('step1Error', 'Please enter a valid mobile number (dummy numbers are rejected).');
+          document.getElementById('regPhone').focus();
+          return;
+        }
+      }
+
+      if (pass.length < 8 || !/[A-Z]/.test(pass) || !/[a-z]/.test(pass) || !/[0-9]/.test(pass)) {
+        showError('step1Error', 'Password must be at least 8 characters with at least one uppercase letter, one lowercase letter, and one number.');
+        document.getElementById('regPass').focus();
+        return;
+      }
       if (pass !== confirm) {
-        showToast('Passwords do not match!', 'error');
+        showError('step1Error', 'Passwords do not match.');
+        document.getElementById('regConfirm').focus();
         return;
       }
 
       btn.disabled = true;
-      btn.textContent = 'Creating account...';
+      btn.textContent = 'Generating Verification Code...';
 
       try {
-        const res = await API.register(name, email, phone, pass, confirm, role);
-        if (res.success && res.user) {
-          Auth.setUser(res.user, res.token);
-          showToast('Account registered successfully! Redirecting...', 'success');
-          setTimeout(() => {
-            if (res.user.role === 'AGENT') window.location.href = 'agent-dashboard.html';
-            else window.location.href = 'traveler-dashboard.html';
-          }, 800);
+        const res = await API.initiateRegistration(name, email, phone, pass, confirm, role, terms);
+        if (res && res.success) {
+          registrationId = res.registrationId;
+          registeredEmail = email;
+          registeredPhone = phone;
+          currentFullName = name;
+          currentRole = role;
+
+          // Configure Step 2 OTP Screen
+          const subtitle = document.getElementById('step2Subtitle');
+          const emailRow = document.getElementById('demoEmailOtpRow');
+          const mobileRow = document.getElementById('demoMobileOtpRow');
+          const dualNote = document.getElementById('demoDualNote');
+
+          if (res.hasEmail && res.hasPhone) {
+            subtitle.textContent = `Verification code sent to ${res.maskedEmail} and ${res.maskedPhone}.`;
+            emailRow.style.display = 'block';
+            document.getElementById('demoEmailOtpCode').textContent = res.demoEmailOtp || '------';
+            mobileRow.style.display = 'block';
+            document.getElementById('demoMobileOtpCode').textContent = res.demoMobileOtp || '------';
+            dualNote.style.display = 'block';
+          } else if (res.hasEmail) {
+            subtitle.textContent = `Verification code sent to ${res.maskedEmail}.`;
+            emailRow.style.display = 'block';
+            document.getElementById('demoEmailOtpCode').textContent = res.demoEmailOtp || '------';
+            mobileRow.style.display = 'none';
+            dualNote.style.display = 'none';
+          } else {
+            subtitle.textContent = `Verification code sent to ${res.maskedPhone}.`;
+            emailRow.style.display = 'none';
+            mobileRow.style.display = 'block';
+            document.getElementById('demoMobileOtpCode').textContent = res.demoMobileOtp || '------';
+            dualNote.style.display = 'none';
+          }
+
+          startResendCooldown(60);
+          goToStep(2);
+          document.getElementById('otpInput').value = '';
+          document.getElementById('otpInput').focus();
         } else {
-          showToast(res.message || 'Registration failed.', 'error');
-          btn.disabled = false;
-          btn.textContent = 'Complete Registration';
+          showError('step1Error', (res && (res.message || res.error)) || 'Registration check failed.');
         }
       } catch (err) {
-        showToast('Error connecting to server: ' + err.message, 'error');
+        showError('step1Error', 'Network error connecting to server: ' + err.message);
+      } finally {
         btn.disabled = false;
-        btn.textContent = 'Complete Registration';
+        btn.textContent = 'Create Account & Verify OTP →';
+      }
+    }
+
+    // --- STEP 2: VERIFY OTP ---
+    function autoFillOtp(code) {
+      if (code && code !== '------') {
+        const input = document.getElementById('otpInput');
+        input.value = code;
+        input.focus();
+      }
+    }
+
+    function startResendCooldown(seconds) {
+      const btn = document.getElementById('resendOtpBtn');
+      const text = document.getElementById('resendCooldownText');
+      btn.disabled = true;
+
+      let remaining = seconds;
+      text.textContent = `Resend available in ${remaining}s`;
+
+      if (resendCooldownTimer) clearInterval(resendCooldownTimer);
+      resendCooldownTimer = setInterval(() => {
+        remaining--;
+        if (remaining <= 0) {
+          clearInterval(resendCooldownTimer);
+          btn.disabled = false;
+          text.textContent = '';
+        } else {
+          text.textContent = `Resend available in ${remaining}s`;
+        }
+      }, 1000);
+    }
+
+    async function handleResendOtp() {
+      if (!registrationId) return;
+      showError('step2Error', '');
+      const btn = document.getElementById('resendOtpBtn');
+      btn.disabled = true;
+
+      try {
+        let res = null;
+        if (registeredEmail) {
+          res = await API.resendEmailRegistrationOtp(registrationId);
+          if (res && res.success && res.demoEmailOtp) {
+            document.getElementById('demoEmailOtpCode').textContent = res.demoEmailOtp;
+          }
+        }
+        if (registeredPhone) {
+          const resPhone = await API.resendMobileRegistrationOtp(registrationId);
+          if (resPhone && resPhone.success && resPhone.demoMobileOtp) {
+            document.getElementById('demoMobileOtpCode').textContent = resPhone.demoMobileOtp;
+            if (!res) res = resPhone;
+          }
+        }
+
+        if (res && res.success) {
+          startResendCooldown(60);
+          showError('step2Error', '');
+        } else {
+          showError('step2Error', (res && (res.message || res.error)) || 'Failed to resend code.');
+          btn.disabled = false;
+        }
+      } catch (err) {
+        showError('step2Error', 'Network error connecting to server: ' + err.message);
+        btn.disabled = false;
+      }
+    }
+
+    async function handleStep2Submit(e) {
+      e.preventDefault();
+      showError('step2Error', '');
+
+      const otp = document.getElementById('otpInput').value.trim();
+      const btn = document.getElementById('step2Btn');
+
+      if (!otp || otp.length !== 6) {
+        showError('step2Error', 'Please enter a valid 6-digit verification code.');
+        document.getElementById('otpInput').focus();
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Verifying Code & Activating...';
+
+      try {
+        const res = await API.verifyRegistrationOtp(registrationId, otp);
+        if (res && res.success && res.accountActivated) {
+          activatedUser = res.user;
+
+          // Store auth token in Auth system and localStorage
+          if (typeof Auth !== 'undefined' && Auth.loginSuccess) {
+            Auth.loginSuccess(res.user, res.token);
+          } else {
+            localStorage.setItem('voyage_token', res.token);
+            localStorage.setItem('voyage_user', JSON.stringify(res.user));
+          }
+
+          // Populate step 3 summary
+          document.getElementById('welcomeUserName').textContent = res.user.fullName || currentFullName;
+          
+          if (registeredEmail) {
+            document.getElementById('summaryEmail').textContent = res.user.email || registeredEmail;
+            document.getElementById('summaryEmailBadge').textContent = '✓ Verified';
+            document.getElementById('summaryEmailBadge').className = 'badge-verified-pill';
+          } else {
+            document.getElementById('summaryEmail').textContent = 'Not provided';
+            document.getElementById('summaryEmailBadge').textContent = '○ Not added';
+            document.getElementById('summaryEmailBadge').className = 'badge-unverified-pill';
+          }
+
+          if (registeredPhone) {
+            document.getElementById('summaryPhone').textContent = res.user.phone || registeredPhone;
+            document.getElementById('summaryPhoneBadge').textContent = '✓ Verified';
+            document.getElementById('summaryPhoneBadge').className = 'badge-verified-pill';
+          } else {
+            document.getElementById('summaryPhone').textContent = 'Not provided';
+            document.getElementById('summaryPhoneBadge').textContent = '○ Not added';
+            document.getElementById('summaryPhoneBadge').className = 'badge-unverified-pill';
+          }
+
+          document.getElementById('summaryRole').textContent = res.user.role || currentRole;
+
+          goToStep(3);
+        } else {
+          showError('step2Error', (res && (res.message || res.error)) || 'Verification failed. Please check the code.');
+        }
+      } catch (err) {
+        showError('step2Error', 'Network error connecting to server: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Verify & Activate Account →';
+      }
+    }
+
+    // --- STEP 3: REDIRECT TO DASHBOARD ---
+    function handleContinueToDashboard() {
+      if (activatedUser) {
+        const role = (activatedUser.role || '').toUpperCase();
+        if (role === 'AGENT') {
+          window.location.href = 'agent-dashboard.html';
+        } else if (role === 'ADMIN') {
+          window.location.href = 'admin-dashboard.html';
+        } else {
+          window.location.href = 'traveler-dashboard.html';
+        }
+      } else {
+        window.location.href = 'index.html';
       }
     }
   </script>

@@ -66,6 +66,7 @@ function handleImageError(img, type = 'travel') {
   if (!img) return;
   img.onerror = null;
   const fallbacks = {
+    flight: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&auto=format&fit=crop',
     car: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=800&auto=format&fit=crop',
     hotel: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&auto=format&fit=crop',
     destination: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=800&auto=format&fit=crop',
@@ -76,10 +77,51 @@ function handleImageError(img, type = 'travel') {
 }
 
 // ---------------------------------------------------------------------------
-// Contextual Image Mapping Helpers (Hotels, Cars, Destinations, Packages)
+// Contextual Image Mapping Helpers (Flights, Hotels, Cars, Destinations, Packages)
 // ---------------------------------------------------------------------------
 
-// 1. Car Image Mapping - matches car name, model, brand, and type
+// 1. Flight Image Mapping - maps routes and destinations to high-quality travel/aerial visuals
+function getFlightImageUrl(flight) {
+  if (!flight) return 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&auto=format&fit=crop';
+
+  const orig = (flight.origin || '').toLowerCase();
+  const dest = (flight.destination || '').toLowerCase();
+  const text = `${orig} ${dest}`;
+
+  // Delhi -> Mumbai or Mumbai routes
+  if (text.includes('mumbai') && text.includes('delhi')) {
+    return 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=800&auto=format&fit=crop';
+  }
+  // Goa coastal flights
+  if (text.includes('goa')) {
+    return 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=800&auto=format&fit=crop';
+  }
+  // Kashmir / Srinagar mountain flights
+  if (text.includes('kashmir') || text.includes('srinagar')) {
+    return 'https://images.unsplash.com/photo-1595846519845-68e298c2edd8?w=800&auto=format&fit=crop';
+  }
+  // Jaipur / Rajasthan desert horizon flights
+  if (text.includes('jaipur') || text.includes('rajasthan')) {
+    return 'https://images.unsplash.com/photo-1477587458883-47145ed94245?w=800&auto=format&fit=crop';
+  }
+  // Kerala backwater / coastal flights
+  if (text.includes('kerala') || text.includes('kochi')) {
+    return 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=800&auto=format&fit=crop';
+  }
+  // Bengaluru flights
+  if (text.includes('bengaluru') || text.includes('bangalore')) {
+    return 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?w=800&auto=format&fit=crop';
+  }
+  // Delhi capital flights
+  if (text.includes('delhi')) {
+    return 'https://images.unsplash.com/photo-1587474260584-136574528ed5?w=800&auto=format&fit=crop';
+  }
+
+  // Commercial airliner in flight fallback
+  return 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&auto=format&fit=crop';
+}
+
+// 2. Car Image Mapping - matches car name, model, brand, and type
 function getCarImageUrl(car) {
   if (!car) return 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=800&auto=format&fit=crop';
 
@@ -377,7 +419,15 @@ document.addEventListener('DOMContentLoaded', () => {
       <!-- Navbar -->
       <header class="navbar">
         <div class="nav-container">
-          <a href="index.html" class="nav-brand">✈ Voyage<span>Quest</span></a>
+          <a href="index.html" class="nav-brand tripzy-brand">
+            <span class="tripzy-logo-icon">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 18C7 18 10.5 15.5 14 11" stroke="#f97316" stroke-width="2" stroke-linecap="round"/>
+                <path d="M19.5 5.5L13.8 9.8L9.5 8.2L11.2 10.8L9.5 12.5L12.2 13L13.8 16.5L15 13.5L19.5 5.5Z" fill="#ffffff" stroke="#ffffff" stroke-width="0.5" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span class="tripzy-brand-text">Trip<span class="brand-zy">zy</span></span>
+          </a>
           <ul class="nav-links">
             <li><a href="index.html" class="${curPath.includes('index.html') || curPath.endsWith('/') ? 'active' : ''}">Home</a></li>
             <li><a href="flights.html" class="${curPath.includes('flights.html') ? 'active' : ''}">Flights</a></li>
@@ -386,6 +436,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <li><a href="packages.html" class="${curPath.includes('packages.html') ? 'active' : ''}">Packages</a></li>
             <li><a href="my-bookings.html" class="${curPath.includes('my-bookings.html') ? 'active' : ''}">My Bookings</a></li>
             <li><a href="itinerary.html" class="${curPath.includes('itinerary.html') ? 'active' : ''}">Itinerary</a></li>
+            <li><a href="profile.html" class="${curPath.includes('profile.html') ? 'active' : ''}">Profile</a></li>
           </ul>
           <div class="nav-auth" id="navAuth"></div>
         </div>
@@ -402,7 +453,15 @@ document.addEventListener('DOMContentLoaded', () => {
       <footer class="footer">
         <div class="container footer-content">
           <div>
-            <div class="footer-brand">✈ Voyage<span>Quest</span></div>
+            <div class="footer-brand tripzy-brand" style="color:#ffffff; margin-bottom:10px;">
+              <span class="tripzy-logo-icon">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M4 18C7 18 10.5 15.5 14 11" stroke="#f97316" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M19.5 5.5L13.8 9.8L9.5 8.2L11.2 10.8L9.5 12.5L12.2 13L13.8 16.5L15 13.5L19.5 5.5Z" fill="#ffffff" stroke="#ffffff" stroke-width="0.5" stroke-linejoin="round"/>
+                </svg>
+              </span>
+              <span class="tripzy-brand-text" style="color:#ffffff;">Trip<span class="brand-zy">zy</span></span>
+            </div>
             <p>Comprehensive Online Travel Booking & Tourism Management Platform. Built with core Java JDK, JDBC, and MySQL database.</p>
           </div>
           <div>
@@ -434,7 +493,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
         <div class="footer-bottom">
-          &copy; ${new Date().getFullYear()} VoyageQuest Online Travel Platform. Designed for B.Tech CSE Final / Minor Project Demonstration.
+          &copy; ${new Date().getFullYear()} Tripzy Online Travel Booking Platform. Designed for B.Tech CSE Final / Minor Project Demonstration.
         </div>
       </footer>
     `;

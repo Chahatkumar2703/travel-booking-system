@@ -3,8 +3,10 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import model.*;
 import service.*;
+import dao.UserDAO;
 import util.DatabaseInitializer;
 import util.SessionManager;
+import util.ValidationUtil;
 
 import java.awt.Desktop;
 import java.io.*;
@@ -35,6 +37,7 @@ public class WebServer {
     private static final AdminService adminService = new AdminService();
     private static final MessageService messageService = new MessageService();
     private static final SettingsService settingsService = new SettingsService();
+    private static final UserDAO userDAO = new UserDAO();
 
     private static int getPort() {
         String envPort = System.getenv("PORT");
@@ -71,6 +74,23 @@ public class WebServer {
             // 2. Authentication endpoints
             registerEndpoint(server, "/api/auth/login", new LoginHandler());
             registerEndpoint(server, "/api/auth/register", new RegisterHandler());
+            registerEndpoint(server, "/api/auth/register/initiate", new RegisterInitiateHandler());
+            registerEndpoint(server, "/api/auth/verify-registration-otp", new RegisterVerifyOtpHandler());
+            registerEndpoint(server, "/api/auth/register/verify-email", new RegisterVerifyEmailHandler());
+            registerEndpoint(server, "/api/auth/register/resend-email-otp", new RegisterResendEmailHandler());
+            registerEndpoint(server, "/api/auth/register/verify-mobile", new RegisterVerifyMobileHandler());
+            registerEndpoint(server, "/api/auth/register/resend-mobile-otp", new RegisterResendMobileHandler());
+            registerEndpoint(server, "/api/auth/forgot-password", new ForgotPasswordHandler());
+            registerEndpoint(server, "/api/auth/reset-password", new ResetPasswordHandler());
+
+            // 2b. Profile endpoints
+            registerEndpoint(server, "/api/profile", new ProfileHandler());
+            registerEndpoint(server, "/api/profile/name", new ProfileNameHandler());
+            registerEndpoint(server, "/api/profile/email/request-otp", new ProfileEmailRequestOtpHandler());
+            registerEndpoint(server, "/api/profile/email/verify", new ProfileEmailVerifyHandler());
+            registerEndpoint(server, "/api/profile/mobile/request-otp", new ProfileMobileRequestOtpHandler());
+            registerEndpoint(server, "/api/profile/mobile/verify", new ProfileMobileVerifyHandler());
+            registerEndpoint(server, "/api/profile/change-password", new ProfileChangePasswordHandler());
 
             // 3. Travel Catalogs
             registerEndpoint(server, "/api/destinations", new DestinationsHandler());
@@ -248,6 +268,211 @@ public class WebServer {
         }
     }
 
+    public static boolean isDemoMode() {
+        String railwayEnv = System.getenv("RAILWAY_ENVIRONMENT");
+        String prod = System.getenv("PRODUCTION");
+        if ("production".equalsIgnoreCase(railwayEnv) || "true".equalsIgnoreCase(prod)) {
+            return false;
+        }
+        return true;
+    }
+
+    static class RegisterInitiateHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if (!"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+                sendErrorResponse(exchange, 405, "Method Not Allowed");
+                return;
+            }
+            try {
+                Map<String, String> params = parseBody(exchange.getRequestBody());
+                String name = params.get("fullName");
+                String email = params.get("email");
+                String phone = params.get("phone");
+                String password = params.get("password");
+                String confirm = params.get("confirmPassword");
+                String role = params.getOrDefault("role", "TRAVELER");
+                String termsStr = params.get("termsAccepted");
+                boolean terms = "true".equalsIgnoreCase(termsStr) || "1".equals(termsStr);
+
+                service.PendingRegistrationManager.PendingRegistration pending =
+                        authService.initiateRegistration(name, email, phone, password, confirm, role, terms);
+
+                boolean demo = isDemoMode();
+                StringBuilder json = new StringBuilder("{");
+                json.append("\"success\":true,");
+                json.append("\"registrationId\":\"").append(escape(pending.getRegistrationId())).append("\",");
+                json.append("\"hasEmail\":").append(pending.hasEmail()).append(",");
+                json.append("\"hasPhone\":").append(pending.hasPhone()).append(",");
+                json.append("\"maskedEmail\":\"").append(escape(util.ValidationUtil.maskEmail(pending.getEmail()))).append("\",");
+                json.append("\"maskedPhone\":\"").append(escape(util.ValidationUtil.maskPhone(pending.getPhone()))).append("\",");
+                json.append("\"isDemoMode\":").append(demo);
+                if (demo) {
+                    if (pending.getEmailOtp() != null) {
+                        json.append(",\"demoEmailOtp\":\"").append(escape(pending.getEmailOtp())).append("\"");
+                    }
+                    if (pending.getMobileOtp() != null) {
+                        json.append(",\"demoMobileOtp\":\"").append(escape(pending.getMobileOtp())).append("\"");
+                    }
+                }
+                json.append(",\"message\":\"Demo Mode: OTP is displayed for testing.\"}");
+                sendJsonResponse(exchange, 200, json.toString());
+            } catch (ValidationException e) {
+                sendJsonResponse(exchange, 400, "{\"success\":false,\"message\":\"" + escape(e.getMessage()) + "\"}");
+            } catch (Exception e) {
+                sendErrorResponse(exchange, 500, e.getMessage());
+            }
+        }
+    }
+
+    static class RegisterVerifyOtpHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if (!"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+                sendErrorResponse(exchange, 405, "Method Not Allowed");
+                return;
+            }
+            try {
+                Map<String, String> params = parseBody(exchange.getRequestBody());
+                String regId = params.get("registrationId");
+                String otp = params.get("otp");
+
+                User user = authService.verifyRegistrationOtp(regId, otp);
+                String token = SessionManager.createWebSession(user);
+                exchange.getResponseHeaders().set("Set-Cookie", "session_token=" + token + "; Path=/; SameSite=Lax; Max-Age=86400");
+                String json = String.format("{\"success\":true,\"accountActivated\":true,\"token\":\"%s\",\"user\":{\"id\":%d,\"fullName\":\"%s\",\"email\":\"%s\",\"phone\":\"%s\",\"role\":\"%s\",\"token\":\"%s\"},\"message\":\"Account created and activated successfully! Welcome to Tripzy.\"}",
+                        token, user.getId(), escape(user.getFullName()), escape(user.getEmail()), escape(user.getPhone()), user.getRole(), token);
+                sendJsonResponse(exchange, 200, json);
+            } catch (ValidationException e) {
+                sendJsonResponse(exchange, 400, "{\"success\":false,\"message\":\"" + escape(e.getMessage()) + "\"}");
+            } catch (Exception e) {
+                sendErrorResponse(exchange, 500, e.getMessage());
+            }
+        }
+    }
+
+    static class RegisterVerifyEmailHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if (!"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+                sendErrorResponse(exchange, 405, "Method Not Allowed");
+                return;
+            }
+            try {
+                Map<String, String> params = parseBody(exchange.getRequestBody());
+                String regId = params.get("registrationId");
+                String otp = params.get("otp");
+
+                service.PendingRegistrationManager.PendingRegistration pending =
+                        service.PendingRegistrationManager.getPending(regId);
+                if (pending != null && !pending.hasPhone()) {
+                    User user = authService.verifyRegistrationOtp(regId, otp);
+                    String token = SessionManager.createWebSession(user);
+                    exchange.getResponseHeaders().set("Set-Cookie", "session_token=" + token + "; Path=/; SameSite=Lax; Max-Age=86400");
+                    String json = String.format("{\"success\":true,\"emailVerified\":true,\"accountActivated\":true,\"token\":\"%s\",\"user\":{\"id\":%d,\"fullName\":\"%s\",\"email\":\"%s\",\"phone\":\"%s\",\"role\":\"%s\",\"token\":\"%s\"},\"message\":\"Account activated successfully! Welcome to Tripzy.\"}",
+                            token, user.getId(), escape(user.getFullName()), escape(user.getEmail()), escape(user.getPhone()), user.getRole(), token);
+                    sendJsonResponse(exchange, 200, json);
+                    return;
+                }
+
+                pending = authService.verifyEmailRegistrationOtp(regId, otp);
+
+                boolean demo = isDemoMode();
+                String demoField = (demo && pending.getMobileOtp() != null) ? String.format(",\"demoMobileOtp\":\"%s\"", escape(pending.getMobileOtp())) : "";
+                String json = String.format("{\"success\":true,\"emailVerified\":true,\"registrationId\":\"%s\",\"maskedPhone\":\"%s\",\"message\":\"Email verified successfully! We sent an OTP to your mobile number.\",\"isDemoMode\":%b%s}",
+                        escape(pending.getRegistrationId()),
+                        escape(util.ValidationUtil.maskPhone(pending.getPhone())),
+                        demo,
+                        demoField);
+                sendJsonResponse(exchange, 200, json);
+            } catch (ValidationException e) {
+                sendJsonResponse(exchange, 400, "{\"success\":false,\"message\":\"" + escape(e.getMessage()) + "\"}");
+            } catch (Exception e) {
+                sendErrorResponse(exchange, 500, e.getMessage());
+            }
+        }
+    }
+
+    static class RegisterResendEmailHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if (!"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+                sendErrorResponse(exchange, 405, "Method Not Allowed");
+                return;
+            }
+            try {
+                Map<String, String> params = parseBody(exchange.getRequestBody());
+                String regId = params.get("registrationId");
+
+                String newOtp = authService.resendEmailRegistrationOtp(regId);
+
+                boolean demo = isDemoMode();
+                String demoField = demo ? String.format(",\"demoEmailOtp\":\"%s\"", escape(newOtp)) : "";
+                String json = String.format("{\"success\":true,\"message\":\"A new verification code has been sent to your email.\",\"isDemoMode\":%b%s}",
+                        demo,
+                        demoField);
+                sendJsonResponse(exchange, 200, json);
+            } catch (ValidationException e) {
+                sendJsonResponse(exchange, 400, "{\"success\":false,\"message\":\"" + escape(e.getMessage()) + "\"}");
+            } catch (Exception e) {
+                sendErrorResponse(exchange, 500, e.getMessage());
+            }
+        }
+    }
+
+    static class RegisterVerifyMobileHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if (!"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+                sendErrorResponse(exchange, 405, "Method Not Allowed");
+                return;
+            }
+            try {
+                Map<String, String> params = parseBody(exchange.getRequestBody());
+                String regId = params.get("registrationId");
+                String otp = params.get("otp");
+
+                User user = authService.verifyMobileRegistrationOtpAndActivate(regId, otp);
+                String token = SessionManager.createWebSession(user);
+                exchange.getResponseHeaders().set("Set-Cookie", "session_token=" + token + "; Path=/; SameSite=Lax; Max-Age=86400");
+                String json = String.format("{\"success\":true,\"accountActivated\":true,\"token\":\"%s\",\"user\":{\"id\":%d,\"fullName\":\"%s\",\"email\":\"%s\",\"phone\":\"%s\",\"role\":\"%s\",\"token\":\"%s\"},\"message\":\"Account created and activated successfully! Welcome to Tripzy.\"}",
+                        token, user.getId(), escape(user.getFullName()), escape(user.getEmail()), escape(user.getPhone()), user.getRole(), token);
+                sendJsonResponse(exchange, 200, json);
+            } catch (ValidationException e) {
+                sendJsonResponse(exchange, 400, "{\"success\":false,\"message\":\"" + escape(e.getMessage()) + "\"}");
+            } catch (Exception e) {
+                sendErrorResponse(exchange, 500, e.getMessage());
+            }
+        }
+    }
+
+    static class RegisterResendMobileHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if (!"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+                sendErrorResponse(exchange, 405, "Method Not Allowed");
+                return;
+            }
+            try {
+                Map<String, String> params = parseBody(exchange.getRequestBody());
+                String regId = params.get("registrationId");
+
+                String newOtp = authService.resendMobileRegistrationOtp(regId);
+
+                boolean demo = isDemoMode();
+                String demoField = demo ? String.format(",\"demoMobileOtp\":\"%s\"", escape(newOtp)) : "";
+                String json = String.format("{\"success\":true,\"message\":\"A new verification code has been sent to your mobile number.\",\"isDemoMode\":%b%s}",
+                        demo,
+                        demoField);
+                sendJsonResponse(exchange, 200, json);
+            } catch (ValidationException e) {
+                sendJsonResponse(exchange, 400, "{\"success\":false,\"message\":\"" + escape(e.getMessage()) + "\"}");
+            } catch (Exception e) {
+                sendErrorResponse(exchange, 500, e.getMessage());
+            }
+        }
+    }
+
     static class RegisterHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
@@ -271,6 +496,301 @@ public class WebServer {
                         token, user.getId(), escape(user.getFullName()), escape(user.getEmail()), escape(user.getPhone()), user.getRole(), token);
                 sendJsonResponse(exchange, 200, json);
             } catch (ValidationException e) {
+                sendJsonResponse(exchange, 400, "{\"success\":false,\"message\":\"" + escape(e.getMessage()) + "\"}");
+            } catch (Exception e) {
+                sendErrorResponse(exchange, 500, e.getMessage());
+            }
+        }
+    }
+
+    static class ForgotPasswordHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if (!"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+                sendErrorResponse(exchange, 405, "Method Not Allowed");
+                return;
+            }
+            try {
+                Map<String, String> params = parseBody(exchange.getRequestBody());
+                String identifier = params.get("identifier");
+                if (identifier == null || identifier.trim().isEmpty()) {
+                    identifier = params.get("email");
+                }
+                if (identifier == null || identifier.trim().isEmpty()) {
+                    identifier = params.get("phone");
+                }
+                String otp = authService.generatePasswordResetOtp(identifier);
+                boolean demo = isDemoMode();
+                String demoField = demo ? String.format(",\"demoOtp\":\"%s\"", escape(otp)) : "";
+                String json = String.format("{\"success\":true,\"message\":\"Demo Mode: OTP is displayed for testing.\",\"isDemoMode\":%b%s}", demo, demoField);
+                sendJsonResponse(exchange, 200, json);
+            } catch (ValidationException e) {
+                sendJsonResponse(exchange, 400, "{\"success\":false,\"message\":\"" + escape(e.getMessage()) + "\"}");
+            } catch (Exception e) {
+                sendErrorResponse(exchange, 500, e.getMessage());
+            }
+        }
+    }
+
+    static class ResetPasswordHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if (!"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+                sendErrorResponse(exchange, 405, "Method Not Allowed");
+                return;
+            }
+            try {
+                Map<String, String> params = parseBody(exchange.getRequestBody());
+                String identifier = params.get("identifier");
+                if (identifier == null || identifier.trim().isEmpty()) {
+                    identifier = params.get("email");
+                }
+                if (identifier == null || identifier.trim().isEmpty()) {
+                    identifier = params.get("phone");
+                }
+                String otp = params.get("otp");
+                String newPassword = params.get("newPassword");
+                String confirmPassword = params.get("confirmPassword");
+
+                boolean reset = authService.resetPasswordWithOtp(identifier, otp, newPassword, confirmPassword);
+                if (reset) {
+                    sendJsonResponse(exchange, 200, "{\"success\":true,\"message\":\"Password reset successfully! You can now log in with your new password.\"}");
+                } else {
+                    sendJsonResponse(exchange, 400, "{\"success\":false,\"message\":\"Failed to reset password. Please request a new verification code.\"}");
+                }
+            } catch (ValidationException e) {
+                sendJsonResponse(exchange, 400, "{\"success\":false,\"message\":\"" + escape(e.getMessage()) + "\"}");
+            } catch (Exception e) {
+                sendErrorResponse(exchange, 500, e.getMessage());
+            }
+        }
+    }
+
+    // =========================================================================
+    // 2b. Profile Handlers (View Profile, Update Name, Add/Change Email & Mobile, Password)
+    // =========================================================================
+
+    static class ProfileHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            User authUser = SessionManager.authenticateRequest(exchange);
+            if (authUser == null) {
+                sendJsonResponse(exchange, 401, "{\"success\":false,\"message\":\"Please log in to view your profile.\"}");
+                return;
+            }
+            try {
+                User user = userDAO.findById(authUser.getId());
+                if (user == null) {
+                    sendJsonResponse(exchange, 404, "{\"success\":false,\"message\":\"User not found.\"}");
+                    return;
+                }
+                AuthService.VerificationStatus vs = AuthService.getVerificationStatus(user);
+                double[] stats = authService.getUserStats(user.getId());
+
+                boolean hasEmail = ValidationUtil.isProvidedEmail(user.getEmail());
+                String displayEmail = hasEmail ? user.getEmail() : "";
+                boolean hasPhone = ValidationUtil.isProvidedPhone(user.getPhone());
+                String displayPhone = hasPhone ? user.getPhone() : "";
+
+                String json = String.format("{\"success\":true," +
+                                "\"user\":{\"id\":%d,\"fullName\":\"%s\",\"email\":\"%s\",\"hasEmail\":%b,\"emailVerified\":%b," +
+                                "\"phone\":\"%s\",\"hasPhone\":%b,\"mobileVerified\":%b,\"role\":\"%s\",\"status\":\"%s\"," +
+                                "\"createdAt\":\"%s\"}," +
+                                "\"stats\":{\"totalBookings\":%d,\"confirmedBookings\":%d,\"cancelledBookings\":%d,\"totalSpent\":%.2f}}",
+                        user.getId(),
+                        escape(user.getFullName()),
+                        escape(displayEmail),
+                        hasEmail,
+                        vs.isEmailVerified(),
+                        escape(displayPhone),
+                        hasPhone,
+                        vs.isMobileVerified(),
+                        user.getRole(),
+                        user.getStatus(),
+                        user.getCreatedAt() != null ? user.getCreatedAt().toString() : "",
+                        (int) stats[0],
+                        (int) stats[1],
+                        (int) stats[2],
+                        stats[3]
+                );
+                sendJsonResponse(exchange, 200, json);
+            } catch (Exception e) {
+                sendErrorResponse(exchange, 500, e.getMessage());
+            }
+        }
+    }
+
+    static class ProfileNameHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if (!"PUT".equalsIgnoreCase(exchange.getRequestMethod()) && !"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+                sendErrorResponse(exchange, 405, "Method Not Allowed");
+                return;
+            }
+            User authUser = SessionManager.authenticateRequest(exchange);
+            if (authUser == null) {
+                sendJsonResponse(exchange, 401, "{\"success\":false,\"message\":\"Please log in to update your profile.\"}");
+                return;
+            }
+            try {
+                Map<String, String> body = parseBody(exchange.getRequestBody());
+                String fullName = body.get("fullName");
+                boolean ok = authService.updateProfileName(authUser.getId(), fullName);
+                if (ok) {
+                    sendJsonResponse(exchange, 200, "{\"success\":true,\"fullName\":\"" + escape(fullName.trim()) + "\",\"message\":\"Name updated successfully!\"}");
+                } else {
+                    sendJsonResponse(exchange, 400, "{\"success\":false,\"message\":\"Failed to update name.\"}");
+                }
+            } catch (ValidationException e) {
+                sendJsonResponse(exchange, 400, "{\"success\":false,\"message\":\"" + escape(e.getMessage()) + "\"}");
+            } catch (Exception e) {
+                sendErrorResponse(exchange, 500, e.getMessage());
+            }
+        }
+    }
+
+    static class ProfileEmailRequestOtpHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if (!"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+                sendErrorResponse(exchange, 405, "Method Not Allowed");
+                return;
+            }
+            User authUser = SessionManager.authenticateRequest(exchange);
+            if (authUser == null) {
+                sendJsonResponse(exchange, 401, "{\"success\":false,\"message\":\"Please log in to update email.\"}");
+                return;
+            }
+            try {
+                Map<String, String> body = parseBody(exchange.getRequestBody());
+                String email = body.get("email");
+                String otp = authService.requestEmailChangeOtp(authUser.getId(), email);
+                boolean demo = isDemoMode();
+                String demoField = demo ? String.format(",\"demoOtp\":\"%s\"", escape(otp)) : "";
+                String json = String.format("{\"success\":true,\"email\":\"%s\",\"message\":\"Demo Mode: OTP is displayed for testing.\",\"isDemoMode\":%b%s}",
+                        escape(email.trim()), demo, demoField);
+                sendJsonResponse(exchange, 200, json);
+            } catch (ValidationException e) {
+                sendJsonResponse(exchange, 400, "{\"success\":false,\"message\":\"" + escape(e.getMessage()) + "\"}");
+            } catch (Exception e) {
+                sendErrorResponse(exchange, 500, e.getMessage());
+            }
+        }
+    }
+
+    static class ProfileEmailVerifyHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if (!"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+                sendErrorResponse(exchange, 405, "Method Not Allowed");
+                return;
+            }
+            User authUser = SessionManager.authenticateRequest(exchange);
+            if (authUser == null) {
+                sendJsonResponse(exchange, 401, "{\"success\":false,\"message\":\"Please log in to verify email.\"}");
+                return;
+            }
+            try {
+                Map<String, String> body = parseBody(exchange.getRequestBody());
+                String email = body.get("email");
+                String otp = body.get("otp");
+                boolean ok = authService.verifyEmailChangeOtp(authUser.getId(), email, otp);
+                if (ok) {
+                    sendJsonResponse(exchange, 200, "{\"success\":true,\"email\":\"" + escape(email.trim()) + "\",\"emailVerified\":true,\"message\":\"Email verified and updated successfully!\"}");
+                } else {
+                    sendJsonResponse(exchange, 400, "{\"success\":false,\"message\":\"Failed to verify email.\"}");
+                }
+            } catch (ValidationException e) {
+                sendJsonResponse(exchange, 400, "{\"success\":false,\"message\":\"" + escape(e.getMessage()) + "\"}");
+            } catch (Exception e) {
+                sendErrorResponse(exchange, 500, e.getMessage());
+            }
+        }
+    }
+
+    static class ProfileMobileRequestOtpHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if (!"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+                sendErrorResponse(exchange, 405, "Method Not Allowed");
+                return;
+            }
+            User authUser = SessionManager.authenticateRequest(exchange);
+            if (authUser == null) {
+                sendJsonResponse(exchange, 401, "{\"success\":false,\"message\":\"Please log in to update mobile number.\"}");
+                return;
+            }
+            try {
+                Map<String, String> body = parseBody(exchange.getRequestBody());
+                String phone = body.get("phone");
+                String otp = authService.requestMobileChangeOtp(authUser.getId(), phone);
+                boolean demo = isDemoMode();
+                String demoField = demo ? String.format(",\"demoOtp\":\"%s\"", escape(otp)) : "";
+                String json = String.format("{\"success\":true,\"phone\":\"%s\",\"message\":\"Demo Mode: OTP is displayed for testing.\",\"isDemoMode\":%b%s}",
+                        escape(ValidationUtil.cleanPhone(phone)), demo, demoField);
+                sendJsonResponse(exchange, 200, json);
+            } catch (ValidationException e) {
+                sendJsonResponse(exchange, 400, "{\"success\":false,\"message\":\"" + escape(e.getMessage()) + "\"}");
+            } catch (Exception e) {
+                sendErrorResponse(exchange, 500, e.getMessage());
+            }
+        }
+    }
+
+    static class ProfileMobileVerifyHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if (!"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+                sendErrorResponse(exchange, 405, "Method Not Allowed");
+                return;
+            }
+            User authUser = SessionManager.authenticateRequest(exchange);
+            if (authUser == null) {
+                sendJsonResponse(exchange, 401, "{\"success\":false,\"message\":\"Please log in to verify mobile number.\"}");
+                return;
+            }
+            try {
+                Map<String, String> body = parseBody(exchange.getRequestBody());
+                String phone = body.get("phone");
+                String otp = body.get("otp");
+                boolean ok = authService.verifyMobileChangeOtp(authUser.getId(), phone, otp);
+                if (ok) {
+                    sendJsonResponse(exchange, 200, "{\"success\":true,\"phone\":\"" + escape(ValidationUtil.cleanPhone(phone)) + "\",\"mobileVerified\":true,\"message\":\"Mobile number verified and updated successfully!\"}");
+                } else {
+                    sendJsonResponse(exchange, 400, "{\"success\":false,\"message\":\"Failed to verify mobile number.\"}");
+                }
+            } catch (ValidationException e) {
+                sendJsonResponse(exchange, 400, "{\"success\":false,\"message\":\"" + escape(e.getMessage()) + "\"}");
+            } catch (Exception e) {
+                sendErrorResponse(exchange, 500, e.getMessage());
+            }
+        }
+    }
+
+    static class ProfileChangePasswordHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if (!"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+                sendErrorResponse(exchange, 405, "Method Not Allowed");
+                return;
+            }
+            User authUser = SessionManager.authenticateRequest(exchange);
+            if (authUser == null) {
+                sendJsonResponse(exchange, 401, "{\"success\":false,\"message\":\"Please log in to change password.\"}");
+                return;
+            }
+            try {
+                Map<String, String> body = parseBody(exchange.getRequestBody());
+                String oldPass = body.get("oldPassword");
+                String newPass = body.get("newPassword");
+                String confirmPass = body.get("confirmPassword");
+                boolean ok = authService.changePassword(authUser.getId(), oldPass, newPass, confirmPass);
+                if (ok) {
+                    sendJsonResponse(exchange, 200, "{\"success\":true,\"message\":\"Password changed successfully!\"}");
+                } else {
+                    sendJsonResponse(exchange, 400, "{\"success\":false,\"message\":\"Failed to change password.\"}");
+                }
+            } catch (ValidationException | AuthenticationException e) {
                 sendJsonResponse(exchange, 400, "{\"success\":false,\"message\":\"" + escape(e.getMessage()) + "\"}");
             } catch (Exception e) {
                 sendErrorResponse(exchange, 500, e.getMessage());
